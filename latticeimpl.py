@@ -2,6 +2,7 @@ from . import lattice
 from . import latticenodeimpl
 import dictionarylib
 
+
 class LatticeImpl(lattice.Lattice):
     def __init__(self, grammar):
         self.end_lists = []
