@@ -134,9 +134,9 @@ class UTF8InputTextTest(unittest.TestCase):
         self.assertEqual(input_.get_original_index(0), 0)
         self.assertEqual(input_.get_original_index(12), 7)
         self.assertEqual(input_.get_original_index(13), 8)
-        self.assertEqual(input_.get_original_index(21), 8)
-        self.assertEqual(input_.get_original_index(22), 10)
-        self.assertEqual(input_.get_original_index(25), 10)
+        self.assertEqual(input_.get_original_index(21), 10)
+        self.assertEqual(input_.get_original_index(22), 11)
+        self.assertEqual(input_.get_original_index(25), 11)
         self.assertEqual(input_.get_original_index(34), 14)
 
     def test_replaceMultiTimes(self):
