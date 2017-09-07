@@ -56,3 +56,12 @@ class UTF8InputText(inputtext.InputText):
 
     def get_char_category_continuous_length(self, index):
         return self.char_category_continuities[index]
+
+    def get_code_points_offset_length(self, index, code_point_offset):
+        length = 0
+        target = self.byte_indexes[index] + code_point_offset
+        for i in range(index, len(self.bytes)):
+            if self.byte_indexes[i] >= target:
+                return length
+            length += 1
+        return length

@@ -1,7 +1,7 @@
-from enum import IntEnum
+from enum import Enum
 
 
-class CategoryType(IntEnum):
+class CategoryType(Enum):
     DEFAULT = 1
     SPACE = 1 << 1
     KANJI = 1 << 2
@@ -17,9 +17,6 @@ class CategoryType(IntEnum):
     USER2 = 1 << 12
     USER3 = 1 << 13
     USER4 = 1 << 14
-
-    def category_type(self, id):
-        self.id = id
 
     def get_id(self):
         return self.id

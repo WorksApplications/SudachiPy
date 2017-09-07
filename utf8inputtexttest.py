@@ -55,10 +55,8 @@ class UTF8InputTextTest(unittest.TestCase):
         self.assertEqual(input_.get_original_index(28), 12)
         self.assertEqual(input_.get_original_index(31), 13)
 
-    """
     def test_get_char_category_types(self):
         input_ = self.builder.build()
-        print(input_.get_char_category_types(0))
         self.assertTrue(dictionarylib.categorytype.CategoryType.ALPHA in input_.get_char_category_types(0))
         self.assertTrue(dictionarylib.categorytype.CategoryType.ALPHA in input_.get_char_category_types(2))
         self.assertTrue(dictionarylib.categorytype.CategoryType.ALPHA in input_.get_char_category_types(5))
@@ -90,7 +88,6 @@ class UTF8InputTextTest(unittest.TestCase):
         self.assertEqual(input_.get_char_category_continuous_length(23), 9)
         self.assertEqual(input_.get_char_category_continuous_length(26), 6)
         self.assertEqual(input_.get_char_category_continuous_length(31), 1)
-    """
 
     def test_replace_with_same_length(self):
         self.builder.replace(8, 10, "ああ")
@@ -124,7 +121,7 @@ class UTF8InputTextTest(unittest.TestCase):
         self.assertEqual(input_.get_original_index(15), 8)
         self.assertEqual(input_.get_original_index(16), 10)
         self.assertEqual(input_.get_original_index(19), 10)
-        self.assertEqual(input_.get_original_index(28), 14)
+        self.assertEqual(input_.get_original_index(28), 13)
 
     def test_replaceWithInsertion(self):
         self.builder.replace(8, 10, "あああ")
@@ -146,7 +143,7 @@ class UTF8InputTextTest(unittest.TestCase):
         self.builder.replace(0, 1, "a")
         self.builder.replace(1, 2, "b")
         self.builder.replace(2, 3, "c")
-        self.builder.replace(10, 12, "土")
+        self.builder.replace(10, 11, "土")
         self.builder.replace(12, 14, "ゴ")
         input_ = self.builder.build()
         self.assertEqual(input_.get_original_text(), self.TEXT)
@@ -161,10 +158,10 @@ class UTF8InputTextTest(unittest.TestCase):
         self.assertEqual(input_.get_original_index(15), 9)
         self.assertEqual(input_.get_original_index(16), 10)
         self.assertEqual(input_.get_original_index(18), 10)
-        self.assertEqual(input_.get_original_index(19), 12)
-        self.assertEqual(input_.get_original_index(21), 12)
-        self.assertEqual(input_.get_original_index(22), 13)
-        self.assertEqual(input_.get_original_index(24), 13)
+        self.assertEqual(input_.get_original_index(19), 11)
+        self.assertEqual(input_.get_original_index(21), 11)
+        self.assertEqual(input_.get_original_index(22), 12)
+        self.assertEqual(input_.get_original_index(24), 12)
 
     def test_getByteLengthByCodePoints(self):
         input_ = self.builder.build()
