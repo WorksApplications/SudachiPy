@@ -15,7 +15,7 @@ class JapaneseTokenizer(tokenizer.Tokenizer):
         # self.dump_output = None
         self.lattice = latticeimpl.LatticeImpl(grammer)
 
-    def tokenize(self, text, mode):
+    def tokenize(self, mode, text):
         if len(text) is 0:
             return []
 
@@ -25,12 +25,12 @@ class JapaneseTokenizer(tokenizer.Tokenizer):
         input_ = builder.build()
         bytes_ = input_.get_byte_text()
 
-        self.lattice.resize(len(bytes_), self.grammer)
+        self.lattice.resize(len(bytes_))
         for i in range(len(bytes_)):
             if not input_.is_char_alignment(i) or not self.lattice.has_previous_node(i):
                 continue
             iterator = self.lexicon.lookup(bytes_, i)
-            has_words = iterator.has_next()
+            has_words = True if iterator.next() else False
             while iterator.has_next():
                 r = iterator.next()
                 word_id = r[0]

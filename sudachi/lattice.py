@@ -11,5 +11,5 @@ class Lattice(object):
     def remove(self, begin, end, node):
         pass
 
-    def create_node():
+    def create_node(self):
         pass

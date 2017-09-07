@@ -1,6 +1,6 @@
 from . import lattice
 from . import latticenodeimpl
-import dictionarylib
+from . import dictionarylib
 
 
 class LatticeImpl(lattice.Lattice):
