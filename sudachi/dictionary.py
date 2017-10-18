@@ -53,11 +53,11 @@ class Dictionary:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         self.buffers.append(bytes_)
 
-        # grammar = dictionarylib.grammarimpl.GrammarImpl(bytes_, 0)
+        # grammar = dictionarylib.grammar.Grammar(bytes_, 0)
         offset = 0;
         header_storageSize = 8 + 8 + 256;
         offset += header_storageSize;
-        grammar = dictionarylib.grammarimpl.GrammarImpl(bytes_, offset)
+        grammar = dictionarylib.grammar.Grammar(bytes_, offset)
         self.grammar = grammar
         offset += grammar.get_storage_size()
         self.lexicon = dictionarylib.lexiconset.LexiconSet(dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, offset))
