@@ -1,18 +1,14 @@
-import json
 import sys
+import json
+import argparse
 
 from sudachi import config
 from sudachi import dictionaryfactory
 from sudachi import tokenizer
 
 
-argvs = sys.argv
-argc = len(argvs)
-
-
 def run(tokenizer, mode, reader, output, print_all):
     for line in reader.readlines():
-        ml = tokenizer.tokenize(mode, line)
         for m in tokenizer.tokenize(mode, line):
             print(m.surface(), file=output, end='')
             print("\t", file=output, end='')
@@ -32,60 +28,46 @@ def run(tokenizer, mode, reader, output, print_all):
 
 
 if __name__ == "__main__":
-    mode = tokenizer.Tokenizer.SplitMode.C
-    settings = None
+    parser = argparse.ArgumentParser(description="Japanese Morphological Analyzer")
+    parser.add_argument("-r", dest="fpath_setting", metavar="file",
+                        default=config.SETTINGFILE, help="the setting file in JSON format")
+    parser.add_argument("-m", dest="mode", choices=["A", "B", "C"], default="C", help="the mode of splitting")
+    parser.add_argument("-o", dest="fpath_out", metavar="file", help="the output file")
+    parser.add_argument("-a", action="store_true", help="print all of the fields")
+    parser.add_argument("-d", action="store_true", help="print the debug information")
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.1.0")
+    parser.add_argument("input_files", metavar="input file(s)", nargs=argparse.REMAINDER)
+    args = parser.parse_args()
+
+    with open(args.fpath_setting, "r", encoding="utf-8") as f:
+        settings = json.load(f)
+
+    if args.mode == "A":
+        mode = tokenizer.Tokenizer.SplitMode.A
+    elif args.mode == "B":
+        mode = tokenizer.Tokenizer.SplitMode.B
+    else:
+        mode = tokenizer.Tokenizer.SplitMode.C
+
     output = sys.stdout
-    is_enable_dump = False
-    print_all = False
+    if args.fpath_out:
+        output = open(args.fpath_out, "w", encoding="utf-8")
 
-    n = 1
-    while n < argc:
-        if argvs[n] is "-r" and n + 1 < argc:
-            n += 1
-            with open(argvs[n], 'r') as input_:
-                settings = input_.read()
+    print_all = args.a
 
-        elif argvs[n] is "-m" and n + 1 < argc:
-            n += 1
-            if argvs[n] is "A":
-                mode = tokenizer.Tokenizer.SplitMode.A
-            elif argvs[n] is "B":
-                mode = tokenizer.Tokenizer.SplitMode.B
-            else:
-                mode = tokenizer.Tokenizer.SplitMode.C
-        elif argvs[n] is "-o" and n + 1 < argc:
-            n += 1
-            output = open(argvs[n], 'w')
-        elif argvs[n] is "-a":
-            print_all = True
-        elif argvs[n] is "-d":
-            is_enable_dump = True
-        elif argvs[n] is "-h":
-            print("usage: SudachiCommandLine [-r file] [-m A|B|C] [-o file] [-d] [file ...]", file=sys.stderr)
-            print("\t-r file\tread settings from file", file=sys.stderr)
-            print("\t-m mode\tmode of splitting", file=sys.stderr)
-            print("\t-o file\toutput to file", file=sys.stderr)
-            print("\t-a\tprint all fields", file=sys.stderr)
-            print("\t-d\tdebug mode", file=sys.stderr)
-            exit(1)
-        else:
-            break
-        n += 1
-
-    if settings is None:
-        with open(config.SETTINGFILE, 'r', encoding="utf-8") as input_:
-            settings = json.load(input_)
+    is_enable_dump = args.d
 
     dict_ = dictionaryfactory.DictionaryFactory().create(settings)
     tokenizer = dict_.create()
     if is_enable_dump:
         tokenizer.set_dump_output(output)
 
-    if (n < argc):
-        while n < argc:
-            with open(argvs[n], 'r', encoding="utf-8") as input_:
+    input_files = args.input_files
+    if input_files:
+        for input_file in input_files:
+            with open(input_file, "r", encoding="utf-8") as input_:
                 run(tokenizer, mode, input_, output, print_all)
-            n += 1
     else:
         run(tokenizer, mode, sys.stdin, output, print_all)
+
     output.close()
