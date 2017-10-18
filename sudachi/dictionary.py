@@ -53,13 +53,16 @@ class Dictionary:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         self.buffers.append(bytes_)
 
-        # grammar = dictionarylib.grammar.Grammar(bytes_, 0)
-        offset = 0;
-        header_storageSize = 8 + 8 + 256;
-        offset += header_storageSize;
-        grammar = dictionarylib.grammar.Grammar(bytes_, offset)
-        self.grammar = grammar
-        offset += grammar.get_storage_size()
+        offset = 0
+        self.header = dictionarylib.dictionaryheader.DictionaryHeader(bytes_, offset)
+        SYSTEM_DICT_VERSION = 0x7366d3f18bd111e7
+        if self.header.version != SYSTEM_DICT_VERSION:
+            raise Exception("invalid system dictionary")
+        offset += self.header.storage_size
+
+        self.grammar = dictionarylib.grammar.Grammar(bytes_, offset)
+        offset += self.grammar.get_storage_size()
+
         self.lexicon = dictionarylib.lexiconset.LexiconSet(dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, offset))
 
     def read_user_dictionary(self, filename):
