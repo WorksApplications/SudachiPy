@@ -1,10 +1,8 @@
 import copy
-import sys
-from . import inputtextbuilder
 from . import utf8inputtext
 
 
-class UTF8InputTextBuilder(inputtextbuilder.InputTextBuilder):
+class UTF8InputTextBuilder:
     def __init__(self, text, grammar):
 
         self.grammar = grammar

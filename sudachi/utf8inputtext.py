@@ -1,10 +1,7 @@
 import copy
 
-from . import inputtext
 
-
-class UTF8InputText(inputtext.InputText):
-
+class UTF8InputText:
     def __init__(self, grammar, original_text, modified_text, bytes_, offsets, byte_indexes, char_categories, char_category_continuities):
         self.original_text = original_text
         self.modified_text = modified_text
