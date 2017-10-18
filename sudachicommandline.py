@@ -3,7 +3,7 @@ import json
 import argparse
 
 from sudachi import config
-from sudachi import japanesedictionary
+from sudachi import dictionary
 from sudachi import tokenizer
 
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     is_enable_dump = args.d
 
-    dict_ = japanesedictionary.JapaneseDictionary(settings)
+    dict_ = dictionary.Dictionary(settings)
     tokenizer = dict_.create()
     if is_enable_dump:
         tokenizer.set_dump_output(output)
