@@ -2,7 +2,7 @@
 import struct
 
 from . import lexicon
-from . import dartsclone
+from .. import dartsclone
 from . import wordidtable
 from . import wordparameterlist
 from . import wordinfolist
