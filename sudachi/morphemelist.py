@@ -3,9 +3,8 @@ from . import morphemeimpl
 from . import tokenizer
 
 
-class MorphemeList(list):
+class MorphemeList:
     def __init__(self, input_, grammar, lexicon, path):
-        list.__init__(self)
         self.input_text = input_
         self.grammar = grammar
         self.lexicon = lexicon
@@ -17,6 +16,11 @@ class MorphemeList(list):
     def __len__(self):
         return len(self.path)
 
+    def __iter__(self):
+        for index in range(len(self.path)):
+            yield morphemeimpl.MorphemeImpl(self, index)
+        return
+
     def get_begin(self, index):
         return self.input_text.get_original_index(self.path[index].get_begin())
 
@@ -26,7 +30,7 @@ class MorphemeList(list):
     def get_surface(self, index):
         begin = self.get_begin(index)
         end = self.get_end(index)
-        return self.input_text.get_original_text().substring(begin, end)
+        return self.input_text.get_original_text()[begin:end]
 
     def get_word_info(self, index):
         return self.path[index].get_word_info()

@@ -37,9 +37,9 @@ class CharacterCategory(object):
         """
 
         if char_def is not None:
-            f = open(char_def, 'r')
+            f = open(char_def, 'r', encoding="utf-8")
         else:
-            f = open("char.def", 'r')
+            f = open("char.def", 'r', encoding="utf-8")
 
         for i, line in enumerate(f.readlines()):
             if re.fullmatch("\s*", line) or re.match("#", line):

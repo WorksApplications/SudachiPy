@@ -15,14 +15,14 @@ class GrammarImpl(grammar.Grammar):
         self.is_copied_connect_table = False
         pos_size = self.bytes_get_short(bytes_, offset)
         offset += 2
-        pos_list = []
+        self.pos_list = []
 
         for i in range(pos_size):
             pos = []
             for j in range(self.POS_DEPTH):
                 pos.append(self.buffer_to_string(offset))
                 offset += 1 + 2 * len(pos[j])
-            pos_list.append(pos)
+            self.pos_list.append(pos)
         self.left_id_size = self.bytes_get_short(bytes_, offset)
         offset += 2
         self.right_id_size = self.bytes_get_short(bytes_, offset)

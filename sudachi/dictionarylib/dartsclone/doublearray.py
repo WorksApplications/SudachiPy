@@ -72,8 +72,7 @@ class DoubleArray(object):
         result[1] = len(key)
         return result
 
-    def common_prefix_search(self, key, offset, max_num_result=None):
-
+    def common_prefix_search(self, key, offset):
         result = []
 
         node_pos = 0
@@ -84,59 +83,14 @@ class DoubleArray(object):
             k = key[i]
             node_pos ^= k
             unit = self.array[node_pos]
-            if self.label(unit) is not k:
+            if self.label(unit) != k:
                 return result
 
             node_pos ^= self.offset(unit)
             if (self.has_leaf(unit)):
-                if (len(result) < max_num_result):
-                    r = [self.value(self.array[node_pos]), i + 1]
-                    result.append(r)
+                r = [self.value(self.array[node_pos]), i + 1]
+                result.append(r)
         return result
-
-    class Itr(object):
-        def __init__(self, key, offset):
-            self.key = key
-            self.offset = offset
-            self.node_pos = 0
-            self.unit = DoubleArray.array.get(self.node_pos)
-            self.node_pos ^= offset(self.unit)
-            self.next = None
-
-        def has_next(self):
-            if self.next is None:
-                self.next = self.get_next()
-            return self.next is not None
-
-        def next(self):
-            """
-            override
-            """
-            if self.next is not None:
-                r = self.next
-            else:
-                r = self.get_next()
-            self.next = None
-            if r is None:
-                raise UnboundLocalError
-            return r
-
-        def get_next(self):
-            for i in range(self.offset, len(self.key)):
-                k = self.key[i]
-                self.node_pos ^= self.byte_to_u_int(k)
-                if self.label(self.unit) is not self.byte_to_u_int(k):
-                    self.offset = len(self.key)
-                    return None
-
-                self.node_pos ^= self.offset(self.unit)
-                if self.has_leaf(self.unit):
-                    self.offset += 1
-                    r = [
-                            self.value(DoubleArray.array.get(self.node_pos)),
-                            self.offset]
-                    return r
-            return None
 
     def has_leaf(self, unit):
         return ((unit >> 8) & 1) == 1

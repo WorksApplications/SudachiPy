@@ -3,20 +3,19 @@ from . import latticenode
 
 class LatticeNodeImpl(latticenode.LatticeNode):
     def __init__(self, lexicon=None, left_id=None, right_id=None, cost=None, word_id=None):
-
-        if lexicon is left_id is right_id is cost is word_id is None:
-            self.word_id = -1
-            return
-
         self.begin = None
         self.end = None
 
-        self.total_cost = None
+        self.total_cost = 0
         self.best_previous_node = None
         self.is_connected_to_bos = None
 
         self.is_oov = False
         self.extra_word_info = None
+
+        if lexicon is left_id is right_id is cost is word_id is None:
+            self.word_id = -1
+            return
 
         self.lexicon = lexicon
         self.left_id = left_id

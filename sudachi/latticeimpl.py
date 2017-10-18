@@ -72,7 +72,7 @@ class LatticeImpl(lattice.Lattice):
             if not l_node.is_connected_to_bos:
                 continue
             connect_cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
-            if connect_cost is dictionarylib.grammar.Grammer.INHIBITED_CONNECTION:
+            if connect_cost == dictionarylib.grammar.Grammar.INHIBITED_CONNECTION:
                 continue
             cost = l_node.total_cost + connect_cost
             if cost < r_node.total_cost:
@@ -91,6 +91,6 @@ class LatticeImpl(lattice.Lattice):
         while node is not self.end_lists[0][0]:
             result.append(node)
             node = node.best_previous_node
-        return result.reverse()
+        return list(reversed(result))
 
     # def dump(self, output):

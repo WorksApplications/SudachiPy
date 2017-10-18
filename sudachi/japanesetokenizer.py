@@ -30,12 +30,8 @@ class JapaneseTokenizer(tokenizer.Tokenizer):
             if not input_.is_char_alignment(i) or not self.lattice.has_previous_node(i):
                 continue
             iterator = self.lexicon.lookup(bytes_, i)
-            has_words = True if iterator.next() else False
-            while iterator.has_next():
-                r = iterator.next()
-                word_id = r[0]
-                end = r[1]
-
+            has_words = True if iterator else False
+            for word_id, end in iterator:
                 n = latticenodeimpl.LatticeNodeImpl(self.lexicon,
                                                     self.lexicon.get_left_id(word_id),
                                                     self.lexicon.get_right_id(word_id),
@@ -84,4 +80,5 @@ class JapaneseTokenizer(tokenizer.Tokenizer):
 
         # dump_output
 
-        return morphemelist.MorphemeList(input_, self.grammer, self.lexicon, path)
+        ml = morphemelist.MorphemeList(input_, self.grammer, self.lexicon, path)
+        return ml

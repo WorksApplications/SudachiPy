@@ -51,12 +51,17 @@ class JapaneseDictionary(dictionary.Dictionary):
         if filename is None:
             raise AttributeError("system dictionary is not specified")
         with open(filename, 'r+b') as system_dic:
-            bytes_ = mmap.mmap(system_dic.fileno(), 0, prot=mmap.PROT_READ)
+            bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         self.buffers.append(bytes_)
 
-        grammar = dictionarylib.grammarimpl.GrammarImpl(bytes_, 0)
+        # grammar = dictionarylib.grammarimpl.GrammarImpl(bytes_, 0)
+        offset = 0;
+        header_storageSize = 8 + 8 + 256;
+        offset += header_storageSize;
+        grammar = dictionarylib.grammarimpl.GrammarImpl(bytes_, offset)
         self.grammar = grammar
-        self.lexicon = dictionarylib.lexiconset.LexiconSet(dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, grammar.get_storage_size()))
+        offset += grammar.get_storage_size()
+        self.lexicon = dictionarylib.lexiconset.LexiconSet(dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, offset))
 
     def read_user_dictionary(self, filename):
         with open(filename, 'r+b') as user_dic:

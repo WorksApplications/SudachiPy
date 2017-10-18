@@ -12,7 +12,7 @@ argc = len(argvs)
 
 def run(tokenizer, mode, reader, output, print_all):
     for line in reader.readlines():
-        print(line)
+        ml = tokenizer.tokenize(mode, line)
         for m in tokenizer.tokenize(mode, line):
             print(m.surface(), file=output, end='')
             print("\t", file=output, end='')
@@ -27,12 +27,8 @@ def run(tokenizer, mode, reader, output, print_all):
                 if m.is_oov():
                     print("\t", file=output, end='')
                     print("(OOV)", file=output, end='')
-            print("", file=output, end='')
+            print("", file=output)
         print("EOS", file=output)
-
-
-
-
 
 
 if __name__ == "__main__":
@@ -77,7 +73,7 @@ if __name__ == "__main__":
         n += 1
 
     if settings is None:
-        with open(config.SETTINGFILE, 'r') as input_:
+        with open(config.SETTINGFILE, 'r', encoding="utf-8") as input_:
             settings = json.load(input_)
 
     dict_ = dictionaryfactory.DictionaryFactory().create(settings)
@@ -87,7 +83,7 @@ if __name__ == "__main__":
 
     if (n < argc):
         while n < argc:
-            with open(argvs[n], 'r') as input_:
+            with open(argvs[n], 'r', encoding="utf-8") as input_:
                 run(tokenizer, mode, input_, output, print_all)
             n += 1
     else:

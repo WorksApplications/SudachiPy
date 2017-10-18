@@ -1,3 +1,5 @@
+import struct
+
 class WordIdTable(object):
     def __init__(self, bytes_, offset):
         self.bytes = bytes_
@@ -9,12 +11,7 @@ class WordIdTable(object):
         return 4 + self.size
 
     def get(self, index):
-        self.bytes.seek(self.offset + index)
-        length = int.from_bytes(self.bytes.read_byte())
+        length = self.bytes[self.offset + index]
         index += 1
-        result = [0 for i in range(length)]
-        for i in range(length):
-            self.bytes.seek(self.offset + index)
-            result[i] = int.from_bytes(self.bytes.read(4), 'little')
-            index += 4
+        result = struct.unpack_from("<{}I".format(length), self.bytes, self.offset + index)
         return result

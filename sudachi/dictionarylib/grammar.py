@@ -1,6 +1,8 @@
 class Grammar(object):
+    INHIBITED_CONNECTION = 0x7F
+
     def __init__(self):
-        self.INHIBITED_CONNECTION = 0x7F
+        pass
 
     def get_part_of_speech_size(self):
         pass

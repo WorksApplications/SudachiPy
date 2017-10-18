@@ -100,4 +100,10 @@ ENV/
 # mypy
 .mypy_cache/
 
+# IDE, Editor
+.idea/
+.vscode/
+
+# Sudachi dictionary
 system.dic
+

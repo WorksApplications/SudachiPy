@@ -18,7 +18,7 @@ class MorphemeImpl(morpheme.Morpheme):
 
     def part_of_speech(self):
         wi = self.get_word_info()
-        return self.list.grammar.get_part_of_speech_string(wi.get_pos_id)
+        return self.list.grammar.get_part_of_speech_string(wi.pos_id)
 
     def dictionary_form(self):
         wi = self.get_word_info()
@@ -26,7 +26,7 @@ class MorphemeImpl(morpheme.Morpheme):
 
     def normalized_form(self):
         wi = self.get_word_info()
-        return wi.get_normalized_form()
+        return wi.normalized_form
 
     def reading_form(self):
         wi = self.get_word_info()
