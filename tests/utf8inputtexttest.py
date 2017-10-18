@@ -174,7 +174,7 @@ class UTF8InputTextTest(unittest.TestCase):
         self.assertEqual(input_.get_code_points_offset_length(19, 1), 4)
         self.assertEqual(input_.get_code_points_offset_length(23, 3), 9)
 
-    class MockGrammar(dictionarylib.grammar.Grammar):
+    class MockGrammar:
         def get_part_of_speech_size(self):
             return 0
 
