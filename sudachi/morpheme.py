@@ -1,27 +1,42 @@
-class Morpheme(object):
+class Morpheme:
+    def __init__(self, list_, index):
+        self.word_info = None
+        self.list = list_
+        self.index = index
+
     def begin(self):
-        pass
+        return self.list.get_begin(self.index)
 
     def end(self):
-        pass
+        return self.list.get_end(self.index)
 
     def surface(self):
-        pass
+        return self.list.get_surface(self.index)
 
     def part_of_speech(self):
-        pass
+        wi = self.get_word_info()
+        return self.list.grammar.get_part_of_speech_string(wi.pos_id)
 
     def dictionary_form(self):
-        pass
+        wi = self.get_word_info()
+        return wi.get_dictionary_form()
 
     def normalized_form(self):
-        pass
+        wi = self.get_word_info()
+        return wi.normalized_form
 
     def reading_form(self):
-        pass
+        wi = self.get_word_info()
+        return wi.get_reading_form()
 
-    def split(self):
-        pass
+    def split(self, mode):
+        wi = self.get_word_info()
+        return self.list.split(mode, self.index, wi)
 
     def is_oov(self):
-        pass
+        return self.list.is_oov(self.index)
+
+    def get_word_info(self):
+        if self.word_info is None:
+            self.word_info = self.list.get_word_info(self.index)
+        return self.word_info

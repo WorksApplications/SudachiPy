@@ -1,5 +1,5 @@
 from . import latticenode
-from . import morphemeimpl
+from . import morpheme
 from . import tokenizer
 
 
@@ -11,14 +11,14 @@ class MorphemeList:
         self.path = path
 
     def __getitem__(self, index):
-        return morphemeimpl.MorphemeImpl(self, index)
+        return morpheme.Morpheme(self, index)
 
     def __len__(self):
         return len(self.path)
 
     def __iter__(self):
         for index in range(len(self.path)):
-            yield morphemeimpl.MorphemeImpl(self, index)
+            yield morpheme.Morpheme(self, index)
         return
 
     def get_begin(self, index):
