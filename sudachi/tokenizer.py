@@ -1,7 +1,7 @@
 from enum import Enum
 from enum import auto
 
-from . import latticeimpl
+from . import lattice
 from . import latticenodeimpl
 from . import morphemelist
 from . import utf8inputtextbuilder
@@ -20,7 +20,7 @@ class Tokenizer:
         self.oov_provider_plugins = oov_provider_plugins
         self.path_rewrite_plugins = path_rewrite_plugins
         # self.dump_output = None
-        self.lattice = latticeimpl.LatticeImpl(grammer)
+        self.lattice = lattice.Lattice(grammer)
 
     def tokenize(self, mode, text):
         if len(text) is 0:

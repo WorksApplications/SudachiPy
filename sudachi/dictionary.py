@@ -1,7 +1,7 @@
 import mmap
 import os.path
 
-from . import japanesetokenizer
+from . import tokenizer
 from . import config
 from . import dictionarylib
 
@@ -68,7 +68,7 @@ class Dictionary:
         self.buffers.append(bytes_)
 
         user_lexicon = dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, 0)
-        tokenizer = japanesetokenizer.JapaneseTokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
+        tokenizer = tokenizer.JapaneseTokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
         user_lexicon.calclate_cost(tokenizer)
         self.lexicon.append(user_lexicon)
 
@@ -86,4 +86,4 @@ class Dictionary:
             buffer_.close()
 
     def create(self):
-        return japanesetokenizer.JapaneseTokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, self.path_rewrite_plugins)
+        return tokenizer.Tokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, self.path_rewrite_plugins)
