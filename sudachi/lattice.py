@@ -1,4 +1,4 @@
-from . import latticenodeimpl
+from . import latticenode
 from . import dictionarylib
 
 
@@ -14,7 +14,7 @@ class Lattice:
         self.eos_params = grammar.get_eos_parameter()
 
         self.end_lists = []
-        bos_node = latticenodeimpl.LatticeNodeImpl()
+        bos_node = latticenode.LatticeNode()
         bos_params = grammar.get_bos_parameter()
         bos_node.set_parameter(bos_params[0], bos_params[1], bos_params[2])
         bos_node.is_connected_to_bos = True
@@ -25,7 +25,7 @@ class Lattice:
             self.expand(size)
         self.size = size
 
-        self.eos_node = latticenodeimpl.LatticeNodeImpl()
+        self.eos_node = latticenode.LatticeNode()
         self.eos_node.set_parameter(self.eos_params[0], self.eos_params[1], self.eos_params[2])
         self.eos_node.begin = self.eos_node.end = size
 
@@ -59,7 +59,7 @@ class Lattice:
         self.end_lists[end].remove(node)
 
     def create_node(self):
-        return latticenodeimpl.LatticeNodeImpl()
+        return latticenode.LatticeNode()
 
     def has_previous_node(self, index):
         return len(self.end_lists[index]) is not 0

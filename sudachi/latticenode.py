@@ -1,24 +1,66 @@
-class LatticeNode(object):
+class LatticeNode:
+    def __init__(self, lexicon=None, left_id=None, right_id=None, cost=None, word_id=None):
+        self.begin = None
+        self.end = None
+
+        self.total_cost = 0
+        self.best_previous_node = None
+        self.is_connected_to_bos = None
+
+        self.is_oov = False
+        self.extra_word_info = None
+
+        if lexicon is left_id is right_id is cost is word_id is None:
+            self.word_id = -1
+            return
+
+        self.lexicon = lexicon
+        self.left_id = left_id
+        self.right_id = right_id
+        self.cost = cost
+        self.word_id = word_id
+
     def set_parameter(self, left_id, right_id, cost):
-        pass
+        self.left_id = left_id
+        self.right_id = right_id
+        self.cost = cost
 
     def get_begin(self):
-        pass
+        return self.begin
 
     def get_end(self):
-        pass
+        return self.end
 
     def set_range(self, begin, end):
-        pass
+        self.begin = begin
+        self.end = end
 
     def is_oov(self):
-        pass
+        return self.is_oov
+
+    def set_oov(self):
+        self.is_oov = True
 
     def get_word_info(self):
-        pass
+        if self.word_id >= 0:
+            return self.lexicon.get_word_info(self.word_id)
+        elif(self.extra_word_info is not None):
+            return self.extra_word_info
+        raise IndexError("this node has no WordInfo")
 
     def set_word_info(self, word_info):
-        pass
+        self.extra_word_info = word_info
+        self.word_id = -1
 
     def get_path_cost(self):
-        pass
+        return self.cost
+
+    def __str__(self):
+        surface = ""
+        if self.word_id < 0 and self.extra_word_info is None:
+            surface = "(None)"
+        else:
+            surface = self.get_word_info().get_surface()
+
+        return ("%d %d %s(%d) %d %d %d",
+                self.get_begin(), self.get_end(), surface, self.word_id, self.left_id, self.right_id, self.cost)

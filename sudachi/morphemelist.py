@@ -1,4 +1,4 @@
-from . import latticenodeimpl
+from . import latticenode
 from . import morphemeimpl
 from . import tokenizer
 
@@ -49,7 +49,7 @@ class MorphemeList:
         offset = self.path[index].get_begin()
         nodes = []
         for wid in word_ids:
-            n = latticenodeimpl.LatticeNodeImpl(self.lexicon, 0, 0, 0, wid)
+            n = latticenode.LatticeNode(self.lexicon, 0, 0, 0, wid)
             n.begin = offset
             offset += n.get_word_info().get_length()
             n.end = offset

@@ -2,7 +2,7 @@ from enum import Enum
 from enum import auto
 
 from . import lattice
-from . import latticenodeimpl
+from . import latticenode
 from . import morphemelist
 from . import utf8inputtextbuilder
 
@@ -39,7 +39,7 @@ class Tokenizer:
             iterator = self.lexicon.lookup(bytes_, i)
             has_words = True if iterator else False
             for word_id, end in iterator:
-                n = latticenodeimpl.LatticeNodeImpl(self.lexicon,
+                n = latticenode.LatticeNode(self.lexicon,
                                                     self.lexicon.get_left_id(word_id),
                                                     self.lexicon.get_right_id(word_id),
                                                     self.lexicon.get_cost(word_id),
@@ -77,8 +77,7 @@ class Tokenizer:
                 else:
                     offset = node.get_begin()
                     for wid in wids:
-                        n = latticenodeimpl.LatticeNodeImpl(self.lexicon,
-                                                            0, 0, 0, wid)
+                        n = latticenode.LatticeNode(self.lexicon, 0, 0, 0, wid)
                         n.begin = offset
                         offset += n.get_word_info().get_length()
                         n.end = offset
