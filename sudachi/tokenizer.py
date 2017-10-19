@@ -13,20 +13,20 @@ class Tokenizer:
         B = auto()
         C = auto()
 
-    def __init__(self, grammer, lexicon, input_text_plugins, oov_provider_plugins, path_rewrite_plugins):
-        self.grammer = grammer
+    def __init__(self, grammar, lexicon, input_text_plugins, oov_provider_plugins, path_rewrite_plugins):
+        self.grammar = grammar
         self.lexicon = lexicon
         self.input_text_plugins = input_text_plugins
         self.oov_provider_plugins = oov_provider_plugins
         self.path_rewrite_plugins = path_rewrite_plugins
         # self.dump_output = None
-        self.lattice = lattice.Lattice(grammer)
+        self.lattice = lattice.Lattice(grammar)
 
     def tokenize(self, mode, text):
         if len(text) is 0:
             return []
 
-        builder = utf8inputtextbuilder.UTF8InputTextBuilder(text, self.grammer)
+        builder = utf8inputtextbuilder.UTF8InputTextBuilder(text, self.grammar)
         for plugin in self.input_text_plugins:
             plugin.rewrite(builder)
         input_ = builder.build()
@@ -86,5 +86,5 @@ class Tokenizer:
 
         # dump_output
 
-        ml = morphemelist.MorphemeList(input_, self.grammer, self.lexicon, path)
+        ml = morphemelist.MorphemeList(input_, self.grammar, self.lexicon, path)
         return ml
