@@ -19,7 +19,7 @@ class Tokenizer:
         self.input_text_plugins = input_text_plugins
         self.oov_provider_plugins = oov_provider_plugins
         self.path_rewrite_plugins = path_rewrite_plugins
-        # self.dump_output = None
+        self.dump_output = None
         self.lattice = lattice.Lattice(grammar)
 
     def tokenize(self, mode, text):
@@ -54,9 +54,11 @@ class Tokenizer:
             if not has_words:
                 raise AttributeError("there is no morpheme at " + str(i))
 
-        # dump_output
-
         path = self.lattice.get_best_path()
+        if self.dump_output:
+            print("=== Lattice dump:", file=self.dump_output)
+            self.lattice.dump(self.dump_output)
+            print("===")
         self.lattice.clear()
 
         path.pop()  # remove EOS
@@ -88,3 +90,6 @@ class Tokenizer:
 
         ml = morphemelist.MorphemeList(input_, self.grammar, self.lexicon, path)
         return ml
+
+    def set_dump_output(self, output):
+        self.dump_output = output

@@ -20,4 +20,3 @@ class WordInfo:
         self.a_unit_split = a_unit_split
         self.b_unit_split = b_unit_split
         self.word_structure = word_structure
-

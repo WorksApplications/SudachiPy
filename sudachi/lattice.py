@@ -13,7 +13,6 @@ class Lattice:
 
         self.eos_params = grammar.get_eos_parameter()
 
-        self.end_lists = []
         bos_node = latticenode.LatticeNode()
         bos_params = grammar.get_bos_parameter()
         bos_node.set_parameter(bos_params[0], bos_params[1], bos_params[2])
@@ -92,4 +91,15 @@ class Lattice:
             node = node.best_previous_node
         return list(reversed(result))
 
-    # def dump(self, output):
+    def dump(self, output):
+        index = 0
+        for i in range(self.size + 1, -1, -1):
+            r_nodes = self.end_lists[i] if i <= self.size else [self.eos_node]
+            for r_node in r_nodes:
+                print("{}: {}: ".format(index, r_node), end="")
+                index += 1
+                for l_node in self.end_lists[r_node.begin]:
+                    cost = l_node.total_cost + \
+                           self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
+                    print("{} ".format(cost), file=output, end="")
+                print(file=output)

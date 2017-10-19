@@ -1,7 +1,7 @@
 class LatticeNode:
     def __init__(self, lexicon=None, left_id=None, right_id=None, cost=None, word_id=None):
-        self.begin = None
-        self.end = None
+        self.begin = 0
+        self.end = 0
 
         self.total_cost = 0
         self.best_previous_node = None
@@ -60,7 +60,8 @@ class LatticeNode:
         if self.word_id < 0 and self.extra_word_info is None:
             surface = "(None)"
         else:
-            surface = self.get_word_info().get_surface()
+            surface = self.get_word_info().surface
 
-        return ("%d %d %s(%d) %d %d %d",
-                self.get_begin(), self.get_end(), surface, self.word_id, self.left_id, self.right_id, self.cost)
+        return "{} {} {}({}) {} {} {}".format(
+            self.get_begin(), self.get_end(), surface, self.word_id, self.left_id, self.right_id, self.cost
+        )
