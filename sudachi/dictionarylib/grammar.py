@@ -71,7 +71,7 @@ class Grammar:
 
     def bytes_get_short(self, bytes_, offset):
         bytes_.seek(offset)
-        return int.from_bytes(bytes_.read(2), 'little')
+        return int.from_bytes(bytes_.read(2), 'little', signed=True)
 
     def bytes_put_short(self, bytes_, offset, data):
         bytes_.seek(offset)
