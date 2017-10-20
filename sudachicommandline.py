@@ -9,6 +9,7 @@ from sudachi import tokenizer
 
 def run(tokenizer, mode, reader, output, print_all):
     for line in reader.readlines():
+        line = line.rstrip()
         for m in tokenizer.tokenize(mode, line):
             print(m.surface(), file=output, end='')
             print("\t", file=output, end='')
