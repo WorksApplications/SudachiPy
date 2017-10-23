@@ -23,7 +23,7 @@ class Tokenizer:
         self.lattice = lattice.Lattice(grammar)
 
     def tokenize(self, mode, text):
-        if len(text) is 0:
+        if not text:
             return []
 
         builder = utf8inputtextbuilder.UTF8InputTextBuilder(text, self.grammar)
