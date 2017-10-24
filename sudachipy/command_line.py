@@ -2,9 +2,9 @@ import sys
 import json
 import argparse
 
-from sudachi import config
-from sudachi import dictionary
-from sudachi import tokenizer
+from . import config
+from . import dictionary
+from . import tokenizer
 
 
 def run(tokenizer, mode, reader, output, print_all):
@@ -28,7 +28,7 @@ def run(tokenizer, mode, reader, output, print_all):
         print("EOS", file=output)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Japanese Morphological Analyzer")
     parser.add_argument("-r", dest="fpath_setting", metavar="file",
                         default=config.SETTINGFILE, help="the setting file in JSON format")
@@ -59,16 +59,16 @@ if __name__ == "__main__":
     is_enable_dump = args.d
 
     dict_ = dictionary.Dictionary(settings)
-    tokenizer = dict_.create()
+    tokenizer_obj = dict_.create()
     if is_enable_dump:
-        tokenizer.set_dump_output(output)
+        tokenizer_obj.set_dump_output(output)
 
     input_files = args.input_files
     if input_files:
         for input_file in input_files:
             with open(input_file, "r", encoding="utf-8") as input_:
-                run(tokenizer, mode, input_, output, print_all)
+                run(tokenizer_obj, mode, input_, output, print_all)
     else:
-        run(tokenizer, mode, sys.stdin, output, print_all)
+        run(tokenizer_obj, mode, sys.stdin, output, print_all)
 
     output.close()
