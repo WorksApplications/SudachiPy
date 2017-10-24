@@ -19,7 +19,7 @@ class Morpheme:
 
     def dictionary_form(self):
         wi = self.get_word_info()
-        return wi.get_dictionary_form()
+        return wi.dictionary_form
 
     def normalized_form(self):
         wi = self.get_word_info()
@@ -27,7 +27,7 @@ class Morpheme:
 
     def reading_form(self):
         wi = self.get_word_info()
-        return wi.get_reading_form()
+        return wi.reading_form
 
     def split(self, mode):
         wi = self.get_word_info()

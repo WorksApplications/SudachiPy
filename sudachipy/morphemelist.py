@@ -58,7 +58,7 @@ class MorphemeList:
         return MorphemeList(self.input_text, self.grammar, self.lexicon, nodes)
 
     def is_oov(self, index):
-        return self.path[index].is_oov()
+        return self.path[index].is_oov
 
     def get_internal_cost(self):
         return self.path[-1].get_path_cost() - self.path[0].get_path_cost()
