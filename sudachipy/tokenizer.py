@@ -71,9 +71,9 @@ class Tokenizer:
             new_path = []
             for node in path:
                 if mode is self.SplitMode.A:
-                    wids = node.get_word_info().get_Aunit_split()
+                    wids = node.get_word_info().a_unit_split
                 else:  # self.SplitMode.B
-                    wids = node.get_word_info().get_Bunit_split()
+                    wids = node.get_word_info().b_unit_split
                 if len(wids) is 0 or len(wids) is 1:
                     new_path.append(node)
                 else:
@@ -81,7 +81,7 @@ class Tokenizer:
                     for wid in wids:
                         n = latticenode.LatticeNode(self.lexicon, 0, 0, 0, wid)
                         n.begin = offset
-                        offset += n.get_word_info().get_length()
+                        offset += n.get_word_info().head_word_length
                         n.end = offset
                         new_path.append(n)
             path = new_path
