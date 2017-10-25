@@ -1,5 +1,4 @@
 from enum import Enum
-from enum import auto
 
 from . import lattice
 from . import latticenode
@@ -8,10 +7,7 @@ from . import utf8inputtextbuilder
 
 
 class Tokenizer:
-    class SplitMode(Enum):
-        A = auto()
-        B = auto()
-        C = auto()
+    SplitMode = Enum("SplitMode", "A B C")
 
     def __init__(self, grammar, lexicon, input_text_plugins, oov_provider_plugins, path_rewrite_plugins):
         self.grammar = grammar
