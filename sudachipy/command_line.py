@@ -11,20 +11,17 @@ def run(tokenizer, mode, reader, output, print_all):
     for line in reader.readlines():
         line = line.rstrip()
         for m in tokenizer.tokenize(mode, line):
-            print(m.surface(), file=output, end='')
-            print("\t", file=output, end='')
-            print(','.join(m.part_of_speech()), file=output, end='')
-            print("\t", file=output, end='')
-            print(m.normalized_form(), file=output, end='')
+            list_info = [
+                m.surface(),
+                ",".join(m.part_of_speech()),
+                m.normalized_form()]
             if print_all:
-                print("\t", file=output, end='')
-                print(m.dictionary_form(), file=output, end='')
-                print("\t", file=output, end='')
-                print(m.reading_form(), file=output, end='')
+                list_info += [
+                    m.dictionary_form(),
+                    m.reading_form()]
                 if m.is_oov():
-                    print("\t", file=output, end='')
-                    print("(OOV)", file=output, end='')
-            print("", file=output)
+                    list_info.append("(OOV)")
+            print("\t".join(list_info), file=output)
         print("EOS", file=output)
 
 
