@@ -17,6 +17,7 @@ class CategoryType(Enum):
     USER2 = 1 << 12
     USER3 = 1 << 13
     USER4 = 1 << 14
+    NOOOVBOW = 1 << 15
 
     def get_id(self):
         return self.id
