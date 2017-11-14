@@ -1,0 +1,16 @@
+* text=auto
+
+*.def text
+*.in text
+*.json text
+*.md text
+*.py text
+*.txt text
+
+*.pyc binary
+*.pyd binary
+*.pyo binary
+*.pyw binary
+*.dic binary
+*.png binary
+*.jpg binary
