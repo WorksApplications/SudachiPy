@@ -28,7 +28,7 @@ class UTF8InputText:
         if (begin > end):
             raise IndexError(end - begin)
 
-        return self.modified_text.substring(self.byte_indexes[begin], self.byte_indexes[end])
+        return self.modified_text[self.byte_indexes[begin]:self.byte_indexes[end]]
 
     def get_offset_text_length(self, index):
         return self.byte_indexes[index]

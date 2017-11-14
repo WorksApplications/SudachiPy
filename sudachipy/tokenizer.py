@@ -4,6 +4,8 @@ from . import lattice
 from . import latticenode
 from . import morphemelist
 from . import utf8inputtextbuilder
+from .dictionarylib import categorytype
+from . import plugin
 
 
 class Tokenizer:
@@ -17,6 +19,11 @@ class Tokenizer:
         self.path_rewrite_plugins = path_rewrite_plugins
         self.dump_output = None
         self.lattice = lattice.Lattice(grammar)
+
+        simple_oov = plugin.simple_oov.SimpleOov()
+        simple_oov.set_up(grammar)
+        self.oov_provider_plugins = [simple_oov]
+        self.default_oov_provider = simple_oov
 
     def tokenize(self, mode, text):
         if not text:
@@ -43,10 +50,16 @@ class Tokenizer:
                 self.lattice.insert(i, end, n)
 
             # OOV
-            for plugin in self.oov_provider_plugins:
-                for node in plugin.get_oov(input_, i, has_words):
+            if categorytype.CategoryType.NOOOVBOW not in input_.get_char_category_types(i):
+                for oov_plugin in self.oov_provider_plugins:
+                    for node in oov_plugin.get_oov(input_, i, has_words):
+                        has_words = True
+                        self.lattice.insert(node.get_begin(), node.get_end(), node)
+            if not has_words and self.default_oov_provider:
+                for node in self.default_oov_provider.get_oov(input_, i, has_words):
                     has_words = True
                     self.lattice.insert(node.get_begin(), node.get_end(), node)
+
             if not has_words:
                 raise AttributeError("there is no morpheme at " + str(i))
 
