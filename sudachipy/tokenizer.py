@@ -5,7 +5,6 @@ from . import latticenode
 from . import morphemelist
 from . import utf8inputtextbuilder
 from .dictionarylib import categorytype
-from . import plugin
 
 
 class Tokenizer:
@@ -20,10 +19,8 @@ class Tokenizer:
         self.dump_output = None
         self.lattice = lattice.Lattice(grammar)
 
-        simple_oov = plugin.simple_oov.SimpleOov()
-        simple_oov.set_up(grammar)
-        self.oov_provider_plugins = [simple_oov]
-        self.default_oov_provider = self.oov_provider_plugins[-1]
+        if self.oov_provider_plugins:
+            self.default_oov_provider = self.oov_provider_plugins[-1]
 
     def tokenize(self, mode, text):
         if not text:

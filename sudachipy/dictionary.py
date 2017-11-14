@@ -4,6 +4,7 @@ import os.path
 from . import tokenizer
 from . import config
 from . import dictionarylib
+from . import plugin
 
 
 class Dictionary:
@@ -25,19 +26,24 @@ class Dictionary:
         for p in settings["editConnectionPlugin"]:
             p.set_up(self.grammar)
             p.edit(self.grammar)
-
         """
+
         self.read_character_definition(os.path.join(config.RESOURCEDIR, settings["characterDefinitionFile"]))
-        """
 
+        """
         self.input_text_plugins = settings["inputTextPlugin"]
         for p in self.input_text_plugins:
             p.set_up()
-        self.oov_provider_plugins = settings["oovProviderPlugin"]
-        if len(self.oov_provider_plugins) is 0:
+        """
+
+        simple_oov = plugin.simple_oov.SimpleOov()
+        self.oov_provider_plugins = [simple_oov]
+        if not self.oov_provider_plugins:
             raise AttributeError("no OOV provider")
         for p in self.oov_provider_plugins:
             p.set_up(self.grammar)
+
+        """
         self.path_rewrite_plugins = os.path.join(config.RESOURCEDIR, settings["pathRewritePlugin"])
         for p in self.path_rewrite_plugins:
             p.set_up(self.grammar)
