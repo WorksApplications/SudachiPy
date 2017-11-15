@@ -1,9 +1,9 @@
 import mmap
 import os.path
 
-from . import tokenizer
 from . import config
 from . import dictionarylib
+from . import tokenizer
 from . import plugin
 
 
@@ -36,8 +36,8 @@ class Dictionary:
             p.set_up()
         """
 
-        simple_oov = plugin.simple_oov.SimpleOov()
-        mecab_oov = plugin.mecab_oov.MeCabOov()
+        simple_oov = plugin.oov.simple_oov.SimpleOov()
+        mecab_oov = plugin.oov.mecab_oov.MeCabOov()
         self.oov_provider_plugins = [mecab_oov, simple_oov]
         if not self.oov_provider_plugins:
             raise AttributeError("no OOV provider")

@@ -1,10 +1,10 @@
 import os
 from collections import defaultdict
 
-from .. import config
-from ..dictionarylib import categorytype
-from .. import latticenode
-from ..dictionarylib import wordinfo
+from sudachipy import config
+from sudachipy.dictionarylib import categorytype
+from sudachipy import latticenode
+from sudachipy.dictionarylib import wordinfo
 
 class MeCabOov:
     class CategoryInfo:

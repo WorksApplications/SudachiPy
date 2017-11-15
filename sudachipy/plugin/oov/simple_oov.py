@@ -1,5 +1,5 @@
-from .. import latticenode
-from ..dictionarylib import wordinfo
+from sudachipy import latticenode
+from sudachipy.dictionarylib import wordinfo
 
 class SimpleOov:
     def set_up(self, grammar):
