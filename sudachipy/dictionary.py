@@ -36,9 +36,9 @@ class Dictionary:
             p.set_up()
         """
 
-        simple_oov = plugin.oov.simple_oov.SimpleOov()
-        mecab_oov = plugin.oov.mecab_oov.MeCabOov()
-        self.oov_provider_plugins = [mecab_oov, simple_oov]
+        simple_oov_plugin = plugin.oov.simple_oov_plugin.SimpleOovPlugin()
+        mecab_oov_plugin = plugin.oov.mecab_oov_plugin.MeCabOovPlugin()
+        self.oov_provider_plugins = [mecab_oov_plugin, simple_oov_plugin]
         if not self.oov_provider_plugins:
             raise AttributeError("no OOV provider")
         for p in self.oov_provider_plugins:

@@ -1,7 +1,7 @@
 from sudachipy import latticenode
 from sudachipy.dictionarylib import wordinfo
 
-class SimpleOov:
+class SimpleOovPlugin:
     def set_up(self, grammar):
         oov_pos_strings =[ "補助記号", "一般", "*", "*", "*", "*" ]
         self.left_id = 5968

@@ -6,7 +6,7 @@ from sudachipy.dictionarylib import categorytype
 from sudachipy import latticenode
 from sudachipy.dictionarylib import wordinfo
 
-class MeCabOov:
+class MeCabOovPlugin:
     class CategoryInfo:
         def __init__(self):
             self.type_ = None

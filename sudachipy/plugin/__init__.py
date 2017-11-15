@@ -1,2 +1,2 @@
-from sudachipy.plugin.oov import simple_oov
-from sudachipy.plugin.oov import mecab_oov
+from sudachipy.plugin.oov import simple_oov_plugin
+from sudachipy.plugin.oov import mecab_oov_plugin
