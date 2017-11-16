@@ -19,7 +19,7 @@ class UTF8InputTextBuilder:
             raise IndexError("begin > length")
         if begin > end:
             raise IndexError("begin > end")
-        if begin is end:
+        if begin == end:
             raise AttributeError("begin == end")
 
         if end > len(self.modified_text):
@@ -65,7 +65,7 @@ class UTF8InputTextBuilder:
         return utf8inputtext.UTF8InputText(self.grammar, self.original_text, modified_string_text, byte_text, offsets, byte_indexes, char_categories, char_category_continuities)
 
     def get_char_category_types(self, text):
-        if len(text) is 0:
+        if len(text) == 0:
             return []
 
         char_category_types = [None for i in range(len(text))]
@@ -75,7 +75,7 @@ class UTF8InputTextBuilder:
         return char_category_types
 
     def get_char_category_continuities(self, text, byte_length, char_categories):
-        if len(text) is 0:
+        if len(text) == 0:
             return []
         char_category_continuities = []
         i = 0
@@ -93,7 +93,7 @@ class UTF8InputTextBuilder:
         continuous_category = copy.deepcopy(char_categories[offset])
         for length in range(1, len(char_categories) - offset):
             continuous_category = continuous_category & char_categories[offset + length]
-            if len(continuous_category) is 0:
+            if len(continuous_category) == 0:
                 return length
         return len(char_categories) - offset
 
