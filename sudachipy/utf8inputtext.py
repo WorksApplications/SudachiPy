@@ -48,7 +48,7 @@ class UTF8InputText:
         e = self.byte_indexes[end]
         continuous_category = copy.deepcopy(self.char_categories[b])
         for i in range(b + 1, e):
-            continuous_category.retain_all(self.char_categories[i])
+            continuous_category = continuous_category & self.char_categories[i]
         return continuous_category
 
     def get_char_category_continuous_length(self, index):

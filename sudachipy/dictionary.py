@@ -44,11 +44,13 @@ class Dictionary:
         for p in self.oov_provider_plugins:
             p.set_up(self.grammar)
 
-        """
-        self.path_rewrite_plugins = os.path.join(config.RESOURCEDIR, settings["pathRewritePlugin"])
+        join_numeric_plugin = plugin.path_rewrite.join_numeric_plugin.JoinNumericPlugin()
+        join_katakana_oov_plugin = plugin.path_rewrite.join_katakana_oov_plugin.JoinKatakanaOovPlugin()
+        self.path_rewrite_plugins = [join_numeric_plugin, join_katakana_oov_plugin]
         for p in self.path_rewrite_plugins:
             p.set_up(self.grammar)
 
+        """
         for filename in os.path.join(config.RESOURCEDIR, settings["userDict"]):
             self.read_user_dictionary(filename)
         """
