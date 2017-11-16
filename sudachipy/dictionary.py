@@ -30,11 +30,10 @@ class Dictionary:
 
         self.read_character_definition(os.path.join(config.RESOURCEDIR, settings["characterDefinitionFile"]))
 
-        """
-        self.input_text_plugins = settings["inputTextPlugin"]
+        default_input_text_plugin = plugin.input_text.default_input_text_plugin.DefaultInputTextPlugin()
+        self.input_text_plugins = [default_input_text_plugin]
         for p in self.input_text_plugins:
             p.set_up()
-        """
 
         simple_oov_plugin = plugin.oov.simple_oov_plugin.SimpleOovPlugin()
         mecab_oov_plugin = plugin.oov.mecab_oov_plugin.MeCabOovPlugin()
