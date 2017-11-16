@@ -15,7 +15,10 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
             raise AttributeError("oovPOS is invalid")
 
     def rewrite(self, text, path, lattice):
-        for i in range(0, len(path)):
+        i = 0
+        while True:
+            if i >= len(path):
+                break
             node = path[i]
             if (node.is_oov or (self.is_one_char(text, node) and self.can_oov_bow_node(text, node))) and \
                     self.is_katakana_node(text, node):
@@ -29,7 +32,7 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
                     begin -= 1
                 if begin < 0:
                     begin = 0
-                while begin != i and self.can_oov_bow_node(text, path[begin]):
+                while begin != i and not self.can_oov_bow_node(text, path[begin]):
                     begin += 1
                 end = i + 1
                 while True:
@@ -40,6 +43,8 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
                     end += 1
                 if (end - begin) > 1:
                     self.concatenate_oov(path, begin, end, self.oov_pos_id, lattice)
+                    i = begin + 1 # we already know the at least next node is not a joinable katakana
+            i += 1
 
 
     def is_katakana_node(self, text, node):
@@ -50,4 +55,4 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
         return b + text.get_code_points_offset_length(b, 1) == node.get_end()
 
     def can_oov_bow_node(self, text, node):
-        return CategoryType.NOOOVBOW not in text.get_char_category_types(node.begin())
+        return CategoryType.NOOOVBOW not in text.get_char_category_types(node.get_begin())
