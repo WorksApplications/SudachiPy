@@ -21,6 +21,7 @@ class DefaultInputTextPlugin:
         text = builder.get_text()
 
         # 1. replace char without normalize
+
         # 2. normalize
         # 2-1. capital alphabet (not only Latin but Greek, Cyrillic, etc.) -> small
         # 2-2. normalize (except in ignoreNormalize)
@@ -42,7 +43,8 @@ class DefaultInputTextPlugin:
                 elif len(cols) == 2:
                     if cols[0] in self.replace_char_map:
                         raise RuntimeError("{} is already defined at line {}".format(cols[0], i))
-                    self.key_lengths[cols[0]] = len(cols[0])
+                    if self.key_lengths.get(cols[0][0], 0) < len(cols[0]):
+                        self.key_lengths[cols[0][0]] = len(cols[0])
                     self.replace_char_map[cols[0]] = cols[1]
                 else:
                     raise RuntimeError("invalid format at line {}".format(i))
