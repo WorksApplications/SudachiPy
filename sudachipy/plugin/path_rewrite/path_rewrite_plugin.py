@@ -29,7 +29,7 @@ class PathRewritePlugin:
             length += info.head_word_length
             normalized_form += info.normalized_form
             dictionary_form += info.dictionary_form
-            reading_form += info.dictionary_form
+            reading_form += info.reading_form
 
         wi = WordInfo(surface=surface, head_word_length=length, pos_id=pos_id,
                       normalized_form=normalized_form, dictionary_form=dictionary_form, dictionary_form_word_id=-1,
