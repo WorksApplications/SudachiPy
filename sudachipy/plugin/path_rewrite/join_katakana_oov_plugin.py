@@ -43,7 +43,7 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
                     end += 1
                 if (end - begin) > 1:
                     self.concatenate_oov(path, begin, end, self.oov_pos_id, lattice)
-                    i = begin + 1 # we already know the at least next node is not a joinable katakana
+                    i = begin + 1 # skip next node, as we already know it is not a joinable katakana
             i += 1
 
 
