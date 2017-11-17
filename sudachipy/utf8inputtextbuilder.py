@@ -35,7 +35,7 @@ class UTF8InputTextBuilder:
             if begin + i < end:
                 self.text_offsets[begin + i] = offset
             else:
-                self.text_offsets.append(offset)
+                self.text_offsets.insert(begin + i, offset)
 
     def get_original_text(self):
         return self.original_text

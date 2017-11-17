@@ -1,4 +1,6 @@
 import os
+from unicodedata import normalize
+
 
 from sudachipy import config
 
@@ -20,12 +22,43 @@ class DefaultInputTextPlugin:
         next_offset = 0
         text = builder.get_text()
 
-        # 1. replace char without normalize
+        i = -1
+        while True:
+            i += 1
+            if i >= len(text):
+                break
+            textloop = False
+            offset += next_offset
+            next_offset = 0
+            original = text[i]
 
-        # 2. normalize
-        # 2-1. capital alphabet (not only Latin but Greek, Cyrillic, etc.) -> small
-        # 2-2. normalize (except in ignoreNormalize)
-        #   e.g. full-width alphabet -> half-width / ligature / etc.
+            # 1. replace char without normalize
+            max_length = min(self.key_lengths.get(original, 0), len(text) - i)
+            for l in range(max_length, 0, -1):
+                replace = self.replace_char_map.get(text[i:i+l])
+                if replace:
+                    builder.replace(i + offset, i + l + offset, replace)
+                    next_offset += len(replace) - l
+                    i += l - 1
+                    textloop = True
+                    continue
+            if textloop:
+                continue
+
+            # 2. normalize
+            # 2-1. capital alphabet (not only Latin but Greek, Cyrillic, etc.) -> small
+            lower = original.lower()
+            if lower in self.ignore_normalize_set:
+                if original == lower:
+                    continue
+                replace = lower
+            else:
+                # 2-2. normalize (except in ignoreNormalize)
+                #   e.g. full-width alphabet -> half-width / ligature / etc.
+                replace = normalize("NFKC", lower)
+            next_offset = len(replace) - 1
+            if original != replace:
+                builder.replace(i + offset, i + 1 + offset, replace)
 
     def read_rewrite_lists(self, rewrite_def):
         with open(rewrite_def, "r", encoding="utf-8") as f:
