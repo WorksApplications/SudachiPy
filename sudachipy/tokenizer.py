@@ -80,7 +80,7 @@ class Tokenizer:
                     wids = node.get_word_info().a_unit_split
                 else:  # self.SplitMode.B
                     wids = node.get_word_info().b_unit_split
-                if len(wids) is 0 or len(wids) is 1:
+                if len(wids) == 0 or len(wids) == 1:
                     new_path.append(node)
                 else:
                     offset = node.get_begin()
