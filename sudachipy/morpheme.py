@@ -37,6 +37,6 @@ class Morpheme:
         return self.list.is_oov(self.index)
 
     def get_word_info(self):
-        if self.word_info is None:
+        if not self.word_info:
             self.word_info = self.list.get_word_info(self.index)
         return self.word_info
