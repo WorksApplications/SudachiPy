@@ -105,5 +105,4 @@ ENV/
 .vscode/
 
 # Sudachi dictionary
-system.dic
-
+*.dic
