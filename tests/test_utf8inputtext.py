@@ -1,8 +1,8 @@
 import unittest
 import os
 
-import sudachi
-import sudachi.dictionarylib as dictionarylib
+import sudachipy
+import sudachipy.dictionarylib as dictionarylib
 
 
 class TestUTF8InputText(unittest.TestCase):
@@ -23,10 +23,10 @@ class TestUTF8InputText(unittest.TestCase):
 
         grammar = self.MockGrammar()
         char_category = dictionarylib.charactercategory.CharacterCategory()
-        char_category.read_character_definition( os.path.join(sudachi.config.RESOURCEDIR, "char.def") )
+        char_category.read_character_definition( os.path.join(sudachipy.config.RESOURCEDIR, "char.def") )
         grammar.set_character_category(char_category)
 
-        self.builder = sudachi.utf8inputtextbuilder.UTF8InputTextBuilder(self.TEXT, grammar)
+        self.builder = sudachipy.utf8inputtextbuilder.UTF8InputTextBuilder(self.TEXT, grammar)
 
     def test_get_original_text(self):
         self.assertEqual(self.builder.get_original_text(), self.TEXT)
@@ -199,7 +199,7 @@ class TestUTF8InputText(unittest.TestCase):
 
         def get_character_category(self):
             char_category = dictionarylib.charactercategory.CharacterCategory()
-            char_category.read_character_definition( os.path.join(sudachi.config.RESOURCEDIR, "char.def") )
+            char_category.read_character_definition( os.path.join(sudachipy.config.RESOURCEDIR, "char.def") )
             return char_category
 
         def set_character_category(self, char_category):
