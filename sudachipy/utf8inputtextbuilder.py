@@ -8,9 +8,8 @@ class UTF8InputTextBuilder:
         self.grammar = grammar
         self.original_text = text
         self.modified_text = text
+        self.text_offsets = list(range(len(self.original_text) + 1))
         # 注: サロゲートペア文字は考慮していない
-        self.text_offsets = [i for i in range(len(self.original_text))]
-        self.text_offsets.append(len(self.original_text))
 
     def replace(self, begin, end, str_):
         if begin < 0:
