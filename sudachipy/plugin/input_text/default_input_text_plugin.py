@@ -41,7 +41,7 @@ class DefaultInputTextPlugin:
                     next_offset += len(replace) - l
                     i += l - 1
                     textloop = True
-                    continue
+                    break
             if textloop:
                 continue
 
