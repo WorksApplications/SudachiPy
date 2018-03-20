@@ -85,7 +85,7 @@ class MeCabOovPlugin:
         return node
 
     def read_character_property(self, char_def):
-        with open(char_def, "r") as f:
+        with open(char_def, "r", encoding="utf-8") as f:
             for i, line in enumerate(f, start=1):
                 line = line.strip()
                 if not line or line.startswith("#"):
@@ -110,7 +110,7 @@ class MeCabOovPlugin:
                 self.categories[type_] = info
 
     def read_oov(self, unk_def, grammar):
-        with open(unk_def, "r") as f:
+        with open(unk_def, "r", encoding="utf-8") as f:
             for i, line in enumerate(f, start=1):
                 line = line.strip()
                 if not line:
