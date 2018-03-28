@@ -55,6 +55,9 @@ class LatticeNode:
     def get_path_cost(self):
         return self.cost
 
+    def get_word_id(self):
+        return self.word_id
+
     def __str__(self):
         surface = ""
         if self.word_id < 0 and self.extra_word_info is None:
