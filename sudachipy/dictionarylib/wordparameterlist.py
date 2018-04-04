@@ -24,10 +24,10 @@ class WordParameterList(object):
 
     def get_cost(self, word_id):
         self.bytes.seek(self.offset + self.ELEMENT_SIZE * word_id + 4)
-        return int.from_bytes(self.bytes.read(2), 'little')
+        return int.from_bytes(self.bytes.read(2), 'little', signed=True)
 
     def set_cost(self, word_id, cost):
         if not self.is_copied:
             self.copy_buffer()
         self.bytes.seek(self.offset + self.ELEMENT_SIZE * word_id + 4)
-        self.bytes.write(2, cost.to_bytes(2, 'little'))
+        self.bytes.write(2, cost.to_bytes(2, 'little', signed=True))
