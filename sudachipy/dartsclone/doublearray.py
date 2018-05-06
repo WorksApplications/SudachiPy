@@ -1,8 +1,8 @@
 import mmap
 import sys
 
-from . import keyset
-from . import doublearraybuilder
+from sudachipy.dartsclone import keyset
+from sudachipy.dartsclone import doublearraybuilder
 
 
 class DoubleArray(object):

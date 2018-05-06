@@ -1,6 +1,6 @@
-from . import latticenode
-from . import morpheme
-from . import tokenizer
+from sudachipy import latticenode
+from sudachipy import morpheme
+from sudachipy import tokenizer
 
 
 class MorphemeList:

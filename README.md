@@ -13,11 +13,12 @@ SudachiPy requires Python3.5+.
 
 SudachiPy is not registered to PyPI just yet, so you may not install it via `pip` command at the moment.
 
-```
-$ git clone https://github.com/WorksApplications/SudachiPy.git
-$ cd SudachiPy
-$ pip install -e .
-```
+Here is instruction of installing.
+
+1. `git clone https://github.com/WorksApplications/SudachiPy.git`
+2. `make` to put system dictionary
+3. `python setup.py install`
+
 The dictionary file is not included in the repository. You can get the built dictionary from [Releases · WorksApplications/Sudachi](https://github.com/WorksApplications/Sudachi/releases). Please download either `sudachi-x.y.z-dictionary-core.zip` or `sudachi-x.y.z-dictionary-full.zip`, unzip and rename it to `system.dic`, then place it under `SudachiPy/resources/`.
 
 After installing SudachiPy, you may also use it in the terminal via command `sudachipy`.

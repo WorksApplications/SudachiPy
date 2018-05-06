@@ -1,5 +1,5 @@
 import copy
-from . import utf8inputtext
+from sudachipy import utf8inputtext
 
 
 class UTF8InputTextBuilder:

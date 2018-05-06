@@ -1,6 +1,6 @@
 import re
 import sys
-from . import categorytype
+from sudachipy.dictionarylib import categorytype
 
 
 class CharacterCategory(object):

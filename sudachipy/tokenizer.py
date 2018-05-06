@@ -1,10 +1,10 @@
 from enum import Enum
 
-from . import lattice
-from . import latticenode
-from . import morphemelist
-from . import utf8inputtextbuilder
-from .dictionarylib import categorytype
+from sudachipy import lattice
+from sudachipy import latticenode
+from sudachipy import morphemelist
+from sudachipy import utf8inputtextbuilder
+from sudachipy.dictionarylib import categorytype
 
 
 class Tokenizer:

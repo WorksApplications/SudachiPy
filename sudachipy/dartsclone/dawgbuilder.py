@@ -1,6 +1,6 @@
 import copy
 import sys
-from . import bitvector
+from sudachipy.dartsclone import bitvector
 
 
 class DAWGBuilder(object):
