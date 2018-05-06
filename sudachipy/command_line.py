@@ -69,3 +69,6 @@ def main():
         run(tokenizer_obj, mode, sys.stdin, output, print_all)
 
     output.close()
+
+if __name__ == '__main__':
+    main()
