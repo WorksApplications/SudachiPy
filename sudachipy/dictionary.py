@@ -30,21 +30,21 @@ class Dictionary:
 
         self.read_character_definition(os.path.join(config.RESOURCEDIR, settings["characterDefinitionFile"]))
 
-        default_input_text_plugin = plugin.input_text.default_input_text_plugin.DefaultInputTextPlugin()
+        default_input_text_plugin = plugin.default_input_text_plugin.DefaultInputTextPlugin()
         self.input_text_plugins = [default_input_text_plugin]
         for p in self.input_text_plugins:
             p.set_up()
 
-        simple_oov_plugin = plugin.oov.simple_oov_plugin.SimpleOovPlugin()
-        mecab_oov_plugin = plugin.oov.mecab_oov_plugin.MeCabOovPlugin()
+        simple_oov_plugin = plugin.simple_oov_plugin.SimpleOovPlugin()
+        mecab_oov_plugin = plugin.mecab_oov_plugin.MeCabOovPlugin()
         self.oov_provider_plugins = [mecab_oov_plugin, simple_oov_plugin]
         if not self.oov_provider_plugins:
             raise AttributeError("no OOV provider")
         for p in self.oov_provider_plugins:
             p.set_up(self.grammar)
 
-        join_numeric_plugin = plugin.path_rewrite.join_numeric_plugin.JoinNumericPlugin()
-        join_katakana_oov_plugin = plugin.path_rewrite.join_katakana_oov_plugin.JoinKatakanaOovPlugin()
+        join_numeric_plugin = plugin.join_numeric_plugin.JoinNumericPlugin()
+        join_katakana_oov_plugin = plugin.join_katakana_oov_plugin.JoinKatakanaOovPlugin()
         self.path_rewrite_plugins = [join_numeric_plugin, join_katakana_oov_plugin]
         for p in self.path_rewrite_plugins:
             p.set_up(self.grammar)
@@ -79,8 +79,8 @@ class Dictionary:
         self.buffers.append(bytes_)
 
         user_lexicon = dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, 0)
-        tokenizer = tokenizer.JapaneseTokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
-        user_lexicon.calclate_cost(tokenizer)
+        tokenizer_obj = tokenizer.Tokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
+        user_lexicon.calclate_cost(tokenizer_obj)
         self.lexicon.append(user_lexicon)
 
     def read_character_definition(self, filename):
