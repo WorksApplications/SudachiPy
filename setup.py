@@ -10,7 +10,10 @@ setup(name="SudachiPy",
       long_description=readme(),
       url="https://github.com/WorksApplications/Sudachi",
       license="Apache-2.0",
-      packages=["sudachipy", "sudachipy.dictionarylib", "sudachipy.dartsclone", "sudachipy.plugin", "resources"],
+      # or you can use find_all() function here to extract all py module files.
+      packages=["sudachipy", "sudachipy.dictionarylib", "sudachipy.dartsclone",
+                "sudachipy.plugin", "sudachipy.plugin.input_text", "sudachipy.plugin.oov", "sudachipy.plugin.path_rewrite",
+                "resources"],
       package_data={"resources": ["*"]},
       entry_points = {
             "console_scripts": ["sudachipy=sudachipy.command_line:main"],
