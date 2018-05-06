@@ -1,6 +1,6 @@
 import struct
 
-from . import wordinfo
+from sudachipy.dictionarylib import wordinfo
 
 class WordInfoList(object):
     def __init__(self, bytes_, offset, word_size):

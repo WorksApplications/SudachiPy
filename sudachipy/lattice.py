@@ -1,5 +1,5 @@
-from . import latticenode
-from . import dictionarylib
+from sudachipy import latticenode
+from sudachipy import dictionarylib
 
 
 class Lattice:

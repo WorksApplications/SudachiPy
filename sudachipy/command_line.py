@@ -2,9 +2,9 @@ import sys
 import json
 import argparse
 
-from . import config
-from . import dictionary
-from . import tokenizer
+from sudachipy import config
+from sudachipy import dictionary
+from sudachipy import tokenizer
 
 
 def run(tokenizer, mode, reader, output, print_all):

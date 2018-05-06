@@ -1,11 +1,11 @@
 #import itertool
 import struct
 
-from . import lexicon
-from .. import dartsclone
-from . import wordidtable
-from . import wordparameterlist
-from . import wordinfolist
+from sudachipy.dictionarylib import lexicon
+from sudachipy import dartsclone
+from sudachipy.dictionarylib import wordidtable
+from sudachipy.dictionarylib import wordparameterlist
+from sudachipy.dictionarylib import wordinfolist
 
 
 class DoubleArrayLexicon(lexicon.Lexicon):

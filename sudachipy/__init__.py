@@ -1,3 +1,3 @@
-from . import utf8inputtextbuilder
-from . import tokenizer
-from . import config
+from sudachipy import utf8inputtextbuilder
+from sudachipy import tokenizer
+from sudachipy import config

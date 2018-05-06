@@ -1,7 +1,7 @@
 import copy
 import sys
-from . import dawgbuilder
-from . import doublearraybuilderunit
+from sudachipy.dartsclone import dawgbuilder
+from sudachipy.dartsclone import doublearraybuilderunit
 
 
 class DoubleArrayBuilder(object):

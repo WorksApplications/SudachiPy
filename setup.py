@@ -10,7 +10,7 @@ setup(name="SudachiPy",
       long_description=readme(),
       url="https://github.com/WorksApplications/Sudachi",
       license="Apache-2.0",
-      packages=["sudachipy"],
+      packages=["sudachipy", "sudachipy.dictionarylib", "sudachipy.dartsclone", "sudachipy.plugin"],
       entry_points = {
             "console_scripts": ["sudachipy=sudachipy.command_line:main"],
       },

@@ -1,4 +1,4 @@
-from . import lexicon
+from sudachipy.dictionarylib import lexicon
 
 class LexiconSet(lexicon.Lexicon):
     def __init__(self, system_lexicon):

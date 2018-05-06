@@ -1,10 +1,10 @@
 import mmap
 import os.path
 
-from . import config
-from . import dictionarylib
-from . import tokenizer
-from . import plugin
+from sudachipy import config
+from sudachipy import dictionarylib
+from sudachipy import tokenizer
+from sudachipy import plugin
 
 
 class Dictionary:
