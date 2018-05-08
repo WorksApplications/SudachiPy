@@ -63,6 +63,9 @@ tokenizer_obj = dictionary.Dictionary(settings).create()
 
 
 # Multi-granular tokenization
+# (following results are w/ `system_full.dic`
+# you may not be able to replicate this particular example w/ `system_core.dic`)
+
 
 mode = tokenizer.Tokenizer.SplitMode.C
 [m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
