@@ -58,6 +58,9 @@ class LatticeNode:
     def get_word_id(self):
         return self.word_id
 
+    def get_dictionary_id(self):
+        return self.word_id >> 28
+
     def __str__(self):
         surface = ""
         if self.word_id < 0 and self.extra_word_info is None:

@@ -8,7 +8,7 @@ from . import tokenizer
 
 
 def run(tokenizer, mode, reader, output, print_all):
-    for line in reader.readlines():
+    for line in iter(sys.stdin.readline, ""):
         line = line.rstrip()
         for m in tokenizer.tokenize(mode, line):
             list_info = [
@@ -18,7 +18,8 @@ def run(tokenizer, mode, reader, output, print_all):
             if print_all:
                 list_info += [
                     m.dictionary_form(),
-                    m.reading_form()]
+                    m.reading_form(),
+                    str(m.dictionary_id())]
                 if m.is_oov():
                     list_info.append("(OOV)")
             print("\t".join(list_info), file=output)
@@ -69,3 +70,7 @@ def main():
         run(tokenizer_obj, mode, sys.stdin, output, print_all)
 
     output.close()
+
+
+if __name__ == '__main__':
+    main()
