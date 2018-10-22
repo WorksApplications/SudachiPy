@@ -37,9 +37,9 @@ class MorphemeList:
 
     def split(self, mode, index, wi):
         if mode is tokenizer.Tokenizer.SplitMode.A:
-            word_ids = wi.get_Aunit_split()
+            word_ids = wi.a_unit_split
         elif mode is tokenizer.Tokenizer.SplitMode.B:
-            word_ids = wi.get_Bunit_split()
+            word_ids = wi.b_unit_split
         else:
             return [self.__getitem__(index)]
 
@@ -51,7 +51,7 @@ class MorphemeList:
         for wid in word_ids:
             n = latticenode.LatticeNode(self.lexicon, 0, 0, 0, wid)
             n.begin = offset
-            offset += n.get_word_info().get_length()
+            offset += n.get_word_info().head_word_length
             n.end = offset
             nodes.append(n)
 
