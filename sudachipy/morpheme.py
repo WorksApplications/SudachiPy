@@ -39,6 +39,9 @@ class Morpheme:
     def word_id(self):
         return self.list.path[self.index].get_word_id()
 
+    def dictionary_id(self):
+        return self.list.path[self.index].get_dictionary_id()
+
     def get_word_info(self):
         if not self.word_info:
             self.word_info = self.list.get_word_info(self.index)
