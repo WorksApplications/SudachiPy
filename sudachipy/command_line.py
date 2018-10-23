@@ -10,7 +10,7 @@ from . import tokenizer
 
 def run(tokenizer, mode, input, output, print_all):
     for line in input:
-        line = line.rstrip('\r\n')
+        line = line.rstrip('\n')
         for m in tokenizer.tokenize(mode, line):
             list_info = [
                 m.surface(),
