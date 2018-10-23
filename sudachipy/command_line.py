@@ -1,15 +1,16 @@
 import sys
 import json
 import argparse
+import fileinput
 
 from . import config
 from . import dictionary
 from . import tokenizer
 
 
-def run(tokenizer, mode, reader, output, print_all):
-    for line in iter(reader.readline, ''):
-        line = line.rstrip('\n').rstrip('\r')
+def run(tokenizer, mode, input, output, print_all):
+    for line in input:
+        line = line.rstrip('\r\n')
         for m in tokenizer.tokenize(mode, line):
             list_info = [
                 m.surface(),
@@ -61,13 +62,8 @@ def main():
     if is_enable_dump:
         tokenizer_obj.set_dump_output(output)
 
-    input_files = args.input_files
-    if input_files:
-        for input_file in input_files:
-            with open(input_file, "r", encoding="utf-8") as input_:
-                run(tokenizer_obj, mode, input_, output, print_all)
-    else:
-        run(tokenizer_obj, mode, sys.stdin, output, print_all)
+    input = fileinput.input(args.input_files, openhook=fileinput.hook_encoded("utf-8"))
+    run(tokenizer_obj, mode, input, output, print_all)
 
     output.close()
 
