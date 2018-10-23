@@ -8,8 +8,8 @@ from . import tokenizer
 
 
 def run(tokenizer, mode, reader, output, print_all):
-    for line in iter(sys.stdin.readline, ""):
-        line = line.rstrip()
+    for line in iter(reader.readline, ''):
+        line = line.rstrip('\n').rstrip('\r')
         for m in tokenizer.tokenize(mode, line):
             list_info = [
                 m.surface(),
