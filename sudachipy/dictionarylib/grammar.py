@@ -1,5 +1,5 @@
 class Grammar:
-    INHIBITED_CONNECTION = 0x7F
+    INHIBITED_CONNECTION = 0x7fff
 
     def __init__(self, bytes_, offset):
         self.POS_DEPTH = 6
