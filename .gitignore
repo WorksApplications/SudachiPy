@@ -103,6 +103,3 @@ ENV/
 # IDE, Editor
 .idea/
 .vscode/
-
-# Sudachi dictionary
-*.dic
