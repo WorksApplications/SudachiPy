@@ -11,16 +11,38 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 
 SudachiPy requires Python3.5+.
 
-SudachiPy is not registered to PyPI just yet, so you may not install it via `pip` command at the moment.
+As SudachiPy is currently under development, it is not registered to PyPI just yet. You may install the package using following `pip` command at the moment.
 
 ```
 $ pip install -e git+git://github.com/WorksApplications/SudachiPy@develop#egg=SudachiPy
 ```
-The dictionary file is not included in the repository. You can get the built dictionary from [Releases · WorksApplications/Sudachi](https://github.com/WorksApplications/Sudachi/releases). Please download either `sudachi-x.y.z-dictionary-core.zip` or `sudachi-x.y.z-dictionary-full.zip`, unzip and rename it to `system.dic`, then place it under `SudachiPy/resources/`. In the end, we would like to make a flow to get these resources via the code, like [NLTK](https://www.nltk.org/data.html) (e.g., `import nltk; nltk.download()`) or [spaCy](https://spacy.io/usage/models) (e.g., `$python -m spacy download en`).
+
+or, you can clone and install as per following example.
+
+```bash
+$ git clone https://github.com/WorksApplications/SudachiPy.git
+$ cd SudachiPy
+$ pip install -e .
+```
+
+### Dictionary
+
+The dictionary file stored in Git LFS is not the full dictionary. For full dictionary or other dictionary models please see [Releases · WorksApplications/Sudachi](https://github.com/WorksApplications/Sudachi/releases).
+
+Currently, dictionary **must** be located on `<repodir>/resources/system.dic`. When you are changing the model, you may do as per following example. Following example will download, unpack, delete current dictionary if any, and finally rename the newly downloaded dictionary.
+
+```bash
+$ cd resources
+$ wget https://github.com/WorksApplications/Sudachi/releases/download/v0.1.0/sudachi-0.1.0-dictionary-core.zip && unzip sudachi-0.1.0-dictionary-core.zip
+$ ls | grep -e "^system.dic$" | xargs rm -f
+$ mv system_core.dic system.dic
+```
+
+**Note**: if you use virtual environment and pip installation from git, `<repodir>` is `<virtual_env_dir>/src/sudachipy`
 
 ## Usage
 
-### As a command
+### Command Line Interface
 
 After installing SudachiPy, you may also use it in the terminal via command `sudachipy`.
 
@@ -44,7 +66,7 @@ optional arguments:
 
 ```
 
-### As a Python package
+### Python Package
 
 Here is an example usage;
 
