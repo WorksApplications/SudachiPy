@@ -9,7 +9,7 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 
 ## Setup
 
-SudachiPy requires Python3.5+.
+SudachiPy requires Python3.5+ and [Git-LFS](https://git-lfs.github.com/).
 
 As SudachiPy is currently under development, it is not registered to PyPI just yet. You may install the package using following `pip` command at the moment.
 
@@ -27,9 +27,11 @@ $ pip install -e .
 
 ### Dictionary
 
-The dictionary file stored in Git LFS is not the full dictionary. For full dictionary or other dictionary models please see [Releases · WorksApplications/Sudachi](https://github.com/WorksApplications/Sudachi/releases).
+SudachiPy needs Git LFS to download default dictionary. If you fail to build the dictionaries, install Git LFS and execute `git lfs pull` on `<repodir>`<sup>^</sup>.
 
-Currently, dictionary **must** be located on `<repodir>/resources/system.dic`. When you are changing the model, you may do as per following example. Following example will download, unpack, delete current dictionary if any, and finally rename the newly downloaded dictionary.
+The default dictionary is stored on Git LFS and is not full dictionary. For full dictionary or other dictionary models please see [Releases · WorksApplications/Sudachi](https://github.com/WorksApplications/Sudachi/releases).
+
+Currently, dictionary **must** be located on `<repodir>/resources/system.dic`<sup>^</sup>. When you are changing the model, you may do as per following example. Following example will download, unpack, delete current dictionary if any, and finally rename the newly downloaded dictionary.
 
 ```bash
 $ cd resources
@@ -38,7 +40,7 @@ $ ls | grep -e "^system.dic$" | xargs rm -f
 $ mv system_core.dic system.dic
 ```
 
-**Note**: if you use virtual environment and pip installation from git, `<repodir>` is `<virtual_env_dir>/src/sudachipy`
+**<sup>^</sup>Note**: if you use virtual environment and pip installation from git, `<repodir>` is `<virtual_env_dir>/src/sudachipy`
 
 ## Usage
 
