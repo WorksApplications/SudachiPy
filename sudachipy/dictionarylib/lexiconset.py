@@ -1,5 +1,6 @@
 from . import lexicon
 
+
 class LexiconSet(lexicon.Lexicon):
     def __init__(self, system_lexicon):
 

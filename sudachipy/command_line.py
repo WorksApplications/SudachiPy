@@ -62,8 +62,8 @@ def main():
     if is_enable_dump:
         tokenizer_obj.set_dump_output(output)
 
-    input = fileinput.input(args.input_files, openhook=fileinput.hook_encoded("utf-8"))
-    run(tokenizer_obj, mode, input, output, print_all)
+    input_ = fileinput.input(args.input_files, openhook=fileinput.hook_encoded("utf-8"))
+    run(tokenizer_obj, mode, input_, output, print_all)
 
     output.close()
 

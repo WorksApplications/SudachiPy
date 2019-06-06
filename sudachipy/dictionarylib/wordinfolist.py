@@ -2,6 +2,7 @@ import struct
 
 from . import wordinfo
 
+
 class WordInfoList(object):
     def __init__(self, bytes_, offset, word_size):
         self.bytes = bytes_

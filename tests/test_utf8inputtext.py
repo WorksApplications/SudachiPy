@@ -23,7 +23,7 @@ class TestUTF8InputText(unittest.TestCase):
 
         grammar = self.MockGrammar()
         char_category = dictionarylib.charactercategory.CharacterCategory()
-        char_category.read_character_definition( os.path.join(sudachipy.config.RESOURCEDIR, "char.def") )
+        char_category.read_character_definition(os.path.join(sudachipy.config.RESOURCEDIR, "char.def"))
         grammar.set_character_category(char_category)
 
         self.builder = sudachipy.utf8inputtextbuilder.UTF8InputTextBuilder(self.TEXT, grammar)
@@ -199,7 +199,7 @@ class TestUTF8InputText(unittest.TestCase):
 
         def get_character_category(self):
             char_category = dictionarylib.charactercategory.CharacterCategory()
-            char_category.read_character_definition( os.path.join(sudachipy.config.RESOURCEDIR, "char.def") )
+            char_category.read_character_definition(os.path.join(sudachipy.config.RESOURCEDIR, "char.def"))
             return char_category
 
         def set_character_category(self, char_category):
