@@ -68,4 +68,3 @@ class PathRewritePlugin:
 
     def get_char_category_types(self, text, node):
         return text.get_char_category_types(node.get_begin(), node.get_end())
-

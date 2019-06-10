@@ -8,17 +8,12 @@ from . import plugin
 
 
 class Dictionary:
-    def __init__(self, settings, path=None):
+    def __init__(self, settings):
         self.grammar = None
         self.lexicon = None
         self.input_text_plugins = []
         self.oov_provider_plugins = []
         self.path_rewrite_plugins = []
-        self.buffers = []
-
-        if path is None:
-            pass
-
         self.buffers = []
 
         self.read_system_dictionary(os.path.join(config.RESOURCEDIR, settings["systemDict"]))

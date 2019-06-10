@@ -18,10 +18,10 @@ class BitVector(object):
     def set(self, id, bit):
         if bit:
             self.units[int(id / self.UNIT_SIZE)] \
-                    = self.units[int(id / self.UNIT_SIZE)] | 1 << (id % self.UNIT_SIZE)
+                = self.units[int(id / self.UNIT_SIZE)] | 1 << (id % self.UNIT_SIZE)
         else:
             self.units[int(id / self.UNIT_SIZE)] \
-                    = self.units[int(id / self.UNIT_SIZE)] & ~(1 << (id % self.UNIT_SIZE))
+                = self.units[int(id / self.UNIT_SIZE)] & ~(1 << (id % self.UNIT_SIZE))
 
     def is_empty(self):
         return len(self.units) is 0
@@ -55,4 +55,3 @@ class BitVector(object):
         unit += unit >> 8
         unit += unit >> 16
         return unit & 0xFF
-

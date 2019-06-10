@@ -97,3 +97,10 @@ tokenizer_obj.tokenize(mode, "SUMMER")[0].normalized_form()
 tokenizer_obj.tokenize(mode, "シュミレーション")[0].normalized_form()
 # => 'シミュレーション'
 ```
+
+## For developer
+
+### Code format
+
+You have to run `./scripts/format.sh` and check if your code is in rule before PR.
+This code formatting script will be integrated to CI system later. `flake8` is required.

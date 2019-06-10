@@ -32,8 +32,8 @@ class DAWGBuilder(object):
 
         def __str__(self):
             return "child: %d, sibling: %d, label: %c, is_state: %d, has_sibling: %d" % (
-                    self.child, self.sibling, self.label, int(self.is_state), int(self.has_sibling)
-                    )
+                self.child, self.sibling, self.label, int(self.is_state), int(self.has_sibling)
+            )
 
     class Unit(object):
         def __init__(self):

@@ -6,6 +6,7 @@ from sudachipy.dictionarylib import categorytype
 from sudachipy import latticenode
 from sudachipy.dictionarylib import wordinfo
 
+
 class MeCabOovPlugin:
     class CategoryInfo:
         def __init__(self):
@@ -132,4 +133,3 @@ class MeCabOovPlugin:
                 pos = cols[4:10]
                 oov.pos_id = grammar.get_part_of_speech_id(pos)
                 self.oov_list[type_].append(oov)
-
