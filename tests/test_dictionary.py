@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from sudachipy import config, dictionary
+from sudachipy import config, dictionary, tokenizer
 
 
 class TestDictionary(unittest.TestCase):
@@ -12,11 +12,11 @@ class TestDictionary(unittest.TestCase):
         self.dict_ = None
         try:
             self.dict_ = dictionary.Dictionary(settings)
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             self.fail('dictionary isn\'t prepared properly')
 
     def test_create(self):
-        self.assertEqual('<class \'sudachipy.tokenizer.Tokenizer\'>', str(type(self.dict_.create())))
+        self.assertEqual(tokenizer.Tokenizer, type(self.dict_.create()))
 
     # def test_close(self):
     #     self.dict_.close()

@@ -14,7 +14,7 @@ class TestTokenizer(unittest.TestCase):
         try:
             self.dict_ = dictionary.Dictionary(settings)
             self.tokenizer_obj = self.dict_.create()
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             self.fail('dictionary isn\'t prepared properly')
 
     def test_tokenize_small_katanana_only(self):

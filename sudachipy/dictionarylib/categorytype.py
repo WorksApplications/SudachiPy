@@ -27,3 +27,10 @@ class CategoryType(Enum):
             if type_.get_id() is id_:
                 return type_
         return None
+
+    @staticmethod
+    def get(str_):
+        try:
+            return CategoryType[str_]
+        except KeyError:
+            return None
