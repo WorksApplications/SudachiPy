@@ -67,7 +67,7 @@ tokenizer_obj = dictionary.Dictionary(settings).create()
 
 mode = tokenizer.Tokenizer.SplitMode.C
 [m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
-# => ['医薬品安全管理責任者']
+# => ['医薬品', '安全', '管理責任者']
 
 mode = tokenizer.Tokenizer.SplitMode.B
 [m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
