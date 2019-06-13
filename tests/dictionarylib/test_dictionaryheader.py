@@ -1,31 +1,28 @@
-import json
+import mmap
 import unittest
 
 from sudachipy.dictionarylib.dictionaryversion import DictionaryVersion
-from sudachipy import config, dictionary
+from sudachipy import dictionarylib
 
 
 class TestDictionaryHeader(unittest.TestCase):
 
     def setUp(self):
-        with open(config.SETTINGFILE, "r", encoding="utf-8") as f:
-            settings = json.load(f)
-        self.dict_ = None
-        self.tokenizer_obj = None
-        try:
-            self.dict_ = dictionary.Dictionary(settings)
-            self.tokenizer_obj = self.dict_.create()
-        except FileNotFoundError:
-            self.fail('dictionary isn\'t prepared properly')
+        # Copied from sudachipy.dictionay.Dictionary.read_system_dictionary
+        filename = 'tests/resources/system.dic'
+        with open(filename, 'r+b') as system_dic:
+            bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
+        offset = 0
+        self.header = dictionarylib.dictionaryheader.DictionaryHeader(bytes_, offset)
 
     def test_version(self):
-        self.assertEqual(DictionaryVersion.SYSTEM_DICT_VERSION, self.dict_.header.version)
+        self.assertEqual(DictionaryVersion.SYSTEM_DICT_VERSION, self.header.version)
 
-    def test_createtime(self):
-        self.assertTrue(self.dict_.header.create_time > 0)
+    def test_create_time(self):
+        self.assertTrue(self.header.create_time > 0)
 
-    # def test_description(self):
-    #     self.assertEqual("the system dictionary for the unit tests", self.dict_.header.description)
+    def test_description(self):
+        self.assertEqual("the system dictionary for the unit tests", self.header.description)
 
 
 if __name__ == '__main__':

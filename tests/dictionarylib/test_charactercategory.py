@@ -24,7 +24,7 @@ class TestCharacterCategory(unittest.TestCase):
 
     def test_get_category_types(self):
         cat = charactercategory.CharacterCategory()
-        cat.read_character_definition('../../resources/char.def')
+        cat.read_character_definition('tests/resources/char.def')
         self.assertEqual({categorytype.CategoryType.KANJI}, cat.get_category_types(ord('熙')))
         self.assertNotEqual({categorytype.CategoryType.DEFAULT}, cat.get_category_types(ord('熙')))
 
