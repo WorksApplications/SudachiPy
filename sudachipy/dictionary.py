@@ -3,6 +3,7 @@ import os.path
 
 from . import config
 from . import dictionarylib
+from .dictionarylib.dictionaryversion import DictionaryVersion
 from . import tokenizer
 from . import plugin
 
@@ -58,8 +59,7 @@ class Dictionary:
 
         offset = 0
         self.header = dictionarylib.dictionaryheader.DictionaryHeader(bytes_, offset)
-        SYSTEM_DICT_VERSION = 0x7366d3f18bd111e7
-        if self.header.version != SYSTEM_DICT_VERSION:
+        if self.header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
             raise Exception("invalid system dictionary")
         offset += self.header.storage_size
 
