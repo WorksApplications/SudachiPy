@@ -67,7 +67,7 @@ tokenizer_obj = dictionary.Dictionary(settings).create()
 
 mode = tokenizer.Tokenizer.SplitMode.C
 [m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
-# => ['医薬品', '安全', '管理責任者']
+# => ['医薬品安全管理責任者']
 
 mode = tokenizer.Tokenizer.SplitMode.B
 [m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
@@ -104,3 +104,9 @@ tokenizer_obj.tokenize(mode, "シュミレーション")[0].normalized_form()
 
 You have to run `./scripts/format.sh` and check if your code is in rule before PR.
 This code formatting script will be integrated to CI system later. `flake8` is required.
+
+### Test
+
+You have to run `./script/test.sh` and check if not your change cause regression.
+This test script will be integrated to CI system later. Current test assumes `sudachi-dictionary-20190531-core.zip`
+is in `resources` directory. We will change it to special dictionary for test like Sudachi (Java).
