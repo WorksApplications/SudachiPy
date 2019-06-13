@@ -109,4 +109,11 @@ This code formatting script will be integrated to CI system later. `flake8` is r
 
 You have to run `./script/test.sh` and check if not your change cause regression.
 This test script will be integrated to CI system later. Current test assumes `sudachi-dictionary-20190531-core.dic`
-is in `resources` directory as `system.dic`. We will change it to special dictionary for test like Sudachi (Java) in all tests.
+is in `resources` directory as `system.dic`. We will change it to special dictionary for test like Sudachi (Java) in all tests.  
+Some of the tests use `system.dic` built by Sudachi.  This is an example command to get `system.dic` for test
+```bash
+git clone https://github.com/WorksApplications/Sudachi.git
+cd Sudahi
+mvn test
+cp target/test-classes/system.dic ${SudachiPy}/tests/resources/
+```
