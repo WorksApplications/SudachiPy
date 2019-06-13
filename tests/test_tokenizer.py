@@ -7,7 +7,9 @@ from sudachipy import config, dictionary, tokenizer
 class TestTokenizer(unittest.TestCase):
 
     def setUp(self):
-        with open('tests/resources/sudachi.json', "r", encoding="utf-8") as f:
+        # It's impossible to avoid to use test dictionary
+        # See implementation of dictionary.Dictionary
+        with open(config.SETTINGFILE, "r", encoding="utf-8") as f:
             settings = json.load(f)
         self.dict_ = None
         self.tokenizer_obj = None

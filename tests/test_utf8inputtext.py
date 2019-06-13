@@ -1,5 +1,5 @@
-import unittest
 import os
+import unittest
 
 import sudachipy
 import sudachipy.dictionarylib as dictionarylib

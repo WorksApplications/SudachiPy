@@ -108,5 +108,5 @@ This code formatting script will be integrated to CI system later. `flake8` is r
 ### Test
 
 You have to run `./script/test.sh` and check if not your change cause regression.
-This test script will be integrated to CI system later. Current test assumes `sudachi-dictionary-20190531-core.zip`
-is in `resources` directory. We will change it to special dictionary for test like Sudachi (Java).
+This test script will be integrated to CI system later. Current test assumes `sudachi-dictionary-20190531-core.dic`
+is in `resources` directory as `system.dic`. We will change it to special dictionary for test like Sudachi (Java) in all tests.
