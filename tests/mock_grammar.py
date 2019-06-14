@@ -1,8 +1,9 @@
 from unittest import mock
-from sudachipy.dictionarylib import grammar
-from sudachipy.dictionarylib import charactercategory
 
-mocked_grammar = mock.Mock(spec=grammar.Grammar)
+from sudachipy.dictionarylib.charactercategory import CharacterCategory
+from sudachipy.dictionarylib.grammar import Grammar
+
+mocked_grammar = mock.Mock(spec=Grammar)
 mocked_grammar.get_part_of_speech_size.return_value = 0
 mocked_grammar.get_part_of_speech_string.return_value = None
 mocked_grammar.get_part_of_speech_id.return_value = 0
@@ -13,7 +14,7 @@ mocked_grammar.get_eos_parameter.return_value = None
 
 
 def mocked_get_character_category():
-    cat = charactercategory.CharacterCategory()
+    cat = CharacterCategory()
     try:
         cat.read_character_definition('tests/resources/char.def')
     except IOError as e:

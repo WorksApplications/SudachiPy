@@ -1,7 +1,7 @@
 import unittest
 
-from sudachipy import utf8inputtextbuilder
-from sudachipy.plugin import default_input_text_plugin
+from sudachipy.plugin.input_text.default_input_text_plugin import DefaultInputTextPlugin
+from sudachipy.utf8inputtextbuilder import UTF8InputTextBuilder
 from tests import mock_grammar
 
 
@@ -11,8 +11,8 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
     normalized_text = "âbγд(株)ガヴ⼼ⅲ"
 
     def setUp(self):
-        self.builder = utf8inputtextbuilder.UTF8InputTextBuilder(self.original_text, mock_grammar.mocked_grammar)
-        self.plugin = default_input_text_plugin.DefaultInputTextPlugin()
+        self.builder = UTF8InputTextBuilder(self.original_text, mock_grammar.mocked_grammar)
+        self.plugin = DefaultInputTextPlugin()
         try:
             self.plugin.set_up()
         except IOError as e:
@@ -60,7 +60,7 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
     # def test_setup_with_null(self):
 
     def test_invalid_format_ignorelist(self):
-        plugin = default_input_text_plugin.DefaultInputTextPlugin()
+        plugin = DefaultInputTextPlugin()
         try:
             plugin.read_rewrite_lists('tests/resources/rewrite_error_ignorelist.def')
             self.fail('no error occurred')
@@ -68,7 +68,7 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
             pass
 
     def test_invalid_format_replacelist(self):
-        plugin = default_input_text_plugin.DefaultInputTextPlugin()
+        plugin = DefaultInputTextPlugin()
         try:
             plugin.read_rewrite_lists('tests/resources/rewrite_error_replacelist.def')
             self.fail('no error occurred')
@@ -76,7 +76,7 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
             pass
 
     def test_duplicated_lines_replacelist(self):
-        plugin = default_input_text_plugin.DefaultInputTextPlugin()
+        plugin = DefaultInputTextPlugin()
         try:
             plugin.read_rewrite_lists('tests/resources/rewrite_error_dup.def')
             self.fail('no error occurred')

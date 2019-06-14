@@ -1,8 +1,9 @@
 import mmap
-import tempfile
-import unittest
 import os
 import shutil
+import tempfile
+import unittest
+
 from sudachipy.dictionarylib.grammar import Grammar
 
 
