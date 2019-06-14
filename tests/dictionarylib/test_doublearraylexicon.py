@@ -1,8 +1,10 @@
 import mmap
 import unittest
 
-from sudachipy import dictionarylib
+from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib.dictionaryversion import DictionaryVersion
+from sudachipy.dictionarylib.doublearraylexicon import DoubleArrayLexicon
+from sudachipy.dictionarylib.grammar import Grammar
 
 
 class TestDoubleArrayLexicon(unittest.TestCase):
@@ -13,14 +15,14 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         with open(filename, 'r+b') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         offset = 0
-        self.header = dictionarylib.dictionaryheader.DictionaryHeader(bytes_, offset)
+        self.header = DictionaryHeader(bytes_, offset)
         if self.header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
             raise Exception("invalid system dictionary")
         offset += self.header.storage_size
 
-        self.grammar = dictionarylib.grammar.Grammar(bytes_, offset)
+        self.grammar = Grammar(bytes_, offset)
         offset += self.grammar.get_storage_size()
-        self.lexicon = dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, offset)
+        self.lexicon = DoubleArrayLexicon(bytes_, offset)
 
     def test_lookup(self):
         res = self.lexicon.lookup('東京都'.encode('utf-8'), 0)
