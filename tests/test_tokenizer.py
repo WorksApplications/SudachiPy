@@ -7,6 +7,8 @@ from sudachipy import config, dictionary, tokenizer
 class TestTokenizer(unittest.TestCase):
 
     def setUp(self):
+        # It's impossible to avoid to use test dictionary
+        # See implementation of dictionary.Dictionary
         with open(config.SETTINGFILE, "r", encoding="utf-8") as f:
             settings = json.load(f)
         self.dict_ = None
@@ -65,7 +67,6 @@ class TestTokenizer(unittest.TestCase):
 
     def test_normalize(self):
         mode = tokenizer.Tokenizer.SplitMode.A
-        m = self.tokenizer_obj.tokenize(mode, '食べ')[0]
         self.assertEqual('付属', self.tokenizer_obj.tokenize(mode, '附属')[0].normalized_form())
         self.assertEqual('サマー', self.tokenizer_obj.tokenize(mode, "SUMMER")[0].normalized_form())
         self.assertEqual('シミュレーション', self.tokenizer_obj.tokenize(mode, "シュミレーション")[0].normalized_form())

@@ -69,10 +69,12 @@ class Grammar:
         string = self.bytes.read(2 * length)
         return string.decode('utf-16')
 
-    def bytes_get_short(self, bytes_, offset):
+    @staticmethod
+    def bytes_get_short(bytes_, offset):
         bytes_.seek(offset)
         return int.from_bytes(bytes_.read(2), 'little', signed=True)
 
-    def bytes_put_short(self, bytes_, offset, data):
+    @staticmethod
+    def bytes_put_short(bytes_, offset, data):
         bytes_.seek(offset)
         bytes_.write(data.to_bytes(2, 'little'))
