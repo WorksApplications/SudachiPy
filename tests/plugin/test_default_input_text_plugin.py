@@ -82,3 +82,7 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
             self.fail('no error occurred')
         except RuntimeError:
             pass
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -6,3 +6,7 @@ class TestJoinKatakanaOOVPlugin(unittest.TestCase):
     # see https://github.com/WorksApplications/SudachiPy/issues/7
     def setUp(self):
         pass
+
+
+if __name__ == '__main__':
+    unittest.main()

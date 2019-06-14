@@ -104,3 +104,7 @@ class TestGrammar(unittest.TestCase):
         storage.extend((-3000).to_bytes(2, byteorder='little', signed=True))  # number of rightId
         storage.extend((200).to_bytes(2, byteorder='little', signed=True))  # number of rightId
         storage.extend((2000).to_bytes(2, byteorder='little', signed=True))  # number of rightId
+
+
+if __name__ == '__main__':
+    unittest.main()

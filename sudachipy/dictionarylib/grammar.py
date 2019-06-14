@@ -45,10 +45,10 @@ class Grammar:
     def get_connect_cost(self, left_id, right_id):
         return self.bytes_get_short(self.connect_table_bytes, self.connect_table_offset + left_id * 2 + 2 * self.left_id_size * right_id)
 
-    # def set_connect_cost(self, left_id, right_id, cost):
-    #     if not self.is_copied_connect_table:
-    #         self.copy_connect_table()
-    #     self.bytes_put_short(self.connect_table_bytes, self.connect_table_offset + left_id * 2 + 2 * self.left_id_size * right_id, cost)
+    def set_connect_cost(self, left_id, right_id, cost):
+        if not self.is_copied_connect_table:
+            self.copy_connect_table()
+        self.bytes_put_short(self.connect_table_bytes, self.connect_table_offset + left_id * 2 + 2 * self.left_id_size * right_id, cost)
 
     def get_bos_parameter(self):
         return self.BOS_PARAMETER
