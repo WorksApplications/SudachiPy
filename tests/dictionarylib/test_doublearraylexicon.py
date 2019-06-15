@@ -4,25 +4,21 @@ import unittest
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib.dictionaryversion import DictionaryVersion
 from sudachipy.dictionarylib.doublearraylexicon import DoubleArrayLexicon
-from sudachipy.dictionarylib.grammar import Grammar
 
 
 class TestDoubleArrayLexicon(unittest.TestCase):
+
+    __GRAMMAR_SIZE = 470
 
     def setUp(self):
         # Copied from sudachipy.dictionay.Dictionary.read_system_dictionary
         filename = 'tests/resources/system.dic'
         with open(filename, 'r+b') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
-        offset = 0
-        self.header = DictionaryHeader(bytes_, offset)
-        if self.header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
+        header = DictionaryHeader(bytes_, 0)
+        if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
             raise Exception("invalid system dictionary")
-        offset += self.header.storage_size
-
-        self.grammar = Grammar(bytes_, offset)
-        offset += self.grammar.get_storage_size()
-        self.lexicon = DoubleArrayLexicon(bytes_, offset)
+        self.lexicon = DoubleArrayLexicon(bytes_, header.storage_size + 470)
 
     def test_lookup(self):
         res = self.lexicon.lookup('東京都'.encode('utf-8'), 0)
@@ -65,9 +61,9 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         self.assertEqual(-1, wi.dictionary_form_word_id)
         self.assertEqual('た', wi.dictionary_form)
         self.assertEqual('タ', wi.reading_form)
-        self.assertEqual([0], wi.a_unit_split)
-        self.assertEqual([0], wi.b_unit_split)
-        self.assertEqual([0], wi.word_structure)
+        self.assertEqual((), wi.a_unit_split)
+        self.assertEqual((), wi.b_unit_split)
+        self.assertEqual((), wi.word_structure)
 
         # 行っ
         wi = self.lexicon.get_word_info(8)
@@ -80,7 +76,7 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         wi = self.lexicon.get_word_info(6)
         self.assertEqual('東京都', wi.surface)
         self.assertEqual((5, 9), wi.a_unit_split)
-        self.assertEqual([0], wi.b_unit_split)
+        self.assertEqual((), wi.b_unit_split)
         self.assertEqual((5, 9), wi.word_structure)
 
     def test_wordinfo_with_longword(self):
@@ -94,7 +90,7 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         self.assertEqual(570, len(wi.reading_form))
 
     def test_size(self):
-        self.assertEqual(37, self.lexicon.size)
+        self.assertEqual(37, self.lexicon.size())
 
 
 if __name__ == '__main__':
