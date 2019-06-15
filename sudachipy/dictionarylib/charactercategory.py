@@ -48,7 +48,7 @@ class CharacterCategory(object):
             cols = re.split(r"\s+", line)
             if len(cols) < 2:
                 f.close()
-                raise AttributeError("invalid format at line ", i)
+                raise AttributeError("invalid format at line {}".format(i))
             if not re.match("0x", cols[0]):
                 continue
             range_ = self.Range()
@@ -58,14 +58,14 @@ class CharacterCategory(object):
                 range_.high = int(r[1], 16)
             if range_.low > range_.high:
                 f.close()
-                raise AttributeError("invalid range at line ", i)
+                raise AttributeError("invalid range at line {}".format(i))
             for j in range(1, len(cols)):
                 if re.match("#", cols[j]) or cols[j] is '':
                     break
                 type_ = categorytype.CategoryType.get(cols[j])
                 if type_ is None:
                     f.close()
-                    raise AttributeError(cols[j], " is invalid type at line ", i)
+                    raise AttributeError("{} is invalid type at line {}".format(cols[j], i))
                 range_.categories.add(type_)
             self.range_list.append(range_)
         default_range = self.Range()

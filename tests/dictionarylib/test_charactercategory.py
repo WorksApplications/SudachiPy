@@ -45,33 +45,27 @@ class TestCharacterCategory(unittest.TestCase):
         with open(f, 'w') as wf:
             wf.write("0x0030..0x0039\n")
         cat = charactercategory.CharacterCategory()
-        try:
+        with self.assertRaises(AttributeError) as cm:
             cat.read_character_definition(f)
-            self.fail('no exception detected')
-        except AttributeError:
-            pass
+        self.assertEqual('invalid format at line 0', cm.exception.args[0])
 
     def test_read_character_definition_with_invalid_range(self):
         f = os.path.join(self.test_dir, 'test_file.txt')
         with open(f, 'w') as wf:
             wf.write("0x0030..0x0029 NUMERIC\n")
         cat = charactercategory.CharacterCategory()
-        try:
+        with self.assertRaises(AttributeError) as cm:
             cat.read_character_definition(f)
-            self.fail('no exception detected')
-        except AttributeError:
-            pass
+        self.assertEqual('invalid range at line 0', cm.exception.args[0])
 
     def test_read_character_definition_with_invalid_type(self):
         f = os.path.join(self.test_dir, 'test_file.txt')
         with open(f, 'w') as wf:
             wf.write("0x0030..0x0039 FOO\n")
         cat = charactercategory.CharacterCategory()
-        try:
+        with self.assertRaises(AttributeError) as cm:
             cat.read_character_definition(f)
-            self.fail('no exception detected')
-        except AttributeError:
-            pass
+        self.assertEqual('FOO is invalid type at line 0', cm.exception.args[0])
 
 
 if __name__ == '__main__':
