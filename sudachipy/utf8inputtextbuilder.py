@@ -24,7 +24,7 @@ class UTF8InputTextBuilder:
         if end > len(self.modified_text):
             end = len(self.modified_text)
 
-        self.modified_text = self.modified_text.replace(self.modified_text[begin:end], str_, 1)
+        self.modified_text = str_.join([self.modified_text[:begin], self.modified_text[end:]])
 
         offset = self.text_offsets[begin]
         length = len(str_)
