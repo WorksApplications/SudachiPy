@@ -15,7 +15,7 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
         self.plugin = DefaultInputTextPlugin()
         try:
             self.plugin.set_up()
-        except IOError as e:
+        except IOError:
             self.fail('no file')
 
     def test_before_rewrite(self):
