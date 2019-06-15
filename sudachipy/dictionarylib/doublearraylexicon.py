@@ -30,13 +30,13 @@ class DoubleArrayLexicon(lexicon.Lexicon):
 
     def lookup(self, text, offset):
         result = self.trie.common_prefix_search(text, offset)
-        l = []
+        pairs = []
         for item in result:
             word_ids = self.word_id_table.get(item[0])
             length = item[1]
             for word_id in word_ids:
-                l.append( (word_id, length) )
-        return l
+                pairs.append((word_id, length))
+        return pairs
 
     def get_left_id(self, word_id):
         return self.word_params.get_left_id(word_id)

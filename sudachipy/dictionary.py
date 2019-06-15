@@ -74,8 +74,8 @@ class Dictionary:
         self.buffers.append(bytes_)
 
         user_lexicon = dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, 0)
-        tokenizer = tokenizer.JapaneseTokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
-        user_lexicon.calclate_cost(tokenizer)
+        tokenizer_ = tokenizer.JapaneseTokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
+        user_lexicon.calclate_cost(tokenizer_)
         self.lexicon.append(user_lexicon)
 
     def read_character_definition(self, filename):
