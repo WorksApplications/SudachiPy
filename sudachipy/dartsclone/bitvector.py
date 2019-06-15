@@ -12,8 +12,7 @@ class BitVector(object):
     def rank(self, id):
         unit_id = int(id / self.UNIT_SIZE)
         return self.ranks[unit_id] \
-            + self.pop_count(self.units[unit_id] &
-                             (~0 >> (self.UNIT_SIZE - (id % self.UNIT_SIZE) - 1)))
+            + self.pop_count(self.units[unit_id] & (~0 >> (self.UNIT_SIZE - (id % self.UNIT_SIZE) - 1)))
 
     def set(self, id, bit):
         if bit:
