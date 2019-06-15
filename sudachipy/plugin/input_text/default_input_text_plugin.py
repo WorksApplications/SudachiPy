@@ -64,13 +64,15 @@ class DefaultInputTextPlugin:
         with open(rewrite_def, "r", encoding="utf-8") as f:
             for i, line in enumerate(f):
                 line = line.strip()
-                if not line or line.startswith("#"):
+                if (not line) or line.startswith("#"):
                     continue
                 cols = line.split()
 
                 # ignored normalize list
                 if len(cols) == 1:
                     key = cols[0]
+                    if len(key) != 1:
+                        raise RuntimeError("{} is not character at line {}".format(key, i))
                     self.ignore_normalize_set.add(key)
                 # replace char list
                 elif len(cols) == 2:

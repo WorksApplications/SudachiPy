@@ -61,27 +61,21 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
 
     def test_invalid_format_ignorelist(self):
         plugin = DefaultInputTextPlugin()
-        try:
+        with self.assertRaises(RuntimeError) as cm:
             plugin.read_rewrite_lists('tests/resources/rewrite_error_ignorelist.def')
-            self.fail('no error occurred')
-        except RuntimeError:
-            pass
+        self.assertEqual('12 is not character at line 1', cm.exception.args[0])
 
     def test_invalid_format_replacelist(self):
         plugin = DefaultInputTextPlugin()
-        try:
+        with self.assertRaises(RuntimeError) as cm:
             plugin.read_rewrite_lists('tests/resources/rewrite_error_replacelist.def')
-            self.fail('no error occurred')
-        except RuntimeError:
-            pass
+        self.assertEqual('invalid format at line 1', cm.exception.args[0])
 
     def test_duplicated_lines_replacelist(self):
         plugin = DefaultInputTextPlugin()
-        try:
+        with self.assertRaises(RuntimeError) as cm:
             plugin.read_rewrite_lists('tests/resources/rewrite_error_dup.def')
-            self.fail('no error occurred')
-        except RuntimeError:
-            pass
+        self.assertEqual('12 is already defined at line 2', cm.exception.args[0])
 
 
 if __name__ == '__main__':
