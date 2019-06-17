@@ -23,7 +23,7 @@ class TestUTF8InputText(unittest.TestCase):
 
         grammar = self.MockGrammar()
         char_category = dictionarylib.charactercategory.CharacterCategory()
-        char_category.read_character_definition(os.path.join(sudachipy.config.RESOURCEDIR, "char.def"))
+        char_category.read_character_definition(os.path.join('tests/resources', "char.def"))
         grammar.set_character_category(char_category)
 
         self.builder = sudachipy.utf8inputtextbuilder.UTF8InputTextBuilder(self.TEXT, grammar)
@@ -135,10 +135,10 @@ class TestUTF8InputText(unittest.TestCase):
         self.assertEqual(input_.get_original_index(0), 0)
         self.assertEqual(input_.get_original_index(12), 7)
         self.assertEqual(input_.get_original_index(13), 8)
-        self.assertEqual(input_.get_original_index(21), 10)
-        self.assertEqual(input_.get_original_index(22), 11)
-        self.assertEqual(input_.get_original_index(25), 11)
-        self.assertEqual(input_.get_original_index(34), 14)
+        self.assertEqual(input_.get_original_index(21), 8)
+        self.assertEqual(input_.get_original_index(22), 10)
+        self.assertEqual(input_.get_original_index(25), 10)
+        self.assertEqual(input_.get_original_index(35), 14)
 
     def test_replaceMultiTimes(self):
         self.builder.replace(0, 1, "a")
