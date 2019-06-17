@@ -17,7 +17,7 @@ class TestDoubleArrayLexicon(unittest.TestCase):
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         header = DictionaryHeader(bytes_, 0)
         if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
-            raise Exception("invalid system dictionary")
+            raise Exception('invalid system dictionary')
         self.lexicon = DoubleArrayLexicon(bytes_, header.storage_size + 470)
 
     def test_lookup(self):
@@ -61,9 +61,9 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         self.assertEqual(-1, wi.dictionary_form_word_id)
         self.assertEqual('た', wi.dictionary_form)
         self.assertEqual('タ', wi.reading_form)
-        self.assertEqual((), wi.a_unit_split)
-        self.assertEqual((), wi.b_unit_split)
-        self.assertEqual((), wi.word_structure)
+        self.assertEqual([], wi.a_unit_split)
+        self.assertEqual([], wi.b_unit_split)
+        self.assertEqual([], wi.word_structure)
 
         # 行っ
         wi = self.lexicon.get_word_info(8)
@@ -75,9 +75,9 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         # 東京都
         wi = self.lexicon.get_word_info(6)
         self.assertEqual('東京都', wi.surface)
-        self.assertEqual((5, 9), wi.a_unit_split)
-        self.assertEqual((), wi.b_unit_split)
-        self.assertEqual((5, 9), wi.word_structure)
+        self.assertEqual([5, 9], wi.a_unit_split)
+        self.assertEqual([], wi.b_unit_split)
+        self.assertEqual([5, 9], wi.word_structure)
 
     def test_wordinfo_with_longword(self):
         # 0123456789 * 30
