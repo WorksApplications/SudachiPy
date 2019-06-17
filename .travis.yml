@@ -6,11 +6,8 @@ python:
  - '3.7'
 install:
  - pip install flake8
-before_script: |
- mv .travis/system.dic.test tests/resources/system.dic && \
- wget https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/sudachi-dictionary-20190531-core.zip && \
- unzip sudachi-dictionary-20190531-core.zip && \
- mv sudachi-dictionary-20190531/system_core.dic resources/system.dic
+before_script:
+ - mv .travis/system.dic.test tests/resources/system.dic
 script:
  - ./scripts/format.sh
  - python -m unittest discover tests

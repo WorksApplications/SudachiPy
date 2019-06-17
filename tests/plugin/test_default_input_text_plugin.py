@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from sudachipy.plugin.input_text.default_input_text_plugin import DefaultInputTextPlugin
@@ -12,11 +13,18 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
 
     def setUp(self):
         self.builder = UTF8InputTextBuilder(self.original_text, mock_grammar.mocked_grammar)
+
         self.plugin = DefaultInputTextPlugin()
+
         try:
             self.plugin.set_up()
         except IOError:
             self.fail('no file')
+
+        self.test_resources_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.pardir,
+            'resources')
 
     def test_before_rewrite(self):
         self.assertEqual(self.original_text, self.builder.get_original_text())
@@ -62,19 +70,19 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
     def test_invalid_format_ignorelist(self):
         plugin = DefaultInputTextPlugin()
         with self.assertRaises(RuntimeError) as cm:
-            plugin.read_rewrite_lists('tests/resources/rewrite_error_ignorelist.def')
+            plugin.read_rewrite_lists(os.path.join(self.test_resources_dir, 'rewrite_error_ignorelist.def'))
         self.assertEqual('12 is not character at line 1', cm.exception.args[0])
 
     def test_invalid_format_replacelist(self):
         plugin = DefaultInputTextPlugin()
         with self.assertRaises(RuntimeError) as cm:
-            plugin.read_rewrite_lists('tests/resources/rewrite_error_replacelist.def')
+            plugin.read_rewrite_lists(os.path.join(self.test_resources_dir, 'rewrite_error_replacelist.def'))
         self.assertEqual('invalid format at line 1', cm.exception.args[0])
 
     def test_duplicated_lines_replacelist(self):
         plugin = DefaultInputTextPlugin()
         with self.assertRaises(RuntimeError) as cm:
-            plugin.read_rewrite_lists('tests/resources/rewrite_error_dup.def')
+            plugin.read_rewrite_lists(os.path.join(self.test_resources_dir, 'rewrite_error_dup.def'))
         self.assertEqual('12 is already defined at line 2', cm.exception.args[0])
 
 

@@ -10,6 +10,10 @@ class TestCharacterCategory(unittest.TestCase):
 
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
+        self.test_resources_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.pardir,
+            'resources')
         pass
 
     def tearDown(self):
@@ -24,7 +28,7 @@ class TestCharacterCategory(unittest.TestCase):
 
     def test_get_category_types(self):
         cat = charactercategory.CharacterCategory()
-        cat.read_character_definition('tests/resources/char.def')
+        cat.read_character_definition(os.path.join(self.test_resources_dir, 'char.def'))
         self.assertEqual({categorytype.CategoryType.KANJI}, cat.get_category_types(ord('熙')))
         self.assertNotEqual({categorytype.CategoryType.DEFAULT}, cat.get_category_types(ord('熙')))
 

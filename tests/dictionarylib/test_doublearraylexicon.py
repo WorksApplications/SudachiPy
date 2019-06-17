@@ -1,3 +1,4 @@
+import os
 import mmap
 import unittest
 
@@ -12,7 +13,11 @@ class TestDoubleArrayLexicon(unittest.TestCase):
 
     def setUp(self):
         # Copied from sudachipy.dictionay.Dictionary.read_system_dictionary
-        filename = 'tests/resources/system.dic'
+        test_resources_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.pardir,
+            'resources')
+        filename = os.path.join(test_resources_dir, 'system.dic')
         with open(filename, 'r+b') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         header = DictionaryHeader(bytes_, 0)

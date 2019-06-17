@@ -23,7 +23,8 @@ class TestUTF8InputText(unittest.TestCase):
 
         grammar = self.MockGrammar()
         char_category = dictionarylib.charactercategory.CharacterCategory()
-        char_category.read_character_definition(os.path.join('tests/resources', "char.def"))
+        this_dir = os.path.dirname(os.path.abspath(__file__))
+        char_category.read_character_definition(os.path.join(this_dir, 'resources/char.def'))
         grammar.set_character_category(char_category)
 
         self.builder = sudachipy.utf8inputtextbuilder.UTF8InputTextBuilder(self.TEXT, grammar)

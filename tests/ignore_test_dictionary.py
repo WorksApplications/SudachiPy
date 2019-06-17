@@ -1,3 +1,6 @@
+# This test file is ignored if it runs on .travis
+# We probably need to parse user.dic to test this code.
+
 import json
 import unittest
 
