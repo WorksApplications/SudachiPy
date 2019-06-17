@@ -1,5 +1,5 @@
 import copy
-import sys
+
 from . import bitvector
 
 

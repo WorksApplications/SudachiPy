@@ -1,5 +1,5 @@
 import re
-import sys
+
 from . import categorytype
 
 

@@ -1,5 +1,3 @@
-import struct
-
 from . import wordinfo
 
 

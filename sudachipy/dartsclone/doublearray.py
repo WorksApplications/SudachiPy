@@ -1,5 +1,4 @@
 import mmap
-import sys
 
 from . import keyset
 from . import doublearraybuilder

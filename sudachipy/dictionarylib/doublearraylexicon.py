@@ -1,4 +1,3 @@
-# import itertool
 import struct
 
 from . import lexicon

@@ -1,4 +1,3 @@
-import sys
 from . import dawgbuilder
 from . import doublearraybuilderunit
 
