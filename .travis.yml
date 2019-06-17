@@ -5,7 +5,7 @@ python:
  - '3.6'
  - '3.7'
 install:
- - pip install flake8
+ - pip install flake8 flake8-import-order flake8-builtins
 before_script:
  - mv .travis/system.dic.test tests/resources/system.dic
 script:

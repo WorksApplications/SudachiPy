@@ -1,4 +1,5 @@
 import copy
+
 from . import utf8inputtext
 
 

@@ -3,7 +3,7 @@ import shutil
 import tempfile
 import unittest
 
-from sudachipy.dictionarylib import charactercategory, categorytype
+from sudachipy.dictionarylib import categorytype, charactercategory
 
 
 class TestCharacterCategory(unittest.TestCase):

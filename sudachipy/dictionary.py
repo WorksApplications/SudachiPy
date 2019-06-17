@@ -3,9 +3,9 @@ import os.path
 
 from . import config
 from . import dictionarylib
-from .dictionarylib.dictionaryversion import DictionaryVersion
-from . import tokenizer
 from . import plugin
+from . import tokenizer
+from .dictionarylib.dictionaryversion import DictionaryVersion
 
 
 class Dictionary:

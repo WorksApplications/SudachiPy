@@ -1,7 +1,7 @@
 import mmap
 
-from . import keyset
 from . import doublearraybuilder
+from . import keyset
 
 
 class DoubleArray(object):

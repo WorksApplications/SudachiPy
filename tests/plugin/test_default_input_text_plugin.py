@@ -3,6 +3,7 @@ import unittest
 
 from sudachipy.plugin.input_text.default_input_text_plugin import DefaultInputTextPlugin
 from sudachipy.utf8inputtextbuilder import UTF8InputTextBuilder
+
 from tests import mock_grammar
 
 

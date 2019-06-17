@@ -1,5 +1,5 @@
-from . import latticenode
 from . import dictionarylib
+from . import latticenode
 
 
 class Lattice:

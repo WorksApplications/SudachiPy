@@ -1,7 +1,7 @@
-import sys
-import json
 import argparse
 import fileinput
+import json
+import sys
 
 from . import config
 from . import dictionary
