@@ -289,9 +289,9 @@ class DoubleArrayBuilder(object):
             self.units.append(doublearraybuilderunit.DoubleArrayBuilderUnit())
 
         if dest_num_blocks > self.NUM_EXTRA_BLOCKS:
-            for id in range(src_num_units, dest_num_units):
-                self.get_extras(id).is_used = False
-                self.get_extras(id).is_fixed = False
+            for id_ in range(src_num_units, dest_num_units):
+                self.get_extras(id_).is_used = False
+                self.get_extras(id_).is_fixed = False
 
         for i in range(src_num_units + 1, dest_num_units):
             self.get_extras(i - 1).next = i
@@ -330,10 +330,10 @@ class DoubleArrayBuilder(object):
                 break
             offset += 1
 
-        for id in range(begin, end):
-            if not self.get_extras(id).is_fixed:
-                self.reserve_id(id)
-                self.units[id].set_label(id ^ unused_offset)
+        for id_ in range(begin, end):
+            if not self.get_extras(id_).is_fixed:
+                self.reserve_id(id_)
+                self.units[id_].set_label(id_ ^ unused_offset)
 
     def byte_to_u_int(self, b):
         return int.from_bytes(b, 'little', signed=False)
