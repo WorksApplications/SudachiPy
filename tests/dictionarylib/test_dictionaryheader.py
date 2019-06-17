@@ -1,5 +1,5 @@
-import mmap
 import os
+import mmap
 import unittest
 
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
