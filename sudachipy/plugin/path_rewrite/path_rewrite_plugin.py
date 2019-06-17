@@ -18,7 +18,7 @@ class PathRewritePlugin:
         if begin >= end:
             raise IndexError("begin >= end")
         b = path[begin].get_begin()
-        e = path[end-1].get_end()
+        e = path[end - 1].get_end()
         pos_id = path[begin].get_word_info().pos_id
         surface = ""
         length = 0
@@ -46,7 +46,7 @@ class PathRewritePlugin:
         if begin >= end:
             raise IndexError("begin >= end")
         b = path[begin].get_begin()
-        e = path[end-1].get_end()
+        e = path[end - 1].get_end()
         surface = ""
         length = 0
         for i in range(begin, end):
