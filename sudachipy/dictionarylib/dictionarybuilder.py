@@ -7,11 +7,12 @@ from sudachipy.dictionarylib.wordinfo import WordInfo
 
 class DictionaryBuilder(object):
 
+    __BYTE_MAX_VALUE = 127
     __MAX_LENGTH = 255
     __COLS_NUM = 18
     __BUFFER_SIZE = 1024 * 1024
     __PATTERN_UNICODE_LITERAL = re.compile(r"\\u([0-9a-fA-F]{4}|{[0-9a-fA-F]+})")
-    __ARRAY_MAX_LENGTH = 127  # max value of byte in Java
+    __ARRAY_MAX_LENGTH = __BYTE_MAX_VALUE  # max value of byte in Java
     __STRING_MAX_LENGTH = 32767  # max value of short in Java
 
     class WordEntry:
@@ -38,7 +39,7 @@ class DictionaryBuilder(object):
             return self.table
 
     def __init__(self):
-        self.buffer = bytearray(self.__BUFFER_SIZE)
+        self.byte_array = bytearray()
         self.trie_keys = SortedDict()
         self.entries = []
         self.is_dictionary = False
@@ -94,6 +95,30 @@ class DictionaryBuilder(object):
             self.trie_keys[key] = []
         self.trie_keys[key].append(word_id)
 
+    def convert_postable(self, pos_list):
+        self.byte_array.extend(len(pos_list).to_bytes(2, byteorder='little'))
+        for pos in pos_list:
+            for text in pos.split(','):
+                self.write_string(text)
+
+    def write_string(self, text):
+        self.write_stringlength(len(text))
+        self.byte_array.extend(text.encode('utf-16-le'))
+
+    def write_stringlength(self, len_):
+        if len_ <= self.__BYTE_MAX_VALUE:
+            self.byte_array.extend(len_.to_bytes(1, byteorder='little'))
+        else:
+            self.byte_array.extend(
+                ((len_ >> 8) | 0x80).to_bytes(1, byteorder='little'))
+            self.byte_array.extend(
+                (len_ & 0xFF).to_bytes(1, byteorder='little'))
+
+    def write_in_array(self, array):
+        self.byte_array.extend(len(array).to_bytes(1, byteorder='little'))
+        for item in array:
+            self.byte_array.append(item.to_bytes(4, byteorder='little'))
+
     def build(self):
         pass
 
@@ -126,10 +151,4 @@ class DictionaryBuilder(object):
         return re.sub(self.__PATTERN_UNICODE_LITERAL, replace, str_)
 
     def parse_splitinfo(self):
-        pass
-
-    def write_string(self):
-        pass
-
-    def write_int_array(self):
         pass

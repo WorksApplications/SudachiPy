@@ -58,7 +58,7 @@ class TestDictionaryBuilder(unittest.TestCase):
 
     def test_parse_line_toolong_headword(self):
         builder = DictionaryBuilder()
-        x = 'a' * (32767 + 1) # max value of short in Java
+        x = 'a' * (32767 + 1)  # max value of short in Java + 1
         x = x + ',6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'
         with self.assertRaises(ValueError) as cm:
             builder.parse_line(x.split(','))
@@ -82,3 +82,8 @@ class TestDictionaryBuilder(unittest.TestCase):
         builder.add_to_trie('abcd', 2)
         self.assertTrue(0 in builder.trie_keys['abc'.encode('utf-8')])
         self.assertTrue(1 in builder.trie_keys['abc'.encode('utf-8')])
+
+    def test_convert_posid(self):
+        builder = DictionaryBuilder()
+        builder.convert_postable(['a,b,c,d,e,f', 'g,h,i,j,k,l'])
+        self.assertEqual(2 + 3 * 12, len(builder.byte_array))
