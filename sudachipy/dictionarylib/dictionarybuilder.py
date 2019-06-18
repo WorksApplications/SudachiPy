@@ -58,7 +58,7 @@ class DictionaryBuilder(object):
         if not self.is_length_valid(cols):
             raise ValueError('string is too long')
         if not cols[0]:
-            return ValueError('headword is empty')
+            raise ValueError('headword is empty')
 
         entry = self.WordEntry()
         # head word for trie
@@ -87,6 +87,12 @@ class DictionaryBuilder(object):
         entry.wordinfo = WordInfo(
             cols[4], head_length, pos_id, cols[12], dict_from_wordid, '', cols[11], None, None, None)
         return entry
+
+    def add_to_trie(self, headword, word_id):
+        key = headword.encode('utf-8')
+        if key not in self.trie_keys:
+            self.trie_keys[key] = []
+        self.trie_keys[key].append(word_id)
 
     def build(self):
         pass
