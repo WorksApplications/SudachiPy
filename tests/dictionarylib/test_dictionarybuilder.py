@@ -1,6 +1,7 @@
 import shutil
 import tempfile
 import unittest
+from io import BytesIO
 
 from sudachipy.dictionarylib.dictionarybuilder import DictionaryBuilder
 
@@ -80,7 +81,13 @@ class TestDictionaryBuilder(unittest.TestCase):
         self.assertEqual(2 + 3 * 12, builder.byte_buffer.tell())
 
     def test_convert_matrix(self):
-        pass
+        in_stream = BytesIO(b'2 3\n0 0 0\n0 1 1\n0 2 2\n\n1 0 3\n1 1 4\n1 2 5\n')
+        builder = DictionaryBuilder()
+        matrix = builder.convert_matrix(in_stream)
+        self.assertEqual(2, int.from_bytes(builder.byte_buffer.getvalue()[0:2], byteorder='little'))
+        self.assertEqual(3, int.from_bytes(builder.byte_buffer.getvalue()[2:4], byteorder='little'))
+        self.assertEqual(0, int.from_bytes(matrix.getvalue()[0:2], byteorder='little'))
+        self.assertEqual(4, int.from_bytes(matrix.getvalue()[(2 + 1) * 2:(2 + 1) * 2 + 2], byteorder='little'))
 
     def test_decode(self):
         builder = DictionaryBuilder()

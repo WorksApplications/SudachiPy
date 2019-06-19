@@ -3,9 +3,9 @@ from logging import DEBUG, StreamHandler, getLogger
 
 from sortedcontainers import SortedDict
 
+from sudachipy.dartsclone.doublearray import DoubleArray
 from sudachipy.dictionarylib.dictionarybytebuffer import DictionaryByteBuffer
 from sudachipy.dictionarylib.wordinfo import WordInfo
-from sudachipy.dartsclone.doublearray import DoubleArray
 
 
 class DictionaryBuilder(object):
@@ -129,8 +129,31 @@ class DictionaryBuilder(object):
             for text in pos.split(','):
                 self.write_string(text)
 
-    def convert_matrix(self, matrix_in):
-        pass
+    def convert_matrix(self, matrix_input):
+        header = matrix_input.readline().strip()
+        if not header:
+            raise ValueError('invalid format at line {}'.format(matrix_input.linenum()))
+        lr = header.decode('utf-8').split()
+        lsize, rsize = [int(x) for x in lr]
+        self.byte_buffer.write_int(lsize, 'short')
+        self.byte_buffer.write_int(rsize, 'short')
+
+        matrix = DictionaryByteBuffer()
+
+        for i, line in enumerate(matrix_input.readlines()):
+            line = line.decode('utf-8').strip()
+            if re.fullmatch(r"\s*", line) or re.match("#", line):
+                continue
+            cols = line.split()
+            if len(cols) < 3:
+                self.logger.warn('invalid format at line {}'.format(i))
+                continue
+            l, r, cost = [int(col) for col in cols]
+            pos = matrix.tell()
+            matrix.seek(2 * (l + lsize * r))
+            matrix.write_int(cost, 'short')
+            matrix.seek(pos)
+        return matrix
 
     def write_lexicon(self, io_out):
         trie = DoubleArray()
