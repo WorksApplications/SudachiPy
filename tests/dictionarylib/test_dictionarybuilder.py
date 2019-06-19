@@ -77,7 +77,7 @@ class TestDictionaryBuilder(unittest.TestCase):
     def test_convert_postable(self):
         builder = DictionaryBuilder()
         builder.convert_postable(['a,b,c,d,e,f', 'g,h,i,j,k,l'])
-        self.assertEqual(2 + 3 * 12, builder.buffer.tell())
+        self.assertEqual(2 + 3 * 12, builder.byte_buffer.tell())
 
     def test_convert_matrix(self):
         pass
@@ -108,35 +108,35 @@ class TestDictionaryBuilder(unittest.TestCase):
 
     def test_write_string(self):
         builder = DictionaryBuilder()
-        position = builder.buffer.tell()
+        position = builder.byte_buffer.tell()
         builder.write_string('')
-        self.assertEqual(0, builder.buffer.getvalue()[position])
-        self.assertEqual(position + 1, builder.buffer.tell())
+        self.assertEqual(0, builder.byte_buffer.getvalue()[position])
+        self.assertEqual(position + 1, builder.byte_buffer.tell())
 
-        position = builder.buffer.tell()
+        position = builder.byte_buffer.tell()
         builder.write_string('あ𠮟')
-        self.assertEqual(3, builder.buffer.getvalue()[position])
-        self.assertEqual('あ', builder.buffer.getvalue()[position + 1: position + 3].decode('utf-16-le'))
-        a = int.from_bytes(builder.buffer.getvalue()[position + 3: position + 5], byteorder='little')
-        b = int.from_bytes(builder.buffer.getvalue()[position + 5: position + 7], byteorder='little')
+        self.assertEqual(3, builder.byte_buffer.getvalue()[position])
+        self.assertEqual('あ', builder.byte_buffer.getvalue()[position + 1: position + 3].decode('utf-16-le'))
+        a = int.from_bytes(builder.byte_buffer.getvalue()[position + 3: position + 5], byteorder='little')
+        b = int.from_bytes(builder.byte_buffer.getvalue()[position + 5: position + 7], byteorder='little')
         self.assertEqual(55362, a)  # \ud842
         self.assertEqual(57247, b)  # \udf94
 
-        position = builder.buffer.tell()
+        position = builder.byte_buffer.tell()
         long_str = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789'
         len_ = len(long_str)
         builder.write_string(long_str)
-        self.assertEqual((len_ >> 8) | 0x80, builder.buffer.getvalue()[position])
-        self.assertEqual(len_ & 0xff, builder.buffer.getvalue()[position + 1])
-        self.assertEqual(position + 2 + 2 * len_, builder.buffer.tell())
+        self.assertEqual((len_ >> 8) | 0x80, builder.byte_buffer.getvalue()[position])
+        self.assertEqual(len_ & 0xff, builder.byte_buffer.getvalue()[position + 1])
+        self.assertEqual(position + 2 + 2 * len_, builder.byte_buffer.tell())
 
     def test_write_intarray(self):
         builder = DictionaryBuilder()
-        position = builder.buffer.tell()
+        position = builder.byte_buffer.tell()
         builder.write_intarray([])
-        self.assertEqual(0, builder.buffer.getvalue()[position])
+        self.assertEqual(0, builder.byte_buffer.getvalue()[position])
         builder.write_intarray([1, 2, 3])
-        self.assertEqual(3, builder.buffer.getvalue()[position + 1])
-        self.assertEqual(1, int.from_bytes(builder.buffer.getvalue()[position + 2:position + 6], byteorder='little', signed=True))
-        self.assertEqual(2, int.from_bytes(builder.buffer.getvalue()[position + 6:position + 10], byteorder='little', signed=True))
-        self.assertEqual(3, int.from_bytes(builder.buffer.getvalue()[position + 10:position + 14], byteorder='little', signed=True))
+        self.assertEqual(3, builder.byte_buffer.getvalue()[position + 1])
+        self.assertEqual(1, int.from_bytes(builder.byte_buffer.getvalue()[position + 2:position + 6], byteorder='little', signed=True))
+        self.assertEqual(2, int.from_bytes(builder.byte_buffer.getvalue()[position + 6:position + 10], byteorder='little', signed=True))
+        self.assertEqual(3, int.from_bytes(builder.byte_buffer.getvalue()[position + 10:position + 14], byteorder='little', signed=True))

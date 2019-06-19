@@ -5,6 +5,7 @@ from sortedcontainers import SortedDict
 
 from sudachipy.dictionarylib.dictionarybytebuffer import DictionaryByteBuffer
 from sudachipy.dictionarylib.wordinfo import WordInfo
+from sudachipy.dartsclone.doublearray import DoubleArray
 
 
 class DictionaryBuilder(object):
@@ -44,6 +45,7 @@ class DictionaryBuilder(object):
     @staticmethod
     def __default_logger():
         handler = StreamHandler()
+        handler.terminator = ""
         handler.setLevel(DEBUG)
         logger = getLogger(__name__)
         logger.setLevel(DEBUG)
@@ -52,7 +54,7 @@ class DictionaryBuilder(object):
         return logger
 
     def __init__(self, *, logger=None):
-        self.buffer = DictionaryByteBuffer()
+        self.byte_buffer = DictionaryByteBuffer()
         self.trie_keys = SortedDict()
         self.entries = []
         self.is_dictionary = False
@@ -69,7 +71,7 @@ class DictionaryBuilder(object):
         if len(cols) != self.__COLS_NUM:
             raise ValueError('invalid format')
         cols = [self.decode(col) for col in cols]
-        if not self.is_length_valid(cols):
+        if not self.__is_length_valid(cols):
             raise ValueError('string is too long')
         if not cols[0]:
             raise ValueError('headword is empty')
@@ -102,7 +104,7 @@ class DictionaryBuilder(object):
             cols[4], head_length, pos_id, cols[12], dict_from_wordid, '', cols[11], None, None, None)
         return entry
 
-    def is_length_valid(self, cols):
+    def __is_length_valid(self, cols):
         head_length = len(cols[0].encode('utf-8'))
         return head_length <= self.__STRING_MAX_LENGTH \
             and len(cols[4]) <= self.__STRING_MAX_LENGTH \
@@ -122,7 +124,7 @@ class DictionaryBuilder(object):
         pass
 
     def convert_postable(self, pos_list):
-        self.buffer.write_int(len(pos_list), 'short')
+        self.byte_buffer.write_int(len(pos_list), 'short')
         for pos in pos_list:
             for text in pos.split(','):
                 self.write_string(text)
@@ -130,8 +132,59 @@ class DictionaryBuilder(object):
     def convert_matrix(self, matrix_in):
         pass
 
-    def write_lexicon(self):
-        pass
+    def write_lexicon(self, io_out):
+        trie = DoubleArray()
+        wordid_table = DictionaryByteBuffer()
+        keys = []
+        vals = []
+        for key, word_ids in self.trie_keys.items():
+            keys.append(key)
+            vals.append(wordid_table.tell())
+            wordid_table.write_int(len(word_ids), 'byte')
+            for wid in word_ids:
+                wordid_table.write_int(wid, 'int')
+
+        self.logger.info('building the trie')
+
+        def progress_func(n, s):
+            if (n % (s / 10 + 1)) == 0:
+                self.logger('.')
+
+        trie.build(keys, vals, progress_func)
+        self.logger.info('done\n')
+
+        self.logger.info('writing the trie...')
+        self.byte_buffer.truncate(0)
+        self.byte_buffer.write_int(trie.size(), 'int')
+        self.byte_buffer.seek(0)
+        io_out.write(self.byte_buffer)
+        self.byte_buffer.truncate(0)
+
+        io_out.write(trie.byte_array())
+        self.__logging_size(trie.size() * 4 + 4)
+        del trie
+
+        self.logger.info('writing the word-ID table...')
+        self.byte_buffer.write_int(wordid_table.tell(), 'int')
+        self.byte_buffer.seek(0)
+        io_out.write(self.byte_buffer)
+        self.byte_buffer.truncate(0)
+
+        wordid_table.seek(0)
+        io_out.write(wordid_table)
+        self.__logging_size(wordid_table.tell() + 4)
+        del wordid_table
+
+        self.logger.info('writing the word parameters...')
+        self.byte_buffer.write_int(len(self.entries))
+        for entry in self.entries:
+            for p in entry.parameters[:3]:
+                self.byte_buffer.write_int(p, 'short')
+            self.byte_buffer.seek(0)
+            io_out.write(self.byte_buffer)
+            self.byte_buffer.truncate(0)
+        self.__logging_size(len(self.entries) * 6 + 4)
+        self.write_wordinfo(io_out)
 
     def write_wordinfo(self, io_out):
         pass
@@ -157,7 +210,7 @@ class DictionaryBuilder(object):
             raise ValueError('too many units')
         ids = []
         for word in words:
-            if self.is_id(word):
+            if self.__is_id(word):
                 ids.append(self.parse_id(word))
             else:
                 ids.append(self.word_to_id(word))
@@ -165,7 +218,8 @@ class DictionaryBuilder(object):
                     return ValueError('not found such a word')
         return ids
 
-    def is_id(self, text):
+    @staticmethod
+    def __is_id(text):
         return re.match(r'U?\d+', text)
 
     def parse_id(self, text):
@@ -210,16 +264,19 @@ class DictionaryBuilder(object):
             else:
                 len_ += 1
         self.write_stringlength(len_)
-        self.buffer.write_str(text)
+        self.byte_buffer.write_str(text)
 
     def write_stringlength(self, len_):
         if len_ <= self.__BYTE_MAX_VALUE:
-            self.buffer.write_int(len_, 'byte')
+            self.byte_buffer.write_int(len_, 'byte')
         else:
-            self.buffer.write_int((len_ >> 8) | 0x80, 'byte')
-            self.buffer.write_int((len_ & 0xFF), 'byte')
+            self.byte_buffer.write_int((len_ >> 8) | 0x80, 'byte')
+            self.byte_buffer.write_int((len_ & 0xFF), 'byte')
 
     def write_intarray(self, array):
-        self.buffer.write_int(len(array), 'byte')
+        self.byte_buffer.write_int(len(array), 'byte')
         for item in array:
-            self.buffer.write_int(item, 'int')
+            self.byte_buffer.write_int(item, 'int')
+
+    def __logging_size(self, size):
+        self.logger.info('{} bytes\n'.format(size))
