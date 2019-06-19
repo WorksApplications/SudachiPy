@@ -52,7 +52,7 @@ class UTF8InputTextBuilder:
         j = 0
         for i in range(len(self.modified_text)):
             # 注: サロゲートペア文字は考慮していない
-            for k in range(self.utf8_byte_length(ord(self.modified_text[i]))):
+            for _ in range(self.utf8_byte_length(ord(self.modified_text[i]))):
                 byte_indexes[j] = i
                 offsets[j] = self.text_offsets[i]
                 j += 1

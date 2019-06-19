@@ -13,11 +13,11 @@ class DoubleArrayLexicon(lexicon.Lexicon):
     def __init__(self, bytes_, offset):
         self.trie = dartsclone.doublearray.DoubleArray()
         bytes_.seek(offset)
-        self.size = int.from_bytes(bytes_.read(4), 'little')
+        size = int.from_bytes(bytes_.read(4), 'little')
         offset += 4
         bytes_.seek(offset)
-        array = struct.unpack_from("<{}I".format(self.size), bytes_, offset)
-        self.trie.set_array(array, self.size)
+        array = struct.unpack_from("<{}I".format(size), bytes_, offset)
+        self.trie.set_array(array, size)
         offset += self.trie.total_size()
 
         self.word_id_table = wordidtable.WordIdTable(bytes_, offset)
@@ -49,3 +49,6 @@ class DoubleArrayLexicon(lexicon.Lexicon):
 
     def get_word_info(self, word_id):
         return self.word_infos.get_word_info(word_id)
+
+    def size(self):
+        return self.word_params.size
