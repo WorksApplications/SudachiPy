@@ -20,12 +20,6 @@ class TestDictionaryBuilder(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_decode(self):
-        builder = DictionaryBuilder()
-        self.assertEqual('a,c', builder.decode('a\\u002cc'))
-        self.assertEqual('a,c', builder.decode('a\\u{002c}c'))
-        self.assertEqual('a𠮟c', builder.decode('a\\u{20b9f}c'))
-
     def test_parseline(self):
         builder = DictionaryBuilder()
         entry = builder.parse_line(
@@ -84,3 +78,29 @@ class TestDictionaryBuilder(unittest.TestCase):
         builder = DictionaryBuilder()
         builder.convert_postable(['a,b,c,d,e,f', 'g,h,i,j,k,l'])
         self.assertEqual(2 + 3 * 12, len(builder.byte_array))
+
+    def test_convert_matrix(self):
+        pass
+
+    def test_decode(self):
+        builder = DictionaryBuilder()
+        self.assertEqual('a,c', builder.decode('a\\u002cc'))
+        self.assertEqual('a,c', builder.decode('a\\u{002c}c'))
+        self.assertEqual('a𠮟c', builder.decode('a\\u{20b9f}c'))
+
+    def test_parse_splitinfo(self):
+        builder = DictionaryBuilder()
+        builder.entries.extend([None] * 4)
+        self.assertEqual([], builder.parse_splitinfo('*'))
+        self.assertEqual([1, 2, 3], builder.parse_splitinfo('1/2/3'))
+        self.assertEqual(2, builder.parse_splitinfo('1/U2/3')[1])
+        # Todo: add test for UserDictionaryBuilder
+
+    def test_parse_splitinfo_invalid_wordid(self):
+        builder = DictionaryBuilder()
+        with self.assertRaises(ValueError) as cm:
+            builder.parse_splitinfo('1/2/3')
+        self.assertEqual('invalid word ID', cm.exception.args[0])
+
+    def test_parse_splitinfo_invalid_system_wordid_in_userdict(self):
+        pass

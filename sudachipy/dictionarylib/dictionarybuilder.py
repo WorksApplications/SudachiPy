@@ -14,6 +14,7 @@ class DictionaryBuilder(object):
     __PATTERN_UNICODE_LITERAL = re.compile(r"\\u([0-9a-fA-F]{4}|{[0-9a-fA-F]+})")
     __ARRAY_MAX_LENGTH = __BYTE_MAX_VALUE  # max value of byte in Java
     __STRING_MAX_LENGTH = 32767  # max value of short in Java
+    is_user_dictionary = False
 
     class WordEntry:
         headword = None
@@ -156,5 +157,55 @@ class DictionaryBuilder(object):
             return uni_text.encode('ascii').decode('unicode-escape')
         return re.sub(self.__PATTERN_UNICODE_LITERAL, replace, str_)
 
-    def parse_splitinfo(self):
-        pass
+    def parse_splitinfo(self, info):
+        if info == '*':
+            return []
+        words = info.split('/')
+        if len(words) > self.__ARRAY_MAX_LENGTH:
+            raise ValueError('too many units')
+        ids = []
+        for word in words:
+            if self.is_id(word):
+                ids.append(self.parse_id(word))
+            else:
+                ids.append(self.word_to_id(word))
+                if ids[-1] < 0:
+                    return ValueError('not found such a word')
+        return ids
+
+    def is_id(self, text):
+        return re.match(r'U?\d+', text)
+
+    def parse_id(self, text):
+        if text.startswith('U'):
+            id_ = int(text[1:])
+            if self.is_user_dictionary:
+                id_ |= (1 << 28)
+        else:
+            id_ = int(text)
+        self.check_wordid(id_)
+        return id_
+
+    def word_to_id(self, text):
+        cols = text.split(',')
+        if len(cols) < 8:
+            raise ValueError('too few columns')
+        headword = self.decode(cols[0])
+        pos_id = self.get_posid([cols[i] for i in range(1, 7)])
+        if pos_id < 0:
+            raise ValueError('invalid part of speech')
+        reading = self.decode(cols[7])
+        return self.get_wordid(headword, pos_id, reading)
+
+    def get_wordid(self, headword, pos_id, reading_form):
+        for i in range(len(self.entries)):
+            info = self.entries[i].wordinfo
+            if info.surface == headword \
+                    and info.pos_id == pos_id \
+                    and info.reading_form == reading_form:
+                return i
+        return -1
+
+    def check_wordid(self, wid):
+        if wid < 0 or wid >= len(self.entries):
+            raise ValueError('invalid word ID')
