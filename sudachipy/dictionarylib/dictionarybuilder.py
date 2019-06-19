@@ -1,9 +1,9 @@
 import re
-from io import BytesIO
 from logging import DEBUG, StreamHandler, getLogger
 
 from sortedcontainers import SortedDict
 
+from sudachipy.dictionarylib.dictionarybytebuffer import DictionaryByteBuffer
 from sudachipy.dictionarylib.wordinfo import WordInfo
 
 
@@ -52,7 +52,7 @@ class DictionaryBuilder(object):
         return logger
 
     def __init__(self, *, logger=None):
-        self.buffer = BytesIO()
+        self.buffer = DictionaryByteBuffer()
         self.trie_keys = SortedDict()
         self.entries = []
         self.is_dictionary = False
@@ -122,7 +122,7 @@ class DictionaryBuilder(object):
         pass
 
     def convert_postable(self, pos_list):
-        self.buffer.write(len(pos_list).to_bytes(2, byteorder='little'))
+        self.buffer.write_int(len(pos_list), 'short')
         for pos in pos_list:
             for text in pos.split(','):
                 self.write_string(text)
@@ -210,18 +210,16 @@ class DictionaryBuilder(object):
             else:
                 len_ += 1
         self.write_stringlength(len_)
-        self.buffer.write(text.encode('utf-16-le'))
+        self.buffer.write_str(text)
 
     def write_stringlength(self, len_):
         if len_ <= self.__BYTE_MAX_VALUE:
-            self.buffer.write(len_.to_bytes(1, byteorder='little'))
+            self.buffer.write_int(len_, 'byte')
         else:
-            self.buffer.write(
-                ((len_ >> 8) | 0x80).to_bytes(1, byteorder='little'))
-            self.buffer.write(
-                (len_ & 0xFF).to_bytes(1, byteorder='little'))
+            self.buffer.write_int((len_ >> 8) | 0x80, 'byte')
+            self.buffer.write_int((len_ & 0xFF), 'byte')
 
     def write_intarray(self, array):
-        self.buffer.write(len(array).to_bytes(1, byteorder='little'))
+        self.buffer.write_int(len(array), 'byte')
         for item in array:
-            self.buffer.write(item.to_bytes(4, byteorder='little'))
+            self.buffer.write_int(item, 'int')
