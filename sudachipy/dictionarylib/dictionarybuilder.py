@@ -106,7 +106,13 @@ class DictionaryBuilder(object):
         pass
 
     def write_string(self, text):
-        self.write_stringlength(len(text))
+        len_ = 0
+        for c in text:
+            if 0x10000 <= ord(c) <= 0x10FFFF:
+                len_ += 2
+            else:
+                len_ += 1
+        self.write_stringlength(len_)
         self.byte_array.extend(text.encode('utf-16-le'))
 
     def write_stringlength(self, len_):
@@ -118,10 +124,10 @@ class DictionaryBuilder(object):
             self.byte_array.extend(
                 (len_ & 0xFF).to_bytes(1, byteorder='little'))
 
-    def write_in_array(self, array):
+    def write_intarray(self, array):
         self.byte_array.extend(len(array).to_bytes(1, byteorder='little'))
         for item in array:
-            self.byte_array.append(item.to_bytes(4, byteorder='little'))
+            self.byte_array.extend(item.to_bytes(4, byteorder='little'))
 
     def build(self):
         pass

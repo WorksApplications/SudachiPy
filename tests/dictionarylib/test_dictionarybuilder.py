@@ -104,3 +104,34 @@ class TestDictionaryBuilder(unittest.TestCase):
 
     def test_parse_splitinfo_invalid_system_wordid_in_userdict(self):
         pass
+
+    def test_write_string(self):
+        builder = DictionaryBuilder()
+        builder.write_string('')
+        self.assertEqual(0, builder.byte_array[0])
+        self.assertEqual(1, len(builder.byte_array))
+
+        builder.write_string('あ𠮟')
+        self.assertEqual(3, builder.byte_array[1])
+        self.assertEqual('あ', builder.byte_array[2:4].decode('utf-16-le'))
+        a = int.from_bytes(builder.byte_array[4:6], byteorder='little')
+        b = int.from_bytes(builder.byte_array[6:8], byteorder='little')
+        self.assertEqual(55362, a)  # \ud842
+        self.assertEqual(57247, b)  # \udf94
+
+        long_str = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789'
+        len_ = len(long_str)
+        builder.write_string(long_str)
+        self.assertEqual((len_ >> 8) | 0x80, builder.byte_array[8])
+        self.assertEqual(len_ & 0xff, builder.byte_array[9])
+
+    def test_write_intarray(self):
+        builder = DictionaryBuilder()
+        builder.write_intarray([])
+        self.assertEqual(1, len(builder.byte_array))
+        self.assertEqual(0, builder.byte_array[0])
+        builder.write_intarray([1, 2, 3])
+        self.assertEqual(3, builder.byte_array[1])
+        self.assertEqual(1, int.from_bytes(builder.byte_array[2:6], byteorder='little', signed=True))
+        self.assertEqual(2, int.from_bytes(builder.byte_array[6:10], byteorder='little', signed=True))
+        self.assertEqual(3, int.from_bytes(builder.byte_array[10:14], byteorder='little', signed=True))
