@@ -101,6 +101,9 @@ class DictionaryBuilder(object):
             for text in pos.split(','):
                 self.write_string(text)
 
+    def convert_matrix(self, matrix_in):
+        pass
+
     def write_string(self, text):
         self.write_stringlength(len(text))
         self.byte_array.extend(text.encode('utf-16-le'))
@@ -141,13 +144,16 @@ class DictionaryBuilder(object):
     def write_wordinfo(self):
         pass
 
+    UNICODE_BYTE_ZERO_MASK = 0xff
+    UNICODE_BYTE_ONE_MASK = 0xff00
+
     def decode(self, str_):
         def replace(match):
             uni_text = match.group()
-            uni_text = uni_text.replace('{', '')
-            uni_text = uni_text.replace('}', '')
-            uni_text = uni_text.encode('ascii').decode('unicode-escape')
-            return str(ord(uni_text))
+            uni_text = uni_text.replace('{', '').replace('}', '')
+            if len(uni_text) > 6:
+                uni_text = ('\\U000{}'.format(uni_text[2:]))
+            return uni_text.encode('ascii').decode('unicode-escape')
         return re.sub(self.__PATTERN_UNICODE_LITERAL, replace, str_)
 
     def parse_splitinfo(self):

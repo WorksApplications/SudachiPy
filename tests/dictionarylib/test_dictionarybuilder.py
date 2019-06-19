@@ -22,12 +22,9 @@ class TestDictionaryBuilder(unittest.TestCase):
 
     def test_decode(self):
         builder = DictionaryBuilder()
-        org_text = '日本\\u1234東京'
-        exp_text = '日本4660東京'
-        self.assertEqual(exp_text, builder.decode(org_text))
-        org_text = '日本\\u{1234}東京'
-        exp_text = '日本4660東京'
-        self.assertEqual(exp_text, builder.decode(org_text))
+        self.assertEqual('a,c', builder.decode('a\\u002cc'))
+        self.assertEqual('a,c', builder.decode('a\\u{002c}c'))
+        self.assertEqual('a𠮟c', builder.decode('a\\u{20b9f}c'))
 
     def test_parseline(self):
         builder = DictionaryBuilder()
