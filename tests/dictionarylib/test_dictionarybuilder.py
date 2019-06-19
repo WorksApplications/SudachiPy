@@ -166,8 +166,8 @@ class TestDictionaryBuilder(unittest.TestCase):
         lexicon_paths = [self.input_path]
         matrix_input_stream = open(self.matrix_path)
 
-        header = DictionaryHeader.from_items(DictionaryVersion.SYSTEM_DICT_VERSION, int(time.time()), 'test')
-        out_stream.write(header.bytes_)
+        header = DictionaryHeader(DictionaryVersion.SYSTEM_DICT_VERSION, int(time.time()), 'test')
+        out_stream.write(header.to_bytes())
         builder = DictionaryBuilder()
         builder.build(lexicon_paths, matrix_input_stream, out_stream)
         out_stream.close()

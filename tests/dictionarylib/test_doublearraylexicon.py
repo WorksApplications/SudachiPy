@@ -20,10 +20,10 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         filename = os.path.join(test_resources_dir, 'system.dic')
         with open(filename, 'r+b') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
-        header = DictionaryHeader(bytes_, 0)
+        header = DictionaryHeader.from_bytes(bytes_, 0)
         if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
             raise Exception('invalid system dictionary')
-        self.lexicon = DoubleArrayLexicon(bytes_, header.storage_size + 470)
+        self.lexicon = DoubleArrayLexicon(bytes_, header.storage_size() + 470)
 
     def test_lookup(self):
         res = self.lexicon.lookup('東京都'.encode('utf-8'), 0)
