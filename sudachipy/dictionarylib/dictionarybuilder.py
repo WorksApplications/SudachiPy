@@ -1,4 +1,6 @@
 import re
+from io import BytesIO
+from logging import DEBUG, StreamHandler, getLogger
 
 from sortedcontainers import SortedDict
 
@@ -39,19 +41,29 @@ class DictionaryBuilder(object):
         def get_list(self):
             return self.table
 
-    def __init__(self):
-        self.byte_array = bytearray()
+    @staticmethod
+    def __default_logger():
+        handler = StreamHandler()
+        handler.setLevel(DEBUG)
+        logger = getLogger(__name__)
+        logger.setLevel(DEBUG)
+        logger.addHandler(handler)
+        logger.propagate = False
+        return logger
+
+    def __init__(self, *, logger=None):
+        self.buffer = BytesIO()
         self.trie_keys = SortedDict()
         self.entries = []
         self.is_dictionary = False
         self.pos_table = self.PosTable()
+        self.logger = logger or self.__default_logger()
 
-    def is_length_valid(self, cols):
-        head_length = len(cols[0].encode('utf-8'))
-        return head_length <= self.__STRING_MAX_LENGTH \
-            and len(cols[4]) <= self.__STRING_MAX_LENGTH \
-            and len(cols[11]) <= self.__STRING_MAX_LENGTH \
-            and len(cols[12]) <= self.__STRING_MAX_LENGTH
+    def build(self, lexicon_paths, file_in, file_out):
+        pass
+
+    def build_lexicon(self, filename, io_in):
+        pass
 
     def parse_line(self, cols):
         if len(cols) != self.__COLS_NUM:
@@ -90,14 +102,27 @@ class DictionaryBuilder(object):
             cols[4], head_length, pos_id, cols[12], dict_from_wordid, '', cols[11], None, None, None)
         return entry
 
+    def is_length_valid(self, cols):
+        head_length = len(cols[0].encode('utf-8'))
+        return head_length <= self.__STRING_MAX_LENGTH \
+            and len(cols[4]) <= self.__STRING_MAX_LENGTH \
+            and len(cols[11]) <= self.__STRING_MAX_LENGTH \
+            and len(cols[12]) <= self.__STRING_MAX_LENGTH
+
     def add_to_trie(self, headword, word_id):
         key = headword.encode('utf-8')
         if key not in self.trie_keys:
             self.trie_keys[key] = []
         self.trie_keys[key].append(word_id)
 
+    def get_posid(self, *strs):
+        return self.pos_table.get_id(','.join(strs))
+
+    def write_grammar(self):
+        pass
+
     def convert_postable(self, pos_list):
-        self.byte_array.extend(len(pos_list).to_bytes(2, byteorder='little'))
+        self.buffer.write(len(pos_list).to_bytes(2, byteorder='little'))
         for pos in pos_list:
             for text in pos.split(','):
                 self.write_string(text)
@@ -105,54 +130,11 @@ class DictionaryBuilder(object):
     def convert_matrix(self, matrix_in):
         pass
 
-    def write_string(self, text):
-        len_ = 0
-        for c in text:
-            if 0x10000 <= ord(c) <= 0x10FFFF:
-                len_ += 2
-            else:
-                len_ += 1
-        self.write_stringlength(len_)
-        self.byte_array.extend(text.encode('utf-16-le'))
-
-    def write_stringlength(self, len_):
-        if len_ <= self.__BYTE_MAX_VALUE:
-            self.byte_array.extend(len_.to_bytes(1, byteorder='little'))
-        else:
-            self.byte_array.extend(
-                ((len_ >> 8) | 0x80).to_bytes(1, byteorder='little'))
-            self.byte_array.extend(
-                (len_ & 0xFF).to_bytes(1, byteorder='little'))
-
-    def write_intarray(self, array):
-        self.byte_array.extend(len(array).to_bytes(1, byteorder='little'))
-        for item in array:
-            self.byte_array.extend(item.to_bytes(4, byteorder='little'))
-
-    def build(self):
-        pass
-
-    def build_lexicon(self):
-        pass
-
-    def get_posid(self, *strs):
-        return self.pos_table.get_id(','.join(strs))
-
-    def check_splitinfo_format(self, str_):
-        if str_.count('/') + 1 > self.__ARRAY_MAX_LENGTH:
-            raise ValueError('too many units')
-
-    def write_grammar(self):
-        pass
-
     def write_lexicon(self):
         pass
 
-    def write_wordinfo(self):
+    def write_wordinfo(self, io_out):
         pass
-
-    UNICODE_BYTE_ZERO_MASK = 0xff
-    UNICODE_BYTE_ONE_MASK = 0xff00
 
     def decode(self, str_):
         def replace(match):
@@ -162,6 +144,10 @@ class DictionaryBuilder(object):
                 uni_text = ('\\U000{}'.format(uni_text[2:]))
             return uni_text.encode('ascii').decode('unicode-escape')
         return re.sub(self.__PATTERN_UNICODE_LITERAL, replace, str_)
+
+    def check_splitinfo_format(self, str_):
+        if str_.count('/') + 1 > self.__ARRAY_MAX_LENGTH:
+            raise ValueError('too many units')
 
     def parse_splitinfo(self, info):
         if info == '*':
@@ -215,3 +201,27 @@ class DictionaryBuilder(object):
     def check_wordid(self, wid):
         if wid < 0 or wid >= len(self.entries):
             raise ValueError('invalid word ID')
+
+    def write_string(self, text):
+        len_ = 0
+        for c in text:
+            if 0x10000 <= ord(c) <= 0x10FFFF:
+                len_ += 2
+            else:
+                len_ += 1
+        self.write_stringlength(len_)
+        self.buffer.write(text.encode('utf-16-le'))
+
+    def write_stringlength(self, len_):
+        if len_ <= self.__BYTE_MAX_VALUE:
+            self.buffer.write(len_.to_bytes(1, byteorder='little'))
+        else:
+            self.buffer.write(
+                ((len_ >> 8) | 0x80).to_bytes(1, byteorder='little'))
+            self.buffer.write(
+                (len_ & 0xFF).to_bytes(1, byteorder='little'))
+
+    def write_intarray(self, array):
+        self.buffer.write(len(array).to_bytes(1, byteorder='little'))
+        for item in array:
+            self.buffer.write(item.to_bytes(4, byteorder='little'))
