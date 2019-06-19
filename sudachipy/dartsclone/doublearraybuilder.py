@@ -32,10 +32,12 @@ class DoubleArrayBuilder(object):
             self.build_from_key_set_header(key_set)
 
     def copy(self):
-        buffer = []
+        from sudachipy.dictionarylib.dictionarybytebuffer import DictionaryByteBuffer
+        buf = DictionaryByteBuffer()
         for u in self.units:
-            buffer.append(u.unit)
-        return buffer
+            buf.write_int(u.unit, 'int')
+        buf.seek(0)
+        return buf
 
     def clear(self):
         self.units = []
@@ -53,8 +55,9 @@ class DoubleArrayBuilder(object):
         dawg_builder.init()
         for i in range(key_set.size()):
             dawg_builder.insert(key_set.get_key(i), key_set.get_value(i))
-            if (self.progress_function is not None):
-                self.progress_function.accept(i + 1, key_set.size() + 1)
+            if self.progress_function is not None:
+                # self.progress_function.accept(i + 1, key_set.size() + 1)
+                self.progress_function(i + 1, key_set.size() + 1)
         dawg_builder.finish()
 
     def build_from_dawg_header(self, dawg):
@@ -202,7 +205,8 @@ class DoubleArrayBuilder(object):
                 if value is -1:
                     value = key_set.get_value(i)
                 if self.progress_function is not None:
-                    self.progress_function.accept(i + 1, key_set.size() + 1)
+                    # self.progress_function.accept(i + 1, key_set.size() + 1)
+                    self.progress_function(i + 1, key_set.size() + 1)
 
             if len(self.labels) is 0:
                 self.labels.append(label)

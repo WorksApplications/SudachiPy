@@ -1,3 +1,4 @@
+import csv
 import re
 from logging import DEBUG, StreamHandler, getLogger
 
@@ -61,11 +62,30 @@ class DictionaryBuilder(object):
         self.pos_table = self.PosTable()
         self.logger = logger or self.__default_logger()
 
-    def build(self, lexicon_paths, file_in, file_out):
-        pass
+    def build(self, lexicon_paths, matrix_input_stream, out_stream):
+        self.logger.info('reading the source file...')
+        for path in lexicon_paths:
+            with open(path) as rf:
+                self.build_lexicon(rf)
+        self.logger.info('{} words\n'.format(len(self.entries)))
 
-    def build_lexicon(self, filename, io_in):
-        pass
+        self.write_grammar(matrix_input_stream, out_stream)
+        self.write_lexicon(out_stream)
+
+    def build_lexicon(self, lexicon_input_stream):
+        line_no = -1
+        try:
+            for i, row in enumerate(csv.reader(lexicon_input_stream)):
+                line_no = -1
+                entry = self.parse_line(row)
+                if entry.headword:
+                    self.add_to_trie(entry.headword, len(self.entries))
+                self.entries.append(entry)
+        except Exception as e:
+            if line_no > 0:
+                self.logger.error(
+                    '{} at line {} in {}\n'.format(e.args[0], line_no, lexicon_input_stream.name))
+            raise e
 
     def parse_line(self, cols):
         if len(cols) != self.__COLS_NUM:
@@ -120,8 +140,27 @@ class DictionaryBuilder(object):
     def get_posid(self, *strs):
         return self.pos_table.get_id(','.join(strs))
 
-    def write_grammar(self):
-        pass
+    def write_grammar(self, matrix_input_stream, output_stream):
+        self.logger.info('writing the POS table...')
+        self.convert_postable(self.pos_table.get_list())
+        self.byte_buffer.seek(0)
+        output_stream.write(self.byte_buffer.getvalue())
+        self.byte_buffer.truncate(0)
+        self.logger.info('done\n')
+        self.logger.info('writing the connection matrix...')
+        if not matrix_input_stream:
+            self.byte_buffer.write_int(0, 'short')
+            self.byte_buffer.write_int(0, 'short')
+            self.byte_buffer.seek(0)
+            output_stream.write(self.byte_buffer)
+            self.byte_buffer.truncate(0)
+            return
+        matrix = self.convert_matrix(matrix_input_stream)
+        self.byte_buffer.seek(0)
+        output_stream.write(self.byte_buffer.getvalue())
+        self.byte_buffer.truncate(0)
+        output_stream.write(matrix.getvalue())
+        self.logger.info('done\n')
 
     def convert_postable(self, pos_list):
         self.byte_buffer.write_int(len(pos_list), 'short')
@@ -131,9 +170,9 @@ class DictionaryBuilder(object):
 
     def convert_matrix(self, matrix_input):
         header = matrix_input.readline().strip()
-        if not header:
-            raise ValueError('invalid format at line {}'.format(matrix_input.linenum()))
-        lr = header.decode('utf-8').split()
+        if re.fullmatch(r"\s*", header):
+            raise ValueError('invalid format at line 0')
+        lr = header.split()
         lsize, rsize = [int(x) for x in lr]
         self.byte_buffer.write_int(lsize, 'short')
         self.byte_buffer.write_int(rsize, 'short')
@@ -141,7 +180,7 @@ class DictionaryBuilder(object):
         matrix = DictionaryByteBuffer()
 
         for i, line in enumerate(matrix_input.readlines()):
-            line = line.decode('utf-8').strip()
+            line = line.strip()
             if re.fullmatch(r"\s*", line) or re.match("#", line):
                 continue
             cols = line.split()
@@ -167,7 +206,7 @@ class DictionaryBuilder(object):
             for wid in word_ids:
                 wordid_table.write_int(wid, 'int')
 
-        self.logger.info('building the trie')
+        self.logger.info('building the trie...')
 
         def progress_func(n, s):
             if (n % (s / 10 + 1)) == 0:
@@ -178,33 +217,33 @@ class DictionaryBuilder(object):
 
         self.logger.info('writing the trie...')
         self.byte_buffer.truncate(0)
-        self.byte_buffer.write_int(trie.size(), 'int')
+        self.byte_buffer.write_int(trie.size, 'int')
         self.byte_buffer.seek(0)
-        io_out.write(self.byte_buffer)
+        io_out.write(self.byte_buffer.getvalue())
         self.byte_buffer.truncate(0)
 
-        io_out.write(trie.byte_array())
-        self.__logging_size(trie.size() * 4 + 4)
+        io_out.write(trie.byte_array().getvalue())
+        self.__logging_size(trie.size * 4 + 4)
         del trie
 
         self.logger.info('writing the word-ID table...')
         self.byte_buffer.write_int(wordid_table.tell(), 'int')
         self.byte_buffer.seek(0)
-        io_out.write(self.byte_buffer)
+        io_out.write(self.byte_buffer.getvalue())
         self.byte_buffer.truncate(0)
 
         wordid_table.seek(0)
-        io_out.write(wordid_table)
+        io_out.write(wordid_table.getvalue())
         self.__logging_size(wordid_table.tell() + 4)
         del wordid_table
 
         self.logger.info('writing the word parameters...')
-        self.byte_buffer.write_int(len(self.entries))
+        self.byte_buffer.write_int(len(self.entries), 'int')
         for entry in self.entries:
             for p in entry.parameters[:3]:
                 self.byte_buffer.write_int(p, 'short')
             self.byte_buffer.seek(0)
-            io_out.write(self.byte_buffer)
+            io_out.write(self.byte_buffer.getvalue())
             self.byte_buffer.truncate(0)
         self.__logging_size(len(self.entries) * 6 + 4)
         self.write_wordinfo(io_out)
