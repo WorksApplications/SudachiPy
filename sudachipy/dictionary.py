@@ -3,9 +3,9 @@ import os.path
 
 from . import config
 from . import dictionarylib
-from .dictionarylib.dictionaryversion import DictionaryVersion
-from . import tokenizer
 from . import plugin
+from . import tokenizer
+from .dictionarylib.dictionaryversion import DictionaryVersion
 
 
 class Dictionary:
@@ -16,6 +16,7 @@ class Dictionary:
         self.oov_provider_plugins = []
         self.path_rewrite_plugins = []
         self.buffers = []
+        self.header = None
 
         self.read_system_dictionary(os.path.join(config.RESOURCEDIR, settings["systemDict"]))
         """
@@ -58,10 +59,10 @@ class Dictionary:
         self.buffers.append(bytes_)
 
         offset = 0
-        self.header = dictionarylib.dictionaryheader.DictionaryHeader(bytes_, offset)
+        self.header = dictionarylib.dictionaryheader.DictionaryHeader.from_bytes(bytes_, offset)
         if self.header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
             raise Exception("invalid system dictionary")
-        offset += self.header.storage_size
+        offset += self.header.storage_size()
 
         self.grammar = dictionarylib.grammar.Grammar(bytes_, offset)
         offset += self.grammar.get_storage_size()

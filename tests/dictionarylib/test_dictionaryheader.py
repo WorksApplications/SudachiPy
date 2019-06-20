@@ -1,5 +1,5 @@
-import os
 import mmap
+import os
 import unittest
 
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
@@ -18,7 +18,7 @@ class TestDictionaryHeader(unittest.TestCase):
         with open(filename, 'r+b') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         offset = 0
-        self.header = DictionaryHeader(bytes_, offset)
+        self.header = DictionaryHeader.from_bytes(bytes_, offset)
 
     def test_version(self):
         self.assertEqual(DictionaryVersion.SYSTEM_DICT_VERSION, self.header.version)

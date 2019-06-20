@@ -35,7 +35,7 @@ class DefaultInputTextPlugin:
             # 1. replace char without normalize
             max_length = min(self.key_lengths.get(original, 0), len(text) - i)
             for l in range(max_length, 0, -1):
-                replace = self.replace_char_map.get(text[i:i+l])
+                replace = self.replace_char_map.get(text[i:i + l])
                 if replace:
                     builder.replace(i + offset, i + l + offset, replace)
                     next_offset += len(replace) - l

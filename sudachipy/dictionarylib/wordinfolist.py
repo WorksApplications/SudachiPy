@@ -1,5 +1,3 @@
-import struct
-
 from . import wordinfo
 
 
@@ -37,7 +35,7 @@ class WordInfoList(object):
 
     def word_id_to_offset(self, word_id):
         i = self.offset + 4 * word_id
-        return int.from_bytes(self.bytes[i:i+4], 'little', signed=False)
+        return int.from_bytes(self.bytes[i:i + 4], 'little', signed=False)
 
     def buffer_to_string_length(self):
         length = self.bytes.read_byte()

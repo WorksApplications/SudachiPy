@@ -2,8 +2,8 @@ import os
 from collections import defaultdict
 
 from sudachipy import config
-from sudachipy.dictionarylib import categorytype
 from sudachipy import latticenode
+from sudachipy.dictionarylib import categorytype
 from sudachipy.dictionarylib import wordinfo
 
 
