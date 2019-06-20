@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from . import dawgbuilder
 from . import doublearraybuilderunit
 
@@ -32,10 +34,10 @@ class DoubleArrayBuilder(object):
             self.build_from_key_set_header(key_set)
 
     def copy(self):
-        from sudachipy.dictionarylib.dictionarybytebuffer import DictionaryByteBuffer
-        buf = DictionaryByteBuffer()
+        buf = BytesIO()
         for u in self.units:
-            buf.write_int(u.unit, 'int', signed=False)
+            buf.write(u.unit.to_bytes(4, byteorder='little', signed=False))
+            # buf.write_int(u.unit, 'int', signed=False)
         buf.seek(0)
         return buf
 

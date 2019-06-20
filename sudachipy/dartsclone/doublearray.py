@@ -40,9 +40,9 @@ class DoubleArray(object):
         builder.build(key_set)
         self.buffer = builder.copy()
         bytes_ = self.buffer.getvalue()
-        self.array = []
-        for i in range(len(bytes_) // 4):
-            self.array.append(int.from_bytes(bytes_[4 * i: 4 * i + 4], byteorder='little'))
+        self.array = [
+            int.from_bytes(bytes_[4 * i: 4 * i + 4], byteorder='little')
+            for i in range(len(bytes_) // 4)]
         self.size = len(self.array)
         # for i, binary in enumerate(self.array):
         #     print("{0:03d}".format(i), "{0:032b}".format(binary), file=sys.stderr)
@@ -55,7 +55,7 @@ class DoubleArray(object):
         self.array = self.buffer.as_int_buffer()
         self.size = self.array.capacity()
 
-    def save(output_file):
+    def save(self, output_file):
         pass
 
     def exact_match_search(self, key):

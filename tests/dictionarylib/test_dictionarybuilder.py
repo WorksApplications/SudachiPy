@@ -216,6 +216,11 @@ class TestDictionaryBuilder(unittest.TestCase):
 
     @staticmethod
     def read_system_dictionary(filename):
+        """
+        Copy of sudachipy.dictionary.Dictionary.read_system_dictionary
+        :param filename:
+        :return:
+        """
         import mmap
         from sudachipy import dictionarylib
         buffers = []

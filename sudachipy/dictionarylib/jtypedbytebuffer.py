@@ -1,9 +1,16 @@
 from io import BytesIO
 
 
-class DictionaryByteBuffer(BytesIO):
+class JTypedByteBuffer(BytesIO):
+    """
+    A interface of BytesIO to write dictionary
+    """
 
     __ENDIAN = 'little'
+
+    @classmethod
+    def from_bytes(cls, bytes_io):
+        return cls(bytes_io.getvalue())
 
     def write_int(self, int_, type_, signed=True):
         if type_ == 'byte':
@@ -20,7 +27,6 @@ class DictionaryByteBuffer(BytesIO):
             len_ = 8
         else:
             raise ValueError('{} is invalid type'.format(type_))
-        # print(int_, type_, len_)
         self.write(int_.to_bytes(len_, byteorder=self.__ENDIAN, signed=signed))
 
     def write_str(self, text):

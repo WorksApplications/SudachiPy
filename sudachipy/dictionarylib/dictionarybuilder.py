@@ -5,7 +5,7 @@ from logging import DEBUG, StreamHandler, getLogger
 from sortedcontainers import SortedDict
 
 from sudachipy.dartsclone.doublearray import DoubleArray
-from sudachipy.dictionarylib.dictionarybytebuffer import DictionaryByteBuffer
+from sudachipy.dictionarylib.jtypedbytebuffer import JTypedByteBuffer
 from sudachipy.dictionarylib.wordinfo import WordInfo
 
 
@@ -55,7 +55,7 @@ class DictionaryBuilder(object):
         return logger
 
     def __init__(self, *, logger=None):
-        self.byte_buffer = DictionaryByteBuffer()
+        self.byte_buffer = JTypedByteBuffer()
         self.trie_keys = SortedDict()
         self.entries = []
         self.is_dictionary = False
@@ -179,7 +179,7 @@ class DictionaryBuilder(object):
         self.byte_buffer.write_int(lsize, 'short')
         self.byte_buffer.write_int(rsize, 'short')
 
-        matrix = DictionaryByteBuffer()
+        matrix = JTypedByteBuffer()
 
         for i, line in enumerate(matrix_input.readlines()):
             line = line.strip()
@@ -198,7 +198,7 @@ class DictionaryBuilder(object):
 
     def write_lexicon(self, io_out):
         trie = DoubleArray()
-        wordid_table = DictionaryByteBuffer()
+        wordid_table = JTypedByteBuffer()
         keys = []
         vals = []
         for key, word_ids in self.trie_keys.items():
@@ -253,7 +253,7 @@ class DictionaryBuilder(object):
     def write_wordinfo(self, io_out):
         mark = io_out.tell()
         io_out.seek(mark * 4 + len(self.entries))
-        offsets = DictionaryByteBuffer()
+        offsets = JTypedByteBuffer()
         self.logger.info('writing the word_infos...')
         base = io_out.tell()
         for entry in self.entries:

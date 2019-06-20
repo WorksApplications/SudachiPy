@@ -1,6 +1,6 @@
 import struct
 
-from sudachipy.dictionarylib.dictionarybytebuffer import DictionaryByteBuffer
+from sudachipy.dictionarylib.jtypedbytebuffer import JTypedByteBuffer
 
 
 class DictionaryHeader:
@@ -27,7 +27,7 @@ class DictionaryHeader:
         return cls(version, create_time, description)
 
     def to_bytes(self):
-        buf = DictionaryByteBuffer(b'\x00' * (16 + self.__DESCRIPTION_SIZE))
+        buf = JTypedByteBuffer(b'\x00' * (16 + self.__DESCRIPTION_SIZE))
         buf.seek(0)
         buf.write_int(self.version, 'long')
         buf.write_int(self.create_time, 'long')
