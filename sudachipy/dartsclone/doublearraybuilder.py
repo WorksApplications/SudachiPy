@@ -35,7 +35,7 @@ class DoubleArrayBuilder(object):
         from sudachipy.dictionarylib.dictionarybytebuffer import DictionaryByteBuffer
         buf = DictionaryByteBuffer()
         for u in self.units:
-            buf.write_int(u.unit, 'int')
+            buf.write_int(u.unit, 'int', signed=False)
         buf.seek(0)
         return buf
 

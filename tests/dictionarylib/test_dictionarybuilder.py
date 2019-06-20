@@ -164,7 +164,7 @@ class TestDictionaryBuilder(unittest.TestCase):
 
         out_stream = open(out_path, 'wb')
         lexicon_paths = [self.input_path]
-        matrix_input_stream = open(self.matrix_path)
+        matrix_input_stream = open(self.matrix_path, 'r')
 
         header = DictionaryHeader(DictionaryVersion.SYSTEM_DICT_VERSION, int(time.time()), 'test')
         out_stream.write(header.to_bytes())
@@ -172,3 +172,67 @@ class TestDictionaryBuilder(unittest.TestCase):
         builder.build(lexicon_paths, matrix_input_stream, out_stream)
         out_stream.close()
         matrix_input_stream.close()
+
+        buffers, header, grammar, lexicon_set = self.read_system_dictionary(out_path)
+        lexicon = lexicon_set.lexicons[0]
+
+        # header
+        self.assertEqual(DictionaryVersion.SYSTEM_DICT_VERSION, header.version)
+        self.assertEqual('test', header.description)
+
+        # grammar
+        self.assertEqual(2, grammar.get_part_of_speech_size())
+        self.assertEqual(["名詞", "固有名詞", "地名", "一般", "*", "*"], grammar.get_part_of_speech_string(0))
+        self.assertEqual(["名詞", "普通名詞", "一般", "*", "*", "*"], grammar.get_part_of_speech_string(1))
+        self.assertEqual(200, grammar.get_connect_cost(0, 0))
+
+        # lexicon
+        self.assertEqual(3, lexicon.size())
+        self.assertEqual(0, lexicon.get_cost(0))
+        wi = lexicon.get_word_info(0)
+        self.assertEqual('東京都', wi.surface)
+        self.assertEqual('東京都', wi.normalized_form)
+        self.assertEqual(-1, wi.dictionary_form_word_id)
+        self.assertEqual('ヒガシキョウト', wi.reading_form)
+        self.assertEqual(0, wi.pos_id)
+        self.assertEqual([1, 2], wi.a_unit_split)
+        self.assertEqual([], wi.b_unit_split)
+        lst = lexicon.lookup('東京都'.encode('utf-8'), 0)
+        self.assertEqual(1, len(lst))
+        self.assertEqual((0, len('東京都'.encode('utf-8'))), lst[0])
+
+        self.assertEqual(-1, lexicon.get_left_id(1))
+        self.assertEqual(0, lexicon.get_cost(1))
+        wi = lexicon.get_word_info(1)
+        self.assertEqual('東', wi.surface)
+        self.assertEqual('ひがし', wi.normalized_form)
+        self.assertEqual(-1, wi.dictionary_form_word_id)
+        self.assertEqual('ヒガシ', wi.reading_form)
+        self.assertEqual(1, wi.pos_id)
+        self.assertEqual([], wi.a_unit_split)
+        self.assertEqual([], wi.b_unit_split)
+        lst = lexicon.lookup('東'.encode('utf-8'), 0)
+        self.assertEqual(0, len(lst))
+
+    @staticmethod
+    def read_system_dictionary(filename):
+        import mmap
+        from sudachipy import dictionarylib
+        buffers = []
+        if filename is None:
+            raise AttributeError("system dictionary is not specified")
+        with open(filename, 'r+b') as system_dic:
+            bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
+        buffers.append(bytes_)
+
+        offset = 0
+        header = dictionarylib.dictionaryheader.DictionaryHeader.from_bytes(bytes_, offset)
+        if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
+            raise Exception("invalid system dictionary")
+        offset += header.storage_size()
+
+        grammar = dictionarylib.grammar.Grammar(bytes_, offset)
+        offset += grammar.get_storage_size()
+
+        lexicon = dictionarylib.lexiconset.LexiconSet(dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, offset))
+        return buffers, header, grammar, lexicon

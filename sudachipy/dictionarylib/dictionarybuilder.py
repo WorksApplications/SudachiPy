@@ -103,7 +103,7 @@ class DictionaryBuilder(object):
         # left-id, right-id, cost
         entry.parameters = [int(cols[i]) for i in [1, 2, 3]]
         # part of speech
-        pos_id = self.get_posid(*cols[5:11])
+        pos_id = self.get_posid(cols[5:11])
         if pos_id < 0:
             raise ValueError('invalid part of speech')
 
@@ -137,30 +137,32 @@ class DictionaryBuilder(object):
             self.trie_keys[key] = []
         self.trie_keys[key].append(word_id)
 
-    def get_posid(self, *strs):
+    def get_posid(self, strs):
         return self.pos_table.get_id(','.join(strs))
 
     def write_grammar(self, matrix_input_stream, output_stream):
         self.logger.info('writing the POS table...')
         self.convert_postable(self.pos_table.get_list())
         self.byte_buffer.seek(0)
-        output_stream.write(self.byte_buffer.getvalue())
-        self.byte_buffer.truncate(0)
-        self.logger.info('done\n')
+        output_stream.write(self.byte_buffer.read())
+        self.__logging_size(self.byte_buffer.tell())
+        self.byte_buffer.clear()
+
         self.logger.info('writing the connection matrix...')
         if not matrix_input_stream:
             self.byte_buffer.write_int(0, 'short')
             self.byte_buffer.write_int(0, 'short')
             self.byte_buffer.seek(0)
-            output_stream.write(self.byte_buffer)
-            self.byte_buffer.truncate(0)
+            output_stream.write(self.byte_buffer.read())
+            self.__logging_size(self.byte_buffer.tell())
+            self.byte_buffer.clear()
             return
         matrix = self.convert_matrix(matrix_input_stream)
         self.byte_buffer.seek(0)
-        output_stream.write(self.byte_buffer.getvalue())
-        self.byte_buffer.truncate(0)
-        output_stream.write(matrix.getvalue())
-        self.logger.info('done\n')
+        output_stream.write(self.byte_buffer.read())
+        self.byte_buffer.clear()
+        output_stream.write(matrix.read())
+        self.__logging_size(matrix.tell() + 4)
 
     def convert_postable(self, pos_list):
         self.byte_buffer.write_int(len(pos_list), 'short')
@@ -211,45 +213,77 @@ class DictionaryBuilder(object):
         def progress_func(n, s):
             if (n % (s / 10 + 1)) == 0:
                 self.logger('.')
-
         trie.build(keys, vals, progress_func)
         self.logger.info('done\n')
 
         self.logger.info('writing the trie...')
-        self.byte_buffer.truncate(0)
+        self.byte_buffer.clear()
         self.byte_buffer.write_int(trie.size, 'int')
         self.byte_buffer.seek(0)
-        io_out.write(self.byte_buffer.getvalue())
-        self.byte_buffer.truncate(0)
+        io_out.write(self.byte_buffer.read())
+        self.byte_buffer.clear()
 
-        io_out.write(trie.byte_array().getvalue())
+        io_out.write(trie.byte_array().read())
         self.__logging_size(trie.size * 4 + 4)
         del trie
 
         self.logger.info('writing the word-ID table...')
         self.byte_buffer.write_int(wordid_table.tell(), 'int')
         self.byte_buffer.seek(0)
-        io_out.write(self.byte_buffer.getvalue())
-        self.byte_buffer.truncate(0)
+        io_out.write(self.byte_buffer.read())
+        self.byte_buffer.clear()
 
         wordid_table.seek(0)
-        io_out.write(wordid_table.getvalue())
+        io_out.write(wordid_table.read())
         self.__logging_size(wordid_table.tell() + 4)
         del wordid_table
 
         self.logger.info('writing the word parameters...')
         self.byte_buffer.write_int(len(self.entries), 'int')
         for entry in self.entries:
-            for p in entry.parameters[:3]:
-                self.byte_buffer.write_int(p, 'short')
+            self.byte_buffer.write_int(entry.parameters[0], 'short')
+            self.byte_buffer.write_int(entry.parameters[1], 'short')
+            self.byte_buffer.write_int(entry.parameters[2], 'short')
             self.byte_buffer.seek(0)
-            io_out.write(self.byte_buffer.getvalue())
-            self.byte_buffer.truncate(0)
+            io_out.write(self.byte_buffer.read())
+            self.byte_buffer.clear()
         self.__logging_size(len(self.entries) * 6 + 4)
         self.write_wordinfo(io_out)
 
     def write_wordinfo(self, io_out):
-        pass
+        mark = io_out.tell()
+        io_out.seek(mark * 4 + len(self.entries))
+        offsets = DictionaryByteBuffer()
+        self.logger.info('writing the word_infos...')
+        base = io_out.tell()
+        for entry in self.entries:
+            wi = entry.wordinfo
+            offsets.write_int(io_out.tell(), 'int')
+            self.write_string(wi.surface)
+            self.write_stringlength(wi.length())
+            self.byte_buffer.write_int(wi.pos_id, 'short')
+            if wi.normalized_form == wi.surface:
+                self.write_string('')
+            else:
+                self.write_string(wi.normalized_form)
+            self.byte_buffer.write_int(wi.dictionary_form_word_id, 'int')
+            if wi.reading_form == wi.surface:
+                self.write_string('')
+            else:
+                self.write_string(wi.reading_form)
+
+            self.write_intarray(self.parse_splitinfo(entry.aunit_split_string))
+            self.write_intarray(self.parse_splitinfo(entry.bunit_split_string))
+            self.write_intarray(self.parse_splitinfo(entry.cunit_split_string))
+            self.byte_buffer.seek(0)
+            io_out.write(self.byte_buffer.read())
+            self.byte_buffer.clear()
+        self.__logging_size(io_out.tell() - base)
+        self.logger.info('writing word_info offsets...')
+        io_out.seek(mark)
+        offsets.seek(0)
+        io_out.write(offsets.read())
+        self.__logging_size(offsets.tell())
 
     def decode(self, str_):
         def replace(match):

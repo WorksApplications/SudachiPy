@@ -16,6 +16,7 @@ class Dictionary:
         self.oov_provider_plugins = []
         self.path_rewrite_plugins = []
         self.buffers = []
+        self.header = None
 
         self.read_system_dictionary(os.path.join(config.RESOURCEDIR, settings["systemDict"]))
         """
