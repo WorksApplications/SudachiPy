@@ -35,7 +35,7 @@ class UserDictionaryBuilder(DictionaryBuilder):
         wid = super().get_wordid(headword, pos_id, reading_form)
         if wid >= 0:
             return wid | (1 << 28)
-        return self.system_lexicon.get_wordid(headword, pos_id, reading_form)
+        return self.system_lexicon.get_word_id1(headword, pos_id, reading_form)
 
     def check_wordid(self, wid):
         if wid >= (1 << 28):
