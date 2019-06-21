@@ -19,5 +19,9 @@ class _DictionaryVersion:
     def USER_DICT_VERSION():
         return 0xa50f31188bd211e7
 
+    @constant
+    def USER_DICT_VERSION_2():
+        return 0x9fdeb5a90168d868
+
 
 DictionaryVersion = _DictionaryVersion()
