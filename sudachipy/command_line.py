@@ -5,14 +5,13 @@ import os
 import sys
 import time
 
+from . import config
+from . import dictionary
+from . import tokenizer
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
 from .dictionarylib.dictionaryheader import DictionaryHeader
 from .dictionarylib.dictionaryversion import DictionaryVersion
 from .dictionarylib.userdictionarybuilder import UserDictionaryBuilder
-
-from . import config
-from . import dictionary
-from . import tokenizer
 
 
 def run(tokenizer, mode, input, output, print_all):
@@ -174,14 +173,15 @@ def main():
 
 # Todo: delete this function in the future
 def _read_system_dictionary(filename):
-    from dictionarylib.dictionaryversion import DictionaryVersion
+    from .dictionarylib.dictionaryversion import DictionaryVersion
+    from .dictionarylib.dictionaryheader import DictionaryHeader
+    from . import dictionarylib
     """
     Copy of sudachipy.dictionary.Dictionary.read_system_dictionary
     :param filename:
     :return:
     """
     import mmap
-    from sudachipy import dictionarylib
     buffers = []
     if filename is None:
         raise AttributeError("system dictionary is not specified")
@@ -190,7 +190,7 @@ def _read_system_dictionary(filename):
     buffers.append(bytes_)
 
     offset = 0
-    header = dictionarylib.dictionaryheader.DictionaryHeader.from_bytes(bytes_, offset)
+    header = DictionaryHeader.from_bytes(bytes_, offset)
     if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
         raise Exception("invalid system dictionary")
     offset += header.storage_size()
