@@ -5,6 +5,7 @@ class WordInfoList(object):
     def __init__(self, bytes_, offset, word_size):
         self.bytes = bytes_
         self.offset = offset
+        self._word_size = word_size
 
     def get_word_info(self, word_id):
         orig_pos = self.bytes.tell()
@@ -54,3 +55,6 @@ class WordInfoList(object):
         for _ in range(length):
             array.append(int.from_bytes(self.bytes.read(4), 'little', signed=True))
         return array
+
+    def size(self):
+        return self._word_size

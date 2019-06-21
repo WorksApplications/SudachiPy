@@ -40,7 +40,7 @@ class Grammar:
         return self.pos_list[pos_id]
 
     def get_part_of_speech_id(self, pos):
-        return self.pos_list.index(pos)
+        return self.pos_list.index(pos) if pos in self.pos_list else -1
 
     def get_connect_cost(self, left_id, right_id):
         return self.bytes_get_short(self.connect_table_bytes, self.connect_table_offset + left_id * 2 + 2 * self.left_id_size * right_id)

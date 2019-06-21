@@ -2,20 +2,17 @@ import os
 import shutil
 import tempfile
 import time
-import unittest
-
+from io import StringIO
+from unittest import TestCase, mock
 
 from sudachipy.dictionarylib.dictionarybuilder import DictionaryBuilder
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib.dictionaryversion import DictionaryVersion
+from sudachipy.dictionarylib.lexicon import Lexicon
+from sudachipy.dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 
 
-class TestDictionaryBuilder(unittest.TestCase):
-
-    mocked_lexicon = None
-
-    def mocked_size(self):
-        return self.mocked_lexicon.size
+class TestDictionaryBuilder(TestCase):
 
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
@@ -91,7 +88,6 @@ class TestDictionaryBuilder(unittest.TestCase):
         self.assertEqual(2 + 3 * 12, builder.byte_buffer.tell())
 
     def test_convert_matrix(self):
-        from io import StringIO
         in_stream = StringIO('2 3\n0 0 0\n0 1 1\n0 2 2\n\n1 0 3\n1 1 4\n1 2 5\n')
         builder = DictionaryBuilder()
         matrix = builder.convert_matrix(in_stream)
@@ -112,7 +108,12 @@ class TestDictionaryBuilder(unittest.TestCase):
         self.assertEqual([], builder.parse_splitinfo('*'))
         self.assertEqual([1, 2, 3], builder.parse_splitinfo('1/2/3'))
         self.assertEqual(2, builder.parse_splitinfo('1/U2/3')[1])
-        # Todo: add test for UserDictionaryBuilder
+
+        mocked_lexicon = mock.Mock(spec=Lexicon)
+        mocked_lexicon.size.return_value = 4
+        builder = UserDictionaryBuilder(None, mocked_lexicon)
+        builder.entries += [None, None, None]
+        self.assertEqual([1, 2 | 1 << 28, 3], builder.parse_splitinfo("1/U2/3"))
 
     def test_parse_splitinfo_invalid_wordid(self):
         builder = DictionaryBuilder()
@@ -120,8 +121,22 @@ class TestDictionaryBuilder(unittest.TestCase):
             builder.parse_splitinfo('1/2/3')
         self.assertEqual('invalid word ID', cm.exception.args[0])
 
+    def test_parse_splitinfo_invalid_wordid_userdict(self):
+        mocked_lexicon = mock.Mock(spec=Lexicon)
+        mocked_lexicon.size.return_value = 1
+        builder = UserDictionaryBuilder(None, mocked_lexicon)
+        with self.assertRaises(ValueError) as cm:
+            builder.parse_splitinfo('0/U1')
+        self.assertEqual('invalid word ID', cm.exception.args[0])
+
     def test_parse_splitinfo_invalid_system_wordid_in_userdict(self):
-        # Todo: add test for UserDictionaryBuilder
+        mocked_lexicon = mock.Mock(spec=Lexicon)
+        mocked_lexicon.size.return_value = 1
+        builder = UserDictionaryBuilder(None, mocked_lexicon)
+        builder.entries.append(None)
+        with self.assertRaises(ValueError) as cm:
+            builder.parse_splitinfo('1/U0')
+        self.assertEqual('invalid word id', cm.exception.args[0])
         pass
 
     def test_write_string(self):

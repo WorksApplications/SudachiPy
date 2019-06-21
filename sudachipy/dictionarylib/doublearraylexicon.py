@@ -51,3 +51,12 @@ class DoubleArrayLexicon(lexicon.Lexicon):
 
     def size(self):
         return self.word_params.size
+
+    def get_word_id(self, headword, pos_id, reading_form):
+        for wid in range(self.word_infos.size()):
+            info = self.word_infos.get_word_info(wid)
+            if info.surface == headword \
+                    and info.pos_id == pos_id \
+                    and info.reading_form == reading_form:
+                return wid
+        return -1
