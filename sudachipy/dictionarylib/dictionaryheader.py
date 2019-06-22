@@ -29,7 +29,7 @@ class DictionaryHeader:
     def to_bytes(self):
         buf = JTypedByteBuffer(b'\x00' * (16 + self.__DESCRIPTION_SIZE))
         buf.seek(0)
-        buf.write_int(self.version, 'long')
+        buf.write_int(self.version, 'long', signed=False)
         buf.write_int(self.create_time, 'long')
         bdesc = self.description.encode('utf-8')
         if len(bdesc) > self.__DESCRIPTION_SIZE:

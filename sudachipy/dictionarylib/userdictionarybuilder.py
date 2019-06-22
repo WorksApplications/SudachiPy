@@ -20,7 +20,7 @@ class UserDictionaryBuilder(DictionaryBuilder):
         for path in lexicon_paths:
             with open(path) as rf:
                 self.build_lexicon(rf)
-            self.logger.info('{} words\n'.format(len(self.entries)))
+        self.logger.info('{} words\n'.format(len(self.entries)))
 
         self.write_grammar(None, out_stream)
         self.write_lexicon(out_stream)
