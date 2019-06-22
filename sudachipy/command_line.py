@@ -63,9 +63,7 @@ def _matrix_file_checker(args, print_usage):
 
 
 def _command_user_build(args, print_usage):
-    # system dictionary
     _system_dic_checker(args, print_usage)
-    # input files
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
         DictionaryVersion.USER_DICT_VERSION_2, int(time.time()), args.description)
@@ -77,9 +75,7 @@ def _command_user_build(args, print_usage):
 
 
 def _command_build(args, print_usage):
-    # matrix
     _matrix_file_checker(args, print_usage)
-    # input files
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
         DictionaryVersion.SYSTEM_DICT_VERSION, int(time.time()), args.description)

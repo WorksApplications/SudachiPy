@@ -26,10 +26,26 @@ The dictionary file is not included in the repository. You can get the built dic
 After installing SudachiPy, you may also use it in the terminal via command `sudachipy`.
 
 ```
-$ sudachipy -h
-usage: sudachipy [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d] [-v] ...
+$ sudachipy
+usage: sudachipy [-h] [-v] {tokenize,build,ubuild} ...
 
 Japanese Morphological Analyzer
+
+positional arguments:
+  {tokenize,build,ubuild}
+    tokenize            see `tokenize -h`
+    build               see `build -h`
+    ubuild              see `ubuild -h`
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+```
+```
+$ sudachipy tokenize -h
+usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d] ...
+
+Japanese Morphological Analyze
 
 positional arguments:
   input file(s)
@@ -41,7 +57,38 @@ optional arguments:
   -o file        the output file
   -a             print all of the fields
   -d             print the debug information
-  -v, --version  show program's version number and exit
+```
+```
+$ sudachipy build -h
+usage: sudachipy build [-h] [-o file] [-d string] -m file file [file ...]
+
+Build Sudachi Dictionary
+
+positional arguments:
+  file        source files with CSV format (one of more)
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -o file     output file (default: system.dic)
+  -d string   description comment to be embedded on dictionary
+
+required named arguments:
+  -m file     connection matrix file with MeCab's matrix.def format
+```
+```
+$ sudachipy ubuild -h
+usage: sudachipy ubuild [-h] [-d string] [-o file] [-s file] file [file ...]
+
+Build User Dictionary
+
+positional arguments:
+  file        source files with CSV format (one or more)
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -d string   description comment to be embedded on dictionary
+  -o file     output file (default: user.dic)
+  -s file     system dictionary (default: ${SUDACHIPY}/resouces/system.dic)
 
 ```
 
