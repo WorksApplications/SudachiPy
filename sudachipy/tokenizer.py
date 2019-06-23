@@ -22,9 +22,10 @@ class Tokenizer:
         if self.oov_provider_plugins:
             self.default_oov_provider = self.oov_provider_plugins[-1]
 
-    def tokenize(self, mode, text):
+    def tokenize(self, text, mode=None):
         if not text:
             return []
+        mode = mode or self.SplitMode.C
 
         builder = utf8inputtextbuilder.UTF8InputTextBuilder(text, self.grammar)
         for plugin in self.input_text_plugins:

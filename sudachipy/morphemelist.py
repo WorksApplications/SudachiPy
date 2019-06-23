@@ -62,3 +62,6 @@ class MorphemeList:
 
     def get_internal_cost(self):
         return self.path[-1].get_path_cost() - self.path[0].get_path_cost()
+
+    def size(self):
+        return len(self.path)

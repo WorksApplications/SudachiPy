@@ -10,7 +10,7 @@ from . import dictionary
 from . import tokenizer
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
 from .dictionarylib.dictionaryheader import DictionaryHeader
-from .dictionarylib.dictionaryversion import DictionaryVersion
+from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
 from .dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 
 
@@ -63,14 +63,15 @@ def _matrix_file_checker(args, print_usage):
 
 
 def _command_user_build(args, print_usage):
+    from .dictionarylib import BinaryDictionary
     _system_dic_checker(args, print_usage)
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
-        DictionaryVersion.USER_DICT_VERSION_2, int(time.time()), args.description)
-    _, _, grammar, system_lexicon = _read_system_dictionary(args.system_dic)
+        USER_DICT_VERSION_2, int(time.time()), args.description)
+    dict_ = BinaryDictionary.from_system_dictionary(args.system_dic)
     with open(args.out_file, 'wb') as wf:
         wf.write(header.to_bytes())
-        builder = UserDictionaryBuilder(grammar, system_lexicon)
+        builder = UserDictionaryBuilder(dict_.grammar, dict_.lexicon)
         builder.build(args.in_files, None, wf)
 
 
@@ -78,7 +79,7 @@ def _command_build(args, print_usage):
     _matrix_file_checker(args, print_usage)
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
-        DictionaryVersion.SYSTEM_DICT_VERSION, int(time.time()), args.description)
+        SYSTEM_DICT_VERSION, int(time.time()), args.description)
     with open(args.out_file, 'wb') as wf, open(args.matrix_file, 'r') as rf:
         wf.write(header.to_bytes())
         builder = DictionaryBuilder()
@@ -169,7 +170,6 @@ def main():
 
 # Todo: delete this function in the future
 def _read_system_dictionary(filename):
-    from .dictionarylib.dictionaryversion import DictionaryVersion
     from .dictionarylib.dictionaryheader import DictionaryHeader
     from . import dictionarylib
     """
@@ -187,7 +187,7 @@ def _read_system_dictionary(filename):
 
     offset = 0
     header = DictionaryHeader.from_bytes(bytes_, offset)
-    if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
+    if header.version != SYSTEM_DICT_VERSION:
         raise Exception("invalid system dictionary")
     offset += header.storage_size()
 

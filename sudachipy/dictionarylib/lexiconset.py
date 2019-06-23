@@ -2,13 +2,16 @@ from . import lexicon
 
 
 class LexiconSet(lexicon.Lexicon):
+
+    __MAX_DICTIONARIES = 16
+
     def __init__(self, system_lexicon):
 
         self.lexicons = []
         self.lexicons.append(system_lexicon)
 
     def add(self, lexicon):
-        if not self.lexicons.contains(lexicon):
+        if lexicon not in self.lexicons:
             self.lexicons.append(lexicon)
 
     def lookup(self, text, offset):
@@ -63,3 +66,6 @@ class LexiconSet(lexicon.Lexicon):
 
     def size(self):
         return sum([lex.size() for lex in self.lexicons])
+
+    def is_full(self):
+        return len(self.lexicons) >= self.__MAX_DICTIONARIES

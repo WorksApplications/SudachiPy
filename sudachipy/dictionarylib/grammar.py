@@ -78,3 +78,6 @@ class Grammar:
     def bytes_put_short(bytes_, offset, data):
         bytes_.seek(offset)
         bytes_.write(data.to_bytes(2, 'little'))
+
+    def add_pos_list(self, grammar):
+        self.pos_list.extend(grammar.pos_list)

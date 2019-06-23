@@ -3,7 +3,7 @@ import os
 import unittest
 
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
-from sudachipy.dictionarylib.dictionaryversion import DictionaryVersion
+from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
 from sudachipy.dictionarylib.doublearraylexicon import DoubleArrayLexicon
 
 
@@ -21,7 +21,7 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         with open(filename, 'r+b') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         header = DictionaryHeader.from_bytes(bytes_, 0)
-        if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
+        if header.version != SYSTEM_DICT_VERSION:
             raise Exception('invalid system dictionary')
         self.lexicon = DoubleArrayLexicon(bytes_, header.storage_size() + 470)
 

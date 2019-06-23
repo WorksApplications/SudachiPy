@@ -9,6 +9,10 @@ from .. import dartsclone
 
 class DoubleArrayLexicon(lexicon.Lexicon):
 
+    __MIN_SHORT_VALUE = -32768
+    __MAX_SHORT_VALUE = 32767
+    __USER_DICT_COST_PAR_MORPH = -20
+
     def __init__(self, bytes_, offset):
         self.trie = dartsclone.doublearray.DoubleArray()
         bytes_.seek(offset)
@@ -60,3 +64,14 @@ class DoubleArrayLexicon(lexicon.Lexicon):
                     and info.reading_form == reading_form:
                 return wid
         return -1
+
+    def calculate_cost(self, tokenizer):
+        for wid in range(self.word_params.get_size()):
+            if self.get_cost(wid) != self.__MIN_SHORT_VALUE:
+                continue
+            surface = self.get_word_info(wid).surface
+            ms = tokenizer.tokenize(surface)
+            cost = ms.get_internal_cost() + self.__USER_DICT_COST_PAR_MORPH * ms.size()
+            cost = min(cost, self.__MAX_SHORT_VALUE)
+            cost = max(cost, self.__MIN_SHORT_VALUE)
+            self.word_params.set_cost(wid, cost)

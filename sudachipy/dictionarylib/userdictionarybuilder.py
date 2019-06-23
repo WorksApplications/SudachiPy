@@ -3,8 +3,8 @@ from .dictionarybuilder import DictionaryBuilder
 
 class UserDictionaryBuilder(DictionaryBuilder):
 
-    def __init__(self, grammar, system_lexicon):
-        super().__init__()
+    def __init__(self, grammar, system_lexicon, *, logger=None):
+        super().__init__(logger=logger)
         self.is_user_dictionary = True
         self.grammar = grammar
         self.system_lexicon = system_lexicon

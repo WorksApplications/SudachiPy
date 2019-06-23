@@ -2,12 +2,13 @@ import os
 import shutil
 import tempfile
 import time
+from logging import getLogger
 from io import StringIO
 from unittest import TestCase, mock
 
 from sudachipy.dictionarylib.dictionarybuilder import DictionaryBuilder
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
-from sudachipy.dictionarylib.dictionaryversion import DictionaryVersion
+from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
 from sudachipy.dictionarylib.lexicon import Lexicon
 from sudachipy.dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 
@@ -24,12 +25,14 @@ class TestDictionaryBuilder(TestCase):
             wf.write("東京都,0,0,0,東京都,名詞,固有名詞,地名,一般,*,*,ヒガシキョウト,東京都,*,B,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/2\",*,1/2\n")
             wf.write("東,-1,-1,0,東,名詞,普通名詞,一般,*,*,*,ヒガシ,ひがし,*,A,*,*,*\n")
             wf.write("京都,0,0,0,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*\n")
+        self.logger = getLogger()
+        self.logger.disabled = True
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
     def test_parseline(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         entry = builder.parse_line(
             '京都,6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'.split(','))
         self.assertEqual('京都', entry.headword)
@@ -44,19 +47,19 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual(0, entry.wordinfo.pos_id)
 
     def test_parse_line_invalid_columns(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         with self.assertRaises(ValueError) as cm:
             builder.parse_line('京都,6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*'.split(','))
         self.assertEqual('invalid format', cm.exception.args[0])
 
     def test_parse_line_empty_headword(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         with self.assertRaises(ValueError) as cm:
             builder.parse_line(',6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'.split(','))
         self.assertEqual('headword is empty', cm.exception.args[0])
 
     def test_parse_line_toolong_headword(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         x = 'a' * (32767 + 1)  # max value of short in Java + 1
         x = x + ',6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'
         with self.assertRaises(ValueError) as cm:
@@ -64,18 +67,18 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual('string is too long', cm.exception.args[0])
 
     def test_parse_line_toomany_split(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         with self.assertRaises(ValueError) as cm:
             builder.parse_line('京都,6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,B,0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0,*,*'.split(','))
         self.assertEqual('too many units', cm.exception.args[0])
 
     def test_parse_line_same_readingform(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         entry = builder.parse_line('〒,6,6,5293,〒,名詞,普通名詞,一般,*,*,*,〒,〒,*,A,*,*,*'.split(','))
         self.assertEqual('〒', entry.wordinfo.reading_form)
 
     def test_add_to_trie(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         builder.add_to_trie('abc', 0)
         builder.add_to_trie('abc', 1)
         builder.add_to_trie('abcd', 2)
@@ -83,13 +86,13 @@ class TestDictionaryBuilder(TestCase):
         self.assertTrue(1 in builder.trie_keys['abc'.encode('utf-8')])
 
     def test_convert_postable(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         builder.convert_postable(['a,b,c,d,e,f', 'g,h,i,j,k,l'])
         self.assertEqual(2 + 3 * 12, builder.byte_buffer.tell())
 
     def test_convert_matrix(self):
         in_stream = StringIO('2 3\n0 0 0\n0 1 1\n0 2 2\n\n1 0 3\n1 1 4\n1 2 5\n')
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         matrix = builder.convert_matrix(in_stream)
         self.assertEqual(2, int.from_bytes(builder.byte_buffer.getvalue()[0:2], byteorder='little'))
         self.assertEqual(3, int.from_bytes(builder.byte_buffer.getvalue()[2:4], byteorder='little'))
@@ -97,13 +100,13 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual(4, int.from_bytes(matrix.getvalue()[(2 + 1) * 2:(2 + 1) * 2 + 2], byteorder='little'))
 
     def test_decode(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         self.assertEqual('a,c', builder.decode('a\\u002cc'))
         self.assertEqual('a,c', builder.decode('a\\u{002c}c'))
         self.assertEqual('a𠮟c', builder.decode('a\\u{20b9f}c'))
 
     def test_parse_splitinfo(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         builder.entries.extend([None] * 4)
         self.assertEqual([], builder.parse_splitinfo('*'))
         self.assertEqual([1, 2, 3], builder.parse_splitinfo('1/2/3'))
@@ -116,7 +119,7 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual([1, 2 | 1 << 28, 3], builder.parse_splitinfo("1/U2/3"))
 
     def test_parse_splitinfo_invalid_wordid(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         with self.assertRaises(ValueError) as cm:
             builder.parse_splitinfo('1/2/3')
         self.assertEqual('invalid word ID', cm.exception.args[0])
@@ -140,7 +143,7 @@ class TestDictionaryBuilder(TestCase):
         pass
 
     def test_write_string(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         position = builder.byte_buffer.tell()
         builder.write_string('')
         self.assertEqual(0, builder.byte_buffer.getvalue()[position])
@@ -164,7 +167,7 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual(position + 2 + 2 * len_, builder.byte_buffer.tell())
 
     def test_write_intarray(self):
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         position = builder.byte_buffer.tell()
         builder.write_intarray([])
         self.assertEqual(0, builder.byte_buffer.getvalue()[position])
@@ -181,9 +184,9 @@ class TestDictionaryBuilder(TestCase):
         lexicon_paths = [self.input_path]
         matrix_input_stream = open(self.matrix_path, 'r')
 
-        header = DictionaryHeader(DictionaryVersion.SYSTEM_DICT_VERSION, int(time.time()), 'test')
+        header = DictionaryHeader(SYSTEM_DICT_VERSION, int(time.time()), 'test')
         out_stream.write(header.to_bytes())
-        builder = DictionaryBuilder()
+        builder = DictionaryBuilder(logger=self.logger)
         builder.build(lexicon_paths, matrix_input_stream, out_stream)
         out_stream.close()
         matrix_input_stream.close()
@@ -192,7 +195,7 @@ class TestDictionaryBuilder(TestCase):
         lexicon = lexicon_set.lexicons[0]
 
         # header
-        self.assertEqual(DictionaryVersion.SYSTEM_DICT_VERSION, header.version)
+        self.assertEqual(SYSTEM_DICT_VERSION, header.version)
         self.assertEqual('test', header.description)
 
         # grammar
@@ -247,7 +250,7 @@ class TestDictionaryBuilder(TestCase):
 
         offset = 0
         header = dictionarylib.dictionaryheader.DictionaryHeader.from_bytes(bytes_, offset)
-        if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
+        if header.version != SYSTEM_DICT_VERSION:
             raise Exception("invalid system dictionary")
         offset += header.storage_size()
 

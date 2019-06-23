@@ -114,21 +114,21 @@ tokenizer_obj = dictionary.Dictionary(settings).create()
 
 
 mode = tokenizer.Tokenizer.SplitMode.C
-[m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
+[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
 # => ['医薬品安全管理責任者']
 
 mode = tokenizer.Tokenizer.SplitMode.B
-[m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
+[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
 # => ['医薬品', '安全', '管理', '責任者']
 
 mode = tokenizer.Tokenizer.SplitMode.A
-[m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
+[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
 # => ['医薬', '品', '安全', '管理', '責任', '者']
 
 
 # Morpheme information
 
-m = tokenizer_obj.tokenize(mode, "食べ")[0]
+m = tokenizer_obj.tokenize("食べ", mode)[0]
 
 m.surface() # => '食べ'
 m.dictionary_form() # => '食べる'
@@ -138,11 +138,11 @@ m.part_of_speech() # => ['動詞', '一般', '*', '*', '下一段-バ行', '連�
 
 # Normalization
 
-tokenizer_obj.tokenize(mode, "附属")[0].normalized_form()
+tokenizer_obj.tokenize("附属", mode)[0].normalized_form()
 # => '付属'
-tokenizer_obj.tokenize(mode, "SUMMER")[0].normalized_form()
+tokenizer_obj.tokenize("SUMMER", mode)[0].normalized_form()
 # => 'サマー'
-tokenizer_obj.tokenize(mode, "シュミレーション")[0].normalized_form()
+tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 # => 'シミュレーション'
 ```
 
