@@ -1,3 +1,5 @@
+import config
+
 from sudachipy.utf8inputtextbuilder import UTF8InputTextBuilder
 
 
@@ -7,10 +9,10 @@ class ProlongedSoundMarkInputTextPlugin(object):
         self.psm_set = set()
         self.replace_symbol = ''
 
-    def set_up(self, settings):
-        for s in settings['prolongedSoundMarks']:
+    def set_up(self):
+        for s in config.settings['prolongedSoundMarks']:
             self.psm_set.add(ord(s[0]))
-        self.replace_symbol = settings['replacementSymbol']
+        self.replace_symbol = config.settings['replacementSymbol']
 
     def rewrite(self, builder: UTF8InputTextBuilder):
         text = builder.get_text()
