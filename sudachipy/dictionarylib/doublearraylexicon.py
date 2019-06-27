@@ -1,3 +1,4 @@
+import mmap
 import struct
 
 from . import wordidtable
@@ -13,12 +14,12 @@ class DoubleArrayLexicon(Lexicon):
     __SIGNED_SHORT_MAX = 32767
     __USER_DICT_COST_PER_MORPH = -20
 
-    def __init__(self, bytes_, offset):
+    def __init__(self, bytes_: mmap.mmap, offset: int):
         self.trie = dartsclone.doublearray.DoubleArray()
         bytes_.seek(offset)
         size = int.from_bytes(bytes_.read(4), 'little')
         offset += 4
-        bytes_.seek(offset)
+        # bytes_.seek(offset)
         array = struct.unpack_from("<{}I".format(size), bytes_, offset)
         self.trie.set_array(array, size)
         offset += self.trie.total_size()
@@ -54,7 +55,7 @@ class DoubleArrayLexicon(Lexicon):
     def size(self) -> int:
         return self.word_params.size
 
-    def get_word_id(self, headword, pos_id, reading_form):
+    def get_word_id(self, headword: str, pos_id: int, reading_form: str) -> int:
         for wid in range(self.word_infos.size()):
             info = self.word_infos.get_word_info(wid)
             if info.surface == headword \

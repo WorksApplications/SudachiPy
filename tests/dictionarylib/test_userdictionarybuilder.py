@@ -67,8 +67,8 @@ class TestUserDictionaryBuilder(TestCase):
         self.assertEqual([4, 3, 1 | (1 << 28)], wi.word_structure)
         lst = lexicon.lookup('東京都市'.encode('utf-8'), 0)
         self.assertEqual((0, len('東京都市'.encode('utf-8'))), lst.__next__())
-        # self.assertEqual(1, lst.__next__())
-        # self.assertEqual((0, len('東京都市'.encode('utf-8'))), lst[0])
+        with self.assertRaises(StopIteration):
+            lst.__next__()
 
         self.assertEqual(-1, lexicon.get_left_id(1))
         self.assertEqual(0, lexicon.get_cost(1))

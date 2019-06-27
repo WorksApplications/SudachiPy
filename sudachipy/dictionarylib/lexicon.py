@@ -13,7 +13,7 @@ class Lexicon(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_word_id(self, headword, pos_id, reading_form):
+    def get_word_id(self, headword: str, pos_id: int, reading_form: str) -> int:
         raise NotImplementedError
 
     @abstractmethod

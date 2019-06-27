@@ -61,7 +61,7 @@ class LexiconSet(Lexicon):
     def get_word_id1(word_id: int) -> int:
         return 0x0FFFFFFF & word_id
 
-    def get_word_id(self, headword, pos_id, reading_form):
+    def get_word_id(self, headword: str, pos_id: int, reading_form: str) -> int:
         for dic_id in range(len(self.lexicons)):
             wid = self.lexicons[dic_id].get_word_id(headword, pos_id, reading_form)
             if wid <= 0:
