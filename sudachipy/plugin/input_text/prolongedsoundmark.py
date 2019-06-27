@@ -1,0 +1,32 @@
+from sudachipy.utf8inputtextbuilder import UTF8InputTextBuilder
+
+
+class ProlongedSoundMarkInputTextPlugin(object):
+
+    def __init__(self):
+        self.psm_set = set()
+        self.replace_symbol = ''
+
+    def set_up(self, settings):
+        for s in settings['prolongedSoundMarks']:
+            self.psm_set.add(ord(s[0]))
+        self.replace_symbol = settings['replacementSymbol']
+
+    def rewrite(self, builder: UTF8InputTextBuilder):
+        text = builder.get_text()
+        n = len(text)
+        offset = 0
+        is_psm = False
+        m_start_idx = n
+        for i in range(n):
+            cp = ord(text[i])
+            if not is_psm and cp in self.psm_set:
+                is_psm = True
+                m_start_idx = i
+            elif is_psm and cp not in self.psm_set:
+                if (i - m_start_idx) > 1:
+                    builder.replace(m_start_idx - offset, i - offset, self.replace_symbol)
+                    offset += i - m_start_idx - 1
+                is_psm = False
+        if is_psm and (n - m_start_idx) > 1:
+            builder.replace(m_start_idx - offset, n - offset, self.replace_symbol)
