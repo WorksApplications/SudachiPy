@@ -27,18 +27,21 @@ class TestDoubleArrayLexicon(unittest.TestCase):
 
     def test_lookup(self):
         res = self.lexicon.lookup('東京都'.encode('utf-8'), 0)
-        self.assertEqual(3, len(res))
-        self.assertEqual((4, 3), res[0])  # 東
-        self.assertEqual((5, 6), res[1])  # 東京
-        self.assertEqual((6, 9), res[2])  # 東京都
+        self.assertEqual((4, 3), res.__next__())  # 東
+        self.assertEqual((5, 6), res.__next__())  # 東京
+        self.assertEqual((6, 9), res.__next__())  # 東京都
+        with self.assertRaises(StopIteration):
+            res.__next__()
 
         res = self.lexicon.lookup('東京都に'.encode('utf-8'), 9)
-        self.assertEqual(2, len(res))
-        self.assertEqual((1, 12), res[0])  # に(接続助詞)
-        self.assertEqual((2, 12), res[1])  # に(格助詞)
+        self.assertEqual((1, 12), res.__next__())  # に(接続助詞)
+        self.assertEqual((2, 12), res.__next__())  # に(格助詞)
+        with self.assertRaises(StopIteration):
+            res.__next__()
 
         res = self.lexicon.lookup('あれ'.encode('utf-8'), 0)
-        self.assertEqual(0, len(res))
+        with self.assertRaises(StopIteration):
+            res.__next__()
 
     def test_parameters(self):
         # た
