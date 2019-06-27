@@ -8,8 +8,8 @@ class LexiconSet(Lexicon):
     __MAX_DICTIONARIES = 16
 
     def __init__(self, system_lexicon: Lexicon):
-        self.lexicons: List[Lexicon] = [system_lexicon]
-        self.pos_offsets: List[int] = []
+        self.lexicons = [system_lexicon]
+        self.pos_offsets = []
 
     def add(self, lexicon: Lexicon, pos_offset: int) -> None:
         if lexicon not in self.lexicons:
