@@ -9,10 +9,10 @@ class InhibitConnectionPlugin(EditConnectionCostPlugin):
     def __init__(self):
         self.inhibit_pairs = []
 
-    def set_up(self, grammar: Grammar):
+    def set_up(self, grammar: Grammar) -> None:
         self.inhibit_pairs = config.settings['inhibitedPair']
 
-    def edit(self, grammar: Grammar):
+    def edit(self, grammar: Grammar) -> None:
         for pair in self.inhibit_pairs:
             if len(pair) < 2:
                 continue
