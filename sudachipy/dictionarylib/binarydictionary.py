@@ -8,7 +8,7 @@ from .grammar import Grammar
 
 class BinaryDictionary(object):
 
-    def __init__(self, bytes_, grammar, header, lexicon):
+    def __init__(self, bytes_: mmap.mmap, grammar: Grammar, header: DictionaryHeader, lexicon: DoubleArrayLexicon):
         self._bytes = bytes_
         self._grammar = grammar
         self._header = header
@@ -51,13 +51,13 @@ class BinaryDictionary(object):
         self._bytes.close()
 
     @property
-    def grammar(self):
+    def grammar(self) -> Grammar:
         return self._grammar
 
     @property
-    def header(self):
+    def header(self) -> DictionaryHeader:
         return self._header
 
     @property
-    def lexicon(self):
+    def lexicon(self) -> DoubleArrayLexicon:
         return self._lexicon

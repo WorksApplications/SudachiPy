@@ -100,7 +100,7 @@ class DictionaryBuilder(object):
         # head word for trie
         if cols[1] != '-1':
             entry.headword = cols[0]
-        # left-id, right-id, cost
+        # left-id, right-id, connectioncost
         entry.parameters = [int(cols[i]) for i in [1, 2, 3]]
         # part of speech
         pos_id = self.get_posid(cols[5:11])

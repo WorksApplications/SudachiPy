@@ -1,18 +1,41 @@
-class Lexicon(object):
-    def lookup(self, text, offset):
-        pass
+from abc import ABC, abstractmethod
+from typing import Iterator, List
 
-    def get_left_id(self, word_id):
-        pass
+from .wordinfo import WordInfo
 
-    def get_right_id(self, word_id):
-        pass
 
-    def get_cost(self, word_id):
-        pass
+class Lexicon(ABC):
 
-    def get_word_info(self, word_id):
-        pass
+    Itr = Iterator[List[int]]
 
-    def size(self):
-        pass
+    @abstractmethod
+    def lookup(self, text: str, offset: int) -> Itr:  # noqa: F821
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_word_id(self, headword: str, pos_id: int, reading_form: str) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_left_id(self, word_id: int) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_right_id(self, word_id: int) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_cost(self, word_id: int) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_word_info(self, word_id: int) -> 'WordInfo':
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_dictionary_id(self, word_id: int) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def size(self) -> int:
+        raise NotImplementedError

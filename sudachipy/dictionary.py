@@ -5,6 +5,7 @@ from . import dictionarylib
 from .plugin.input_text import DefaultInputTextPlugin
 from .plugin.oov import MeCabOovPlugin, SimpleOovPlugin
 from .plugin.path_rewrite import JoinKatakanaOovPlugin, JoinNumericPlugin
+from .plugin.connectioncost import InhibitConnectionPlugin
 from .tokenizer import Tokenizer
 from .dictionarylib.binarydictionary import BinaryDictionary
 from .dictionarylib.lexiconset import LexiconSet
@@ -15,17 +16,18 @@ class Dictionary:
         self.grammar = None
         self.lexicon = None
         self.input_text_plugins = []
+        self.edit_connection_plugin = []
         self.oov_provider_plugins = []
         self.path_rewrite_plugins = []
         self.dictionaries = []
         self.header = None
 
         self._read_system_dictionary(os.path.join(resource_dir, settings["systemDict"]))
-        """
-        for p in settings["editConnectionPlugin"]:
-            p.set_up(self.grammar)
-            p.edit(self.grammar)
-        """
+
+        # self.edit_connection_plugin = [InhibitConnectionPlugin()]
+        # for p in self.edit_connection_plugin:
+        #     p.set_up(self.grammar)
+        #     p.edit(self.grammar)
 
         self._read_character_definition(os.path.join(resource_dir, settings["characterDefinitionFile"]))
 
@@ -44,10 +46,10 @@ class Dictionary:
         for p in self.path_rewrite_plugins:
             p.set_up(self.grammar)
 
-        if 'userDict' in settings:
-            filenames = [os.path.join(resource_dir, filename) for filename in settings['userDict']]
-            for filename in filenames:
-                self._read_user_dictionary(filename)
+        #if 'userDict' in settings:
+        #    filenames = [os.path.join(resource_dir, filename) for filename in settings['userDict']]
+        #    for filename in filenames:
+        #        self._read_user_dictionary(filename)
 
     def _read_system_dictionary(self, filename):
         if filename is None:
@@ -63,9 +65,9 @@ class Dictionary:
         dict_ = BinaryDictionary.from_user_dictionary(filename)
         self.dictionaries.append(dict_)
         user_lexicon = dict_.lexicon
-        # tokenizer_ = Tokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
-        # user_lexicon.calculate_cost(tokenizer_)
-        self.lexicon.add(user_lexicon)
+        tokenizer_ = Tokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
+        user_lexicon.calculate_cost(tokenizer_)
+        self.lexicon.add(user_lexicon, self.grammar.get_part_of_speech_size())
         if dict_.grammar:
             self.grammar.add_pos_list(dict_.grammar)
 

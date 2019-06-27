@@ -1,36 +1,37 @@
 from enum import Enum
+from typing import List
 
-from . import lattice
+from .lattice import Lattice
+from .latticenode import LatticeNode
 from . import latticenode
 from . import morphemelist
-from . import utf8inputtextbuilder
+from .utf8inputtext import UTF8InputText
+from .utf8inputtextbuilder import UTF8InputTextBuilder
 from .dictionarylib import categorytype
+
+from .dictionarylib.grammar import Grammar
+from .dictionarylib.lexicon import Lexicon
+from .plugin.input_text import InputTextPlugin
+from .plugin.path_rewrite import PathRewritePlugin
 
 
 class Tokenizer:
     SplitMode = Enum("SplitMode", "A B C")
 
-    def __init__(self, grammar, lexicon, input_text_plugins, oov_provider_plugins, path_rewrite_plugins):
+    def __init__(self, grammar: Grammar, lexicon: Lexicon, input_text_plugins: List[InputTextPlugin],
+                 oov_provider_plugins: List, path_rewrite_plugins: List[PathRewritePlugin]):
         self.grammar = grammar
         self.lexicon = lexicon
         self.input_text_plugins = input_text_plugins
         self.oov_provider_plugins = oov_provider_plugins
         self.path_rewrite_plugins = path_rewrite_plugins
         self.dump_output = None
-        self.lattice = lattice.Lattice(grammar)
+        self.lattice = Lattice(grammar)
 
         if self.oov_provider_plugins:
             self.default_oov_provider = self.oov_provider_plugins[-1]
 
-    def tokenize(self, text, mode=None):
-        if not text:
-            return []
-        mode = mode or self.SplitMode.C
-
-        builder = utf8inputtextbuilder.UTF8InputTextBuilder(text, self.grammar)
-        for plugin in self.input_text_plugins:
-            plugin.rewrite(builder)
-        input_ = builder.build()
+    def build_lattice(self, input_: UTF8InputText):
         bytes_ = input_.get_byte_text()
 
         self.lattice.resize(len(bytes_))
@@ -60,41 +61,51 @@ class Tokenizer:
 
             if not has_words:
                 raise AttributeError("there is no morpheme at " + str(i))
+        self.lattice.connect_eos_node()
 
-        path = self.lattice.get_best_path()
+    def split_path(self, path: List[LatticeNode], mode: SplitMode) -> List[LatticeNode]:
+        new_path = []
+        for node in path:
+            if mode is self.SplitMode.A:
+                wids = node.get_word_info().a_unit_split
+            else:  # self.SplitMode.B
+                wids = node.get_word_info().b_unit_split
+            if len(wids) == 0 or len(wids) == 1:
+                new_path.append(node)
+            else:
+                offset = node.get_begin()
+                for wid in wids:
+                    n = latticenode.LatticeNode(self.lexicon, 0, 0, 0, wid)
+                    n.begin = offset
+                    offset += n.get_word_info().head_word_length
+                    n.end = offset
+                    new_path.append(n)
+        return new_path
+
+    def tokenize(self, text: str, mode=None) -> morphemelist.MorphemeList:
+        if not text:
+            return []
+        mode = mode or self.SplitMode.C
+
+        builder = UTF8InputTextBuilder(text, self.grammar)
+        for plugin in self.input_text_plugins:
+            plugin.rewrite(builder)
+        input_ = builder.build()
+        # dump
+        self.build_lattice(input_)
         if self.dump_output:
             print("=== Lattice dump:", file=self.dump_output)
             self.lattice.dump(self.dump_output)
-            print("===")
-        self.lattice.clear()
-
+        path = self.lattice.get_best_path()
+        # dump
         path.pop()  # remove EOS
         # dump_output
-
         for plugin in self.path_rewrite_plugins:
             plugin.rewrite(input_, path, self.lattice)
-
+        self.lattice.clear()
         if mode is not self.SplitMode.C:
-            new_path = []
-            for node in path:
-                if mode is self.SplitMode.A:
-                    wids = node.get_word_info().a_unit_split
-                else:  # self.SplitMode.B
-                    wids = node.get_word_info().b_unit_split
-                if len(wids) == 0 or len(wids) == 1:
-                    new_path.append(node)
-                else:
-                    offset = node.get_begin()
-                    for wid in wids:
-                        n = latticenode.LatticeNode(self.lexicon, 0, 0, 0, wid)
-                        n.begin = offset
-                        offset += n.get_word_info().head_word_length
-                        n.end = offset
-                        new_path.append(n)
-            path = new_path
-
+            path = self.split_path(path, mode)
         # dump_output
-
         ml = morphemelist.MorphemeList(input_, self.grammar, self.lexicon, path)
         return ml
 

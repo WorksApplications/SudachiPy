@@ -4,6 +4,7 @@ import json
 import os
 import unittest
 
+from sudachipy import config
 from sudachipy import tokenizer
 from sudachipy.dictionary import Dictionary
 
@@ -11,6 +12,7 @@ from sudachipy.dictionary import Dictionary
 class TestDictionary(unittest.TestCase):
 
     def setUp(self):
+        config.settings.activate()
         resource_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources')
         with open(os.path.join(resource_dir, 'sudachi.json'), 'r') as rf:
             settings = json.load(rf)

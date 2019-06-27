@@ -216,8 +216,9 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual([1, 2], wi.a_unit_split)
         self.assertEqual([], wi.b_unit_split)
         lst = lexicon.lookup('東京都'.encode('utf-8'), 0)
-        self.assertEqual(1, len(lst))
-        self.assertEqual((0, len('東京都'.encode('utf-8'))), lst[0])
+        self.assertEqual((0, len('東京都'.encode('utf-8'))), lst.__next__())
+        with self.assertRaises(StopIteration):
+            lst.__next__()
 
         self.assertEqual(-1, lexicon.get_left_id(1))
         self.assertEqual(0, lexicon.get_cost(1))
@@ -230,7 +231,8 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual([], wi.a_unit_split)
         self.assertEqual([], wi.b_unit_split)
         lst = lexicon.lookup('東'.encode('utf-8'), 0)
-        self.assertEqual(0, len(lst))
+        with self.assertRaises(StopIteration):
+            lst.__next__()
 
     @staticmethod
     def read_system_dictionary(filename):
