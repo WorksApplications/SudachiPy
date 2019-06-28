@@ -53,7 +53,7 @@ class LatticeNode:
     def get_word_info(self) -> WordInfo:
         if not self.is_defined:
             return self.undefined_word_info
-        if not self.extra_word_info:
+        if self.extra_word_info:
             return self.extra_word_info
         return self.lexicon.get_word_info(self.word_id)
 
@@ -68,9 +68,9 @@ class LatticeNode:
         return self.word_id
 
     def get_dictionary_id(self) -> int:
-        if not self.is_defined or not self.extra_word_info:
+        if not self.is_defined or self.extra_word_info:
             return -1
-        return self.word_id >> 28
+        return self.lexicon.get_dictionary_id()  # self.word_id >> 28
 
     def __str__(self):
         surface = ""

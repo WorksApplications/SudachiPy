@@ -7,7 +7,7 @@ from . import latticenode
 from . import morphemelist
 from .utf8inputtext import UTF8InputText
 from .utf8inputtextbuilder import UTF8InputTextBuilder
-from .dictionarylib import categorytype
+from .dictionarylib.categorytype import CategoryType
 
 from .dictionarylib.grammar import Grammar
 from .dictionarylib.lexicon import Lexicon
@@ -33,23 +33,25 @@ class Tokenizer:
 
     def build_lattice(self, input_: UTF8InputText):
         bytes_ = input_.get_byte_text()
-
         self.lattice.resize(len(bytes_))
         for i in range(len(bytes_)):
+            print(i, input_.is_char_alignment(i), self.lattice.has_previous_node(i))
             if not input_.is_char_alignment(i) or not self.lattice.has_previous_node(i):
                 continue
             iterator = self.lexicon.lookup(bytes_, i)
-            has_words = True if iterator else False
+            has_words = False
             for word_id, end in iterator:
-                n = latticenode.LatticeNode(self.lexicon,
-                                            self.lexicon.get_left_id(word_id),
-                                            self.lexicon.get_right_id(word_id),
-                                            self.lexicon.get_cost(word_id),
-                                            word_id)
+                print(word_id, end)
+                has_words = True
+                n = LatticeNode(self.lexicon,
+                                self.lexicon.get_left_id(word_id),
+                                self.lexicon.get_right_id(word_id),
+                                self.lexicon.get_cost(word_id),
+                                word_id)
                 self.lattice.insert(i, end, n)
 
             # OOV
-            if categorytype.CategoryType.NOOOVBOW not in input_.get_char_category_types(i):
+            if CategoryType.NOOOVBOW not in input_.get_char_category_types(i):
                 for oov_plugin in self.oov_provider_plugins:
                     for node in oov_plugin.get_oov(input_, i, has_words):
                         has_words = True
@@ -70,7 +72,7 @@ class Tokenizer:
                 wids = node.get_word_info().a_unit_split
             else:  # self.SplitMode.B
                 wids = node.get_word_info().b_unit_split
-            if len(wids) == 0 or len(wids) == 1:
+            if 0 <= len(wids) <= 1:
                 new_path.append(node)
             else:
                 offset = node.get_begin()
@@ -92,13 +94,16 @@ class Tokenizer:
             plugin.rewrite(builder)
         input_ = builder.build()
         # dump
+        print('in build_lattice')
         self.build_lattice(input_)
+        print('out build_lattice')
+
         if self.dump_output:
             print("=== Lattice dump:", file=self.dump_output)
             self.lattice.dump(self.dump_output)
         path = self.lattice.get_best_path()
         # dump
-        path.pop()  # remove EOS
+        # path.pop()  # remove EOS
         # dump_output
         for plugin in self.path_rewrite_plugins:
             plugin.rewrite(input_, path, self.lattice)

@@ -20,6 +20,7 @@ class LexiconSet(Lexicon):
         return len(self.lexicons) >= self.__MAX_DICTIONARIES
 
     def lookup(self, text: str, offset: int) -> Lexicon.Itr:
+        print('ichikawa')
         if len(self.lexicons) == 1:
             return self.lexicons[0].lookup(text, offset)
         return self.__lookup(text, offset)
@@ -68,13 +69,12 @@ class LexiconSet(Lexicon):
                 return self.build_word_id(dic_id, wid)
         return self.lexicons[0].get_word_id(headword, pos_id, reading_form)
 
-    @staticmethod
-    def build_word_id(dict_id, word_id):
+    def build_word_id(self, dict_id, word_id):
         if word_id > 0x0FFFFFFF:
             raise AttributeError("word ID is too large: ", word_id)
-        if dict_id > 0xF:
+        if dict_id > len(self.lexicons):
             raise AttributeError("dictionary ID is too large: ", dict_id)
-        return dict_id << 28 | word_id
+        return (dict_id << 28) | word_id
 
     def size(self) -> int:
         return sum([lex.size() for lex in self.lexicons])

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from .latticenode import LatticeNode
 from .dictionarylib.grammar import Grammar
@@ -6,11 +6,12 @@ from .dictionarylib.grammar import Grammar
 
 class Lattice:
 
+    size = 0
+    capacity = 0
+    eos_node = None
+
     def __init__(self, grammar: Grammar):
         self.end_lists = []
-        self.size = 0
-        self.capacity = 0
-        self.eos_node = None
         self.grammar = grammar
         self.eos_params = grammar.get_eos_parameter()
         bos_node = LatticeNode()
@@ -45,7 +46,7 @@ class Lattice:
         return [node for node in self.end_lists[end] if node.begin == begin]
         # return filter(lambda node: node.begin is begin, self.end_lists[end])
 
-    def get_minumum_node(self, begin: int, end: int) -> LatticeNode:
+    def get_minumum_node(self, begin: int, end: int) -> Optional[LatticeNode]:
         nodes = self.get_nodes(begin, end)
         if not nodes:
             return None
@@ -56,6 +57,7 @@ class Lattice:
         return min_arg
 
     def insert(self, begin: int, end: int, node: LatticeNode) -> None:
+        print('insert', begin, end, node.word_id)
         self.end_lists[end].append(node)
         node.begin = begin
         node.end = end
@@ -69,7 +71,7 @@ class Lattice:
         return LatticeNode()
 
     def has_previous_node(self, index: int) -> bool:
-        return len(self.end_lists[index]) == 0
+        return len(self.end_lists[index]) != 0
 
     def connect_node(self, r_node: LatticeNode) -> None:
         begin = r_node.begin
@@ -77,7 +79,8 @@ class Lattice:
         for l_node in self.end_lists[begin]:
             if not l_node.is_connected_to_bos:
                 continue
-            connect_cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
+            connect_cost = self.grammar.get_connect_cost(l_node.left_id, r_node.right_id)
+            print('hi', connect_cost, Grammar.INHIBITED_CONNECTION)
             if connect_cost == Grammar.INHIBITED_CONNECTION:
                 continue
             cost = l_node.total_cost + connect_cost
@@ -85,7 +88,7 @@ class Lattice:
                 r_node.total_cost = cost
                 r_node.best_previous_node = l_node
 
-        r_node.is_connected_to_bos = not r_node.best_previous_node
+        r_node.is_connected_to_bos = r_node.best_previous_node is not None
         r_node.total_cost += r_node.cost
 
     def connect_eos_node(self) -> None:

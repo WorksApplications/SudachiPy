@@ -11,13 +11,13 @@ class _Settings(object):
         self.is_active = False
         self.dict_ = {}
 
-    def activate(self, path=SETTINGFILE, res_path=None):
+    def activate(self, path=SETTINGFILE, resource_path=None):
         with open(path, "r", encoding="utf-8") as f:
             self.dict_ = json.load(f)
         self.is_active = True
-        if res_path:
+        if resource_path:
             global RESOURCEDIR
-            RESOURCEDIR = res_path
+            RESOURCEDIR = resource_path
 
     def __getitem__(self, key):
         if self.is_active:

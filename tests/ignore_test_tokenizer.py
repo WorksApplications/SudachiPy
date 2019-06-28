@@ -13,8 +13,8 @@ class TestTokenizer(unittest.TestCase):
     def setUp(self):
         # It's impossible to avoid to use test dictionary
         # See implementation of dictionary.Dictionary
-        config.settings.activate()
         resource_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources')
+        config.settings.activate(resource_path=resource_dir)
         with open(os.path.join(resource_dir, 'sudachi.json'), 'r') as rf:
             settings = json.load(rf)
         self.dict_ = dictionary.Dictionary(settings, resource_dir)
