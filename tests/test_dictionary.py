@@ -1,6 +1,3 @@
-# This test file is ignored if it runs on .travis
-# We probably need to parse user.dic to test this code.
-import json
 import os
 import unittest
 
@@ -12,11 +9,9 @@ from sudachipy.dictionary import Dictionary
 class TestDictionary(unittest.TestCase):
 
     def setUp(self):
-        config.settings.activate()
         resource_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources')
-        with open(os.path.join(resource_dir, 'sudachi.json'), 'r') as rf:
-            settings = json.load(rf)
-        self.dict_ = Dictionary(settings, resource_dir)
+        config.settings.set_up(os.path.join(resource_dir, 'sudachi.json'), resource_dir)
+        self.dict_ = Dictionary(resource_dir=resource_dir)
 
     def tearDown(self) -> None:
         self.dict_.close()

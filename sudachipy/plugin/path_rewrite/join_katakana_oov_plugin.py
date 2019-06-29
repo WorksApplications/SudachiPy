@@ -3,14 +3,15 @@ from sudachipy.plugin.path_rewrite.path_rewrite_plugin import PathRewritePlugin
 
 
 class JoinKatakanaOovPlugin(PathRewritePlugin):
-    def __init__(self):
+    def __init__(self, json_obj):
+        self.__pos = json_obj['oovPOS']
         self.oov_pos_id = None
 
     def set_up(self, grammar):
-        pos = ["名詞", "普通名詞", "一般", "*", "*", "*"]
-        if not pos:
+        # pos = ["名詞", "普通名詞", "一般", "*", "*", "*"]
+        if not self.__pos:
             raise AttributeError("oovPOS is undefined")
-        self.oov_pos_id = grammar.get_part_of_speech_id(pos)
+        self.oov_pos_id = grammar.get_part_of_speech_id(self.__pos)
         if self.oov_pos_id < 0:
             raise AttributeError("oovPOS is invalid")
 

@@ -23,17 +23,18 @@ class MeCabOovPlugin(OovProviderPlugin):
             self.pos_id = None
 
     def __init__(self, json_obj=None):
-        super().__init__(None)
+        self.__chardef_filename = json_obj['charDef']
+        self.__unkdef_filename = json_obj['unkDef']
         self.categories = {}
         self.oov_list = defaultdict(list)
 
     def set_up(self, grammar):
-        char_def = os.path.join(config.RESOURCEDIR, "char.def")
+        char_def = os.path.join(config.settings.resource_dir, self.__chardef_filename)
         if not char_def:
             raise AttributeError("charDef is not defined")
         self.read_character_property(char_def)
 
-        unk_def = os.path.join(config.RESOURCEDIR, "unk.def")
+        unk_def = os.path.join(config.settings.resource_dir, self.__unkdef_filename)
         if not unk_def:
             raise AttributeError("unkDef is not defined")
         self.read_oov(unk_def, grammar)

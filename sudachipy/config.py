@@ -8,25 +8,29 @@ RESOURCEDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir
 class _Settings(object):
 
     def __init__(self):
-        self.is_active = False
-        self.dict_ = {}
+        self.__is_active = False
+        self.__dict_ = None
+        self.resource_dir = RESOURCEDIR
 
-    def activate(self, path=SETTINGFILE, resource_path=None):
+    def set_up(self, path=SETTINGFILE, resource_dir=RESOURCEDIR):
         with open(path, "r", encoding="utf-8") as f:
-            self.dict_ = json.load(f)
-        self.is_active = True
-        if resource_path:
-            global RESOURCEDIR
-            RESOURCEDIR = resource_path
+            self.__dict_ = json.load(f)
+        self.__is_active = True
+        self.resource_dir = resource_dir
 
     def __getitem__(self, key):
-        if self.is_active:
-            return self.dict_[key]
-        else:
-            raise RuntimeError('call activate beforehand')
+        if not self.__is_active:
+            self.set_up()
+        return self.__dict_[key]
+
+    def keys(self):
+        return self.__dict_.keys()
+
+    def __contains__(self, item):
+        return item in self.__dict_.keys()
 
     def has(self, key):
-        return key in self.dict_
+        return key in self.__dict_
 
 
 settings = _Settings()

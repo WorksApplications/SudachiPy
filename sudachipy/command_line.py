@@ -17,7 +17,7 @@ from .dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 def run(tokenizer, mode, input, output, print_all):
     for line in input:
         line = line.rstrip('\n')
-        for m in tokenizer.tokenize(mode, line):
+        for m in tokenizer.tokenize(line, mode):
             list_info = [
                 m.surface(),
                 ",".join(m.part_of_speech()),
@@ -88,8 +88,9 @@ def _command_build(args, print_usage):
 
 def _command_tokenize(args, print_usage):
 
-    with open(args.fpath_setting, "r", encoding="utf-8") as f:
-        settings = json.load(f)
+    # with open(args.fpath_setting, "r", encoding="utf-8") as f:
+    #     settings = json.load(f)
+    config.settings.set_up(path=args.fpath_setting)
 
     if args.mode == "A":
         mode = tokenizer.Tokenizer.SplitMode.A
@@ -106,7 +107,7 @@ def _command_tokenize(args, print_usage):
 
     is_enable_dump = args.d
 
-    dict_ = dictionary.Dictionary(settings)
+    dict_ = dictionary.Dictionary()
     tokenizer_obj = dict_.create()
     if is_enable_dump:
         tokenizer_obj.set_dump_output(output)

@@ -1,3 +1,6 @@
+from typing import List
+
+from sudachipy import config
 from . import OovProviderPlugin, MeCabOovPlugin, SimpleOovPlugin
 
 
@@ -11,3 +14,13 @@ def get_oov_plugin(json_obj) -> OovProviderPlugin:
         raise ValueError('{} is invalid OovProviderPlugin class'.format(json_obj['class']))
     except KeyError:
         raise ValueError('config file is invalid format')
+
+
+def get_oov_plugins() -> List[OovProviderPlugin]:
+    key_word = 'oovProviderPlugin'
+    if key_word not in config.settings:
+        return []
+    ps = []
+    for obj in config.settings[key_word]:
+        ps.append(get_oov_plugin(obj))
+    return ps

@@ -1,23 +1,15 @@
-# This test file is ignored if it runs on .travis
-# We probably need to parse user.dic to test this code.
-
-import json
 import unittest
 import os
 
-from sudachipy import config, dictionary, tokenizer
+from sudachipy import config, dictionary
 
 
 class TestTokenizer(unittest.TestCase):
 
     def setUp(self):
-        # It's impossible to avoid to use test dictionary
-        # See implementation of dictionary.Dictionary
         resource_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources')
-        config.settings.activate(resource_path=resource_dir)
-        with open(os.path.join(resource_dir, 'sudachi.json'), 'r') as rf:
-            settings = json.load(rf)
-        self.dict_ = dictionary.Dictionary(settings, resource_dir)
+        config.settings.set_up(os.path.join(resource_dir, 'sudachi.json'), resource_dir)
+        self.dict_ = dictionary.Dictionary(resource_dir=resource_dir)
         self.tokenizer_obj = self.dict_.create()
 
     def test_tokenize_small_katanana_only(self):
@@ -52,12 +44,11 @@ class TestTokenizer(unittest.TestCase):
 
         ms = self.tokenizer_obj.tokenize('ぴらる')
         self.assertEqual(1, ms.size())
-        self.assertEqual(1, ms[0].get_dictionary_id())
+        self.assertEqual(1, ms[0].dictionary_id())
 
         ms = self.tokenizer_obj.tokenize('京')
         self.assertEqual(1, ms.size())
         self.assertTrue(ms[0].dictionary_id() < 0)
-
 
     # def test_multi_granular(self):
     #    text = '医薬品安全管理責任者'

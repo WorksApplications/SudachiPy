@@ -3,16 +3,15 @@ import os.path
 from . import config
 from . import dictionarylib
 from .plugin.input_text import DefaultInputTextPlugin
-from .plugin.oov import get_oov_plugin
-from .plugin.path_rewrite import get_path_rewrite_plugin
-from .plugin.path_rewrite import JoinKatakanaOovPlugin, JoinNumericPlugin
+from .plugin.oov import get_oov_plugins
+from .plugin.path_rewrite import get_path_rewrite_plugins
 from .tokenizer import Tokenizer
 from .dictionarylib.binarydictionary import BinaryDictionary
 from .dictionarylib.lexiconset import LexiconSet
 
 
 class Dictionary:
-    def __init__(self, settings, resource_dir=config.RESOURCEDIR):
+    def __init__(self, settings=config.settings, resource_dir=config.RESOURCEDIR):
         self.grammar = None
         self.lexicon = None
         self.input_text_plugins = []
@@ -21,7 +20,6 @@ class Dictionary:
         self.path_rewrite_plugins = []
         self.dictionaries = []
         self.header = None
-
         self._read_system_dictionary(os.path.join(resource_dir, settings["systemDict"]))
 
         # self.edit_connection_plugin = [InhibitConnectionPlugin()]
@@ -36,18 +34,13 @@ class Dictionary:
         for p in self.input_text_plugins:
             p.set_up()
 
-        self.oov_provider_plugins = []
-        if 'oovProviderPlugin' in settings:
-            self.oov_provider_plugins = [get_oov_plugin(obj) for obj in settings['oovProviderPlugin']]
+        self.oov_provider_plugins = get_oov_plugins()
         if not self.oov_provider_plugins:
             raise AttributeError("no OOV provider")
         for p in self.oov_provider_plugins:
             p.set_up(self.grammar)
 
-        # self.path_rewrite_plugins = [JoinNumericPlugin(), JoinKatakanaOovPlugin()]
-        self.path_rewrite_plugins = []
-        if 'pathRewritePlugin' in settings:
-            self.path_rewrite_plugins = [get_path_rewrite_plugin(obj) for obj in settings['pathRewritePlugin']]
+        self.path_rewrite_plugins = get_path_rewrite_plugins()
         for p in self.path_rewrite_plugins:
             p.set_up(self.grammar)
 

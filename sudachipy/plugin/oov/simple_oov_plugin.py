@@ -9,12 +9,9 @@ class SimpleOovPlugin(OovProviderPlugin):
         self.right_id = json_obj['rightId']
         self.cost = json_obj['cost']
         self.__oov_pos_strings = json_obj['oovPOS']
+        self.oov_pos_id = -1
 
     def set_up(self, grammar):
-        #oov_pos_strings = ["補助記号", "一般", "*", "*", "*", "*"]
-        #self.left_id = 5968
-        #self.right_id = 5968
-        #self.cost = 3857
         self.oov_pos_id = grammar.get_part_of_speech_id(self.__oov_pos_strings)
 
     def provide_oov(self, input_text, offset, has_other_words):

@@ -13,7 +13,7 @@ class OovProviderPlugin(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def provide_oov(self, input_text: UTF8InputText, offset: int,  has_other_words: bool) -> List[LatticeNode]:
+    def provide_oov(self, input_text: UTF8InputText, offset: int, has_other_words: bool) -> List[LatticeNode]:
         raise NotImplementedError
 
     def get_oov(self, input_text: UTF8InputText, offset: int, has_other_words: bool) -> List[LatticeNode]:

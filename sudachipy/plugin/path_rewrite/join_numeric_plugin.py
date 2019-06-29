@@ -4,12 +4,13 @@ from .path_rewrite_plugin import PathRewritePlugin
 
 
 class JoinNumericPlugin(PathRewritePlugin):
-    def __init__(self):
-        self.join_kanji_numeric = None
+    def __init__(self, json_obj):
+        self.join_kanji_numeric = True
+        if 'enableNormalize' in json_obj:
+            self.join_kanji_numeric = json_obj['enableNormalize']
         self.join_all_numeric = None
 
     def set_up(self, grammar):
-        self.join_kanji_numeric = True
         self.join_all_numeric = False
 
     def rewrite(self, text, path, lattice):
