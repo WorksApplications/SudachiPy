@@ -43,8 +43,6 @@ class Grammar:
         return self.pos_list.index(pos) if pos in self.pos_list else -1
 
     def get_connect_cost(self, left_id: int, right_id: int) -> int:
-        print('get_connect_cost', left_id, right_id)
-        print('get_connect_cost', self.connect_table_offset, self.storage_size, self.left_id_size, self.right_id_size)
         return self.bytes_get_short(self.connect_table_bytes, self.connect_table_offset + 2 * left_id + 2 * self.left_id_size * right_id)
 
     def set_connect_cost(self, left_id, right_id, cost):
@@ -74,7 +72,6 @@ class Grammar:
 
     @staticmethod
     def bytes_get_short(bytes_, offset):
-        print('bytes_get_short', offset)
         bytes_.seek(offset)
         return int.from_bytes(bytes_.read(2), 'little', signed=True)
 

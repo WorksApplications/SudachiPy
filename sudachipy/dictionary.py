@@ -3,9 +3,9 @@ import os.path
 from . import config
 from . import dictionarylib
 from .plugin.input_text import DefaultInputTextPlugin
-from .plugin.oov import MeCabOovPlugin, SimpleOovPlugin
+from .plugin.oov import get_oov_plugin
+from .plugin.path_rewrite import get_path_rewrite_plugin
 from .plugin.path_rewrite import JoinKatakanaOovPlugin, JoinNumericPlugin
-from .plugin.connectioncost import InhibitConnectionPlugin
 from .tokenizer import Tokenizer
 from .dictionarylib.binarydictionary import BinaryDictionary
 from .dictionarylib.lexiconset import LexiconSet
@@ -36,14 +36,18 @@ class Dictionary:
         for p in self.input_text_plugins:
             p.set_up()
 
-        # self.oov_provider_plugins = [MeCabOovPlugin(), SimpleOovPlugin()]
-        self.oov_provider_plugins = [SimpleOovPlugin()]
+        self.oov_provider_plugins = []
+        if 'oovProviderPlugin' in settings:
+            self.oov_provider_plugins = [get_oov_plugin(obj) for obj in settings['oovProviderPlugin']]
         if not self.oov_provider_plugins:
             raise AttributeError("no OOV provider")
         for p in self.oov_provider_plugins:
             p.set_up(self.grammar)
 
-        self.path_rewrite_plugins = [JoinNumericPlugin(), JoinKatakanaOovPlugin()]
+        # self.path_rewrite_plugins = [JoinNumericPlugin(), JoinKatakanaOovPlugin()]
+        self.path_rewrite_plugins = []
+        if 'pathRewritePlugin' in settings:
+            self.path_rewrite_plugins = [get_path_rewrite_plugin(obj) for obj in settings['pathRewritePlugin']]
         for p in self.path_rewrite_plugins:
             p.set_up(self.grammar)
 

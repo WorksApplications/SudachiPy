@@ -1,22 +1,21 @@
-from sudachipy import latticenode
 from sudachipy.dictionarylib import wordinfo
+from . import OovProviderPlugin
 
 
-class SimpleOovPlugin:
+class SimpleOovPlugin(OovProviderPlugin):
+
+    def __init__(self, json_obj):
+        self.left_id = json_obj['leftId']
+        self.right_id = json_obj['rightId']
+        self.cost = json_obj['cost']
+        self.__oov_pos_strings = json_obj['oovPOS']
+
     def set_up(self, grammar):
-        oov_pos_strings = ["補助記号", "一般", "*", "*", "*", "*"]
-        self.left_id = 5968
-        self.right_id = 5968
-        self.cost = 3857
-        self.oov_pos_id = grammar.get_part_of_speech_id(oov_pos_strings)
-        self.oov_pos_id
-
-    def get_oov(self, input_text, offset, has_other_words):
-        nodes = self.provide_oov(input_text, offset, has_other_words)
-        for n in nodes:
-            n.begin = offset
-            n.end = offset + n.get_word_info().head_word_length
-        return nodes
+        #oov_pos_strings = ["補助記号", "一般", "*", "*", "*", "*"]
+        #self.left_id = 5968
+        #self.right_id = 5968
+        #self.cost = 3857
+        self.oov_pos_id = grammar.get_part_of_speech_id(self.__oov_pos_strings)
 
     def provide_oov(self, input_text, offset, has_other_words):
         if not has_other_words:
@@ -31,8 +30,3 @@ class SimpleOovPlugin:
             return [node]
         else:
             return []
-
-    def create_node(self):
-        node = latticenode.LatticeNode()
-        node.set_oov()
-        return node

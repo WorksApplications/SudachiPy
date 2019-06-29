@@ -2,12 +2,12 @@ import os
 from collections import defaultdict
 
 from sudachipy import config
-from sudachipy import latticenode
 from sudachipy.dictionarylib import categorytype
 from sudachipy.dictionarylib import wordinfo
+from .oov_provider_plugin import OovProviderPlugin
 
 
-class MeCabOovPlugin:
+class MeCabOovPlugin(OovProviderPlugin):
     class CategoryInfo:
         def __init__(self):
             self.type_ = None
@@ -22,7 +22,8 @@ class MeCabOovPlugin:
             self.cost = None
             self.pos_id = None
 
-    def __init__(self):
+    def __init__(self, json_obj=None):
+        super().__init__(None)
         self.categories = {}
         self.oov_list = defaultdict(list)
 
@@ -36,13 +37,6 @@ class MeCabOovPlugin:
         if not unk_def:
             raise AttributeError("unkDef is not defined")
         self.read_oov(unk_def, grammar)
-
-    def get_oov(self, input_text, offset, has_other_words):
-        nodes = self.provide_oov(input_text, offset, has_other_words)
-        for n in nodes:
-            n.begin = offset
-            n.end = offset + n.get_word_info().head_word_length
-        return nodes
 
     def provide_oov(self, input_text, offset, has_other_words):
         nodes = []
@@ -70,11 +64,6 @@ class MeCabOovPlugin:
                         for oov in oovs:
                             nodes.append(self.get_oov_node(s, oov, sublength))
         return nodes
-
-    def create_node(self):
-        node = latticenode.LatticeNode()
-        node.set_oov()
-        return node
 
     def get_oov_node(self, text, oov, length):
         node = self.create_node()

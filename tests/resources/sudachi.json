@@ -2,8 +2,13 @@
     "systemDict" : "system.dic",
     "userDict" : [ "user.dic" ],
     "characterDefinitionFile" : "char.def",
+    "inputTextPlugin" : [
+        { "class" : "sudachipy.plugin.connect_cost.ProlongedSoundMarkInputTextPlugin",
+          "prolongedSoundMarks": ["ー", "〜", "〰"],
+          "replacementSymbol": "ー"}
+    ],
     "oovProviderPlugin" : [
-        { "class" : "com.worksap.nlp.sudachi.SimpleOovProviderPlugin",
+        { "class" : "sudachipy.plugin.oov.SimpleOovProviderPlugin",
           "oovPOS" : [ "名詞", "普通名詞", "一般", "*", "*", "*" ],
           "leftId" : 8,
           "rightId" : 8,

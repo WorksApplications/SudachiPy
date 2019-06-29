@@ -1,10 +1,9 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 from sudachipy.dictionarylib.wordinfo import WordInfo
 
 
-class PathRewritePlugin:
-    __metaclass__ = ABCMeta
+class PathRewritePlugin(ABC):
 
     @abstractmethod
     def set_up(self, grammar):

@@ -35,13 +35,11 @@ class Tokenizer:
         bytes_ = input_.get_byte_text()
         self.lattice.resize(len(bytes_))
         for i in range(len(bytes_)):
-            print(i, input_.is_char_alignment(i), self.lattice.has_previous_node(i))
             if not input_.is_char_alignment(i) or not self.lattice.has_previous_node(i):
                 continue
             iterator = self.lexicon.lookup(bytes_, i)
             has_words = False
             for word_id, end in iterator:
-                print(word_id, end)
                 has_words = True
                 n = LatticeNode(self.lexicon,
                                 self.lexicon.get_left_id(word_id),
@@ -94,16 +92,14 @@ class Tokenizer:
             plugin.rewrite(builder)
         input_ = builder.build()
         # dump
-        print('in build_lattice')
         self.build_lattice(input_)
-        print('out build_lattice')
 
         if self.dump_output:
             print("=== Lattice dump:", file=self.dump_output)
             self.lattice.dump(self.dump_output)
         path = self.lattice.get_best_path()
         # dump
-        # path.pop()  # remove EOS
+        path.pop()  # remove EOS
         # dump_output
         for plugin in self.path_rewrite_plugins:
             plugin.rewrite(input_, path, self.lattice)

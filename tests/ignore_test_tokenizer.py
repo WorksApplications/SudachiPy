@@ -36,15 +36,28 @@ class TestTokenizer(unittest.TestCase):
     def test_get_word_id(self):
         ms = self.tokenizer_obj.tokenize('京都')
         self.assertEqual(1, len(ms))
-        # wid = ms[0].word_id()
 
-        # test for user dictionary
+        # wid = ms[0].word_id()
         # ms = self.tokenizer_obj.tokenize(None, 'ぴらる')
         # self.assertEqual(1, len(ms))
         # self.assertNotEqual(wid, ms[0].word_id())
 
         ms = self.tokenizer_obj.tokenize('京')
         self.assertEqual(1, len(ms))
+
+    def test_get_dictionary_id(self):
+        ms = self.tokenizer_obj.tokenize('京都')
+        self.assertEqual(1, ms.size())
+        self.assertEqual(0, ms[0].dictionary_id())
+
+        # ms = self.tokenizer_obj.tokenize('ぴらる')
+        # self.assertEqual(1, ms.size())
+        # self.assertEqual(1, ms[0].get_dictionary_id())
+
+        ms = self.tokenizer_obj.tokenize('京')
+        self.assertEqual(1, ms.size())
+        self.assertTrue(ms[0].dictionary_id() < 0)
+
 
     # def test_multi_granular(self):
     #    text = '医薬品安全管理責任者'

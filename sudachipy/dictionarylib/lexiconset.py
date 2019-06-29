@@ -20,7 +20,6 @@ class LexiconSet(Lexicon):
         return len(self.lexicons) >= self.__MAX_DICTIONARIES
 
     def lookup(self, text: str, offset: int) -> Lexicon.Itr:
-        print('ichikawa')
         if len(self.lexicons) == 1:
             return self.lexicons[0].lookup(text, offset)
         return self.__lookup(text, offset)

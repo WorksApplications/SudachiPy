@@ -57,7 +57,6 @@ class Lattice:
         return min_arg
 
     def insert(self, begin: int, end: int, node: LatticeNode) -> None:
-        print('insert', begin, end, node.word_id)
         self.end_lists[end].append(node)
         node.begin = begin
         node.end = end
@@ -79,8 +78,8 @@ class Lattice:
         for l_node in self.end_lists[begin]:
             if not l_node.is_connected_to_bos:
                 continue
-            connect_cost = self.grammar.get_connect_cost(l_node.left_id, r_node.right_id)
-            print('hi', connect_cost, Grammar.INHIBITED_CONNECTION)
+            # right_id and left_id look reversed, but it works ...
+            connect_cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
             if connect_cost == Grammar.INHIBITED_CONNECTION:
                 continue
             cost = l_node.total_cost + connect_cost
