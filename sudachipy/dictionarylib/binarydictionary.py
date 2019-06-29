@@ -15,9 +15,9 @@ class BinaryDictionary(object):
         self._lexicon = lexicon
 
     @staticmethod
-    def _read_dictionary(filename):
+    def _read_dictionary(filename, access=mmap.ACCESS_READ):
         with open(filename, 'r+b') as system_dic:
-            bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
+            bytes_ = mmap.mmap(system_dic.fileno(), 0, access=access)
         offset = 0
         header = DictionaryHeader.from_bytes(bytes_, offset)
         offset += header.storage_size()
@@ -41,7 +41,7 @@ class BinaryDictionary(object):
 
     @classmethod
     def from_user_dictionary(cls, filename):
-        args = cls._read_dictionary(filename)
+        args = cls._read_dictionary(filename, mmap.ACCESS_COPY)
         version = args[2].version
         if version not in [USER_DICT_VERSION_1, USER_DICT_VERSION_2]:
             raise IOError('invalid user dictionary')

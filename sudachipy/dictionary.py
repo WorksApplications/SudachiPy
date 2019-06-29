@@ -51,10 +51,10 @@ class Dictionary:
         for p in self.path_rewrite_plugins:
             p.set_up(self.grammar)
 
-        # if 'userDict' in settings:
-        #     filenames = [os.path.join(resource_dir, filename) for filename in settings['userDict']]
-        #     for filename in filenames:
-        #         self._read_user_dictionary(filename)
+        if 'userDict' in settings:
+            filenames = [os.path.join(resource_dir, filename) for filename in settings['userDict']]
+            for filename in filenames:
+                self._read_user_dictionary(filename)
 
     def _read_system_dictionary(self, filename):
         if filename is None:

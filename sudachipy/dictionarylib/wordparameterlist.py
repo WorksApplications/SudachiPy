@@ -27,7 +27,8 @@ class WordParameterList(object):
         return int.from_bytes(self.bytes.read(2), 'little', signed=True)
 
     def set_cost(self, word_id, cost):
-        if not self.is_copied:
-            self.copy_buffer()
+        # if not self.is_copied:
+        #    self.copy_buffer()
         self.bytes.seek(self.offset + self.ELEMENT_SIZE * word_id + 4)
-        self.bytes.write(2, cost.to_bytes(2, 'little', signed=True))
+        self.bytes.write(cost.to_bytes(2, 'little', signed=True))
+        # self.bytes.write(2, cost.to_bytes(2, 'little', signed=True))

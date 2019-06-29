@@ -37,10 +37,10 @@ class TestTokenizer(unittest.TestCase):
         ms = self.tokenizer_obj.tokenize('京都')
         self.assertEqual(1, len(ms))
 
-        # wid = ms[0].word_id()
-        # ms = self.tokenizer_obj.tokenize(None, 'ぴらる')
-        # self.assertEqual(1, len(ms))
-        # self.assertNotEqual(wid, ms[0].word_id())
+        wid = ms[0].word_id()
+        ms = self.tokenizer_obj.tokenize('ぴらる')
+        self.assertEqual(1, len(ms))
+        self.assertNotEqual(wid, ms[0].word_id())
 
         ms = self.tokenizer_obj.tokenize('京')
         self.assertEqual(1, len(ms))
@@ -50,9 +50,9 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(1, ms.size())
         self.assertEqual(0, ms[0].dictionary_id())
 
-        # ms = self.tokenizer_obj.tokenize('ぴらる')
-        # self.assertEqual(1, ms.size())
-        # self.assertEqual(1, ms[0].get_dictionary_id())
+        ms = self.tokenizer_obj.tokenize('ぴらる')
+        self.assertEqual(1, ms.size())
+        self.assertEqual(1, ms[0].get_dictionary_id())
 
         ms = self.tokenizer_obj.tokenize('京')
         self.assertEqual(1, ms.size())
