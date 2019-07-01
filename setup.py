@@ -12,7 +12,7 @@ with open(os.path.join(this_dir, 'requirements.txt'), 'r') as rf:
     install_requires = [line for line in rf.read().splitlines() if not line.startswith('#')]
 
 setup(name="SudachiPy",
-      version="0.1.0",
+      version="0.2.0",
       description="Python version of Sudachi, the Japanese Morphological Analyzer",
       long_description=readme(),
       url="https://github.com/WorksApplications/Sudachi",

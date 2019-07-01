@@ -25,40 +25,33 @@ The dictionary file is not included in the repository. You can get the built dic
 
 After installing SudachiPy, you may also use it in the terminal via command `sudachipy`.
 
-```
-$ sudachipy
-usage: sudachipy [-h] [-v] {tokenize,build,ubuild} ...
+```bash
+$ sudachipy -h
+usage: sudachipy [-h] [-v] [-r file] [-m {A,B,C}] [-o file] [-a] [-d]
+                 file [file ...] {build,ubuild} ...
 
 Japanese Morphological Analyzer
 
 positional arguments:
-  {tokenize,build,ubuild}
-    tokenize            see `tokenize -h`
-    build               see `build -h`
-    ubuild              see `ubuild -h`
+  file
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -v, --version         show program's version number and exit
-```
-```
-$ sudachipy tokenize -h
-usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d] ...
+  -h, --help      show this help message and exit
+  -v, --version   show program's version number and exit
+  -r file         the setting file in JSON format
+  -m {A,B,C}      the mode of splitting
+  -o file         the output file
+  -a              print all of the fields
+  -d              print the debug information
 
-Japanese Morphological Analyze
+subcommands:
+  dictionary build commands
 
-positional arguments:
-  input file(s)
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -r file        the setting file in JSON format
-  -m {A,B,C}     the mode of splitting
-  -o file        the output file
-  -a             print all of the fields
-  -d             print the debug information
+  {build,ubuild}
+    build         see `build -h`
+    ubuild        see `ubuild -h`
 ```
-```
+```bash
 $ sudachipy build -h
 usage: sudachipy build [-h] [-o file] [-d string] -m file file [file ...]
 
@@ -75,7 +68,7 @@ optional arguments:
 required named arguments:
   -m file     connection matrix file with MeCab's matrix.def format
 ```
-```
+```bash
 $ sudachipy ubuild -h
 usage: sudachipy ubuild [-h] [-d string] [-o file] [-s file] file [file ...]
 
@@ -89,7 +82,6 @@ optional arguments:
   -d string   description comment to be embedded on dictionary
   -o file     output file (default: user.dic)
   -s file     system dictionary (default: ${SUDACHIPY}/resouces/system.dic)
-
 ```
 
 ### As a Python package
@@ -107,7 +99,6 @@ tokenizer_obj = dictionary.Dictionary().create()
 # Multi-granular tokenization
 # (following results are w/ `system_full.dic`
 # you may not be able to replicate this particular example w/ `system_core.dic`)
-
 
 mode = tokenizer.Tokenizer.SplitMode.C
 [m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
