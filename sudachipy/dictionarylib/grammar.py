@@ -46,10 +46,8 @@ class Grammar:
         return self.bytes_get_short(self.connect_table_bytes, self.connect_table_offset + 2 * left_id + 2 * self.left_id_size * right_id)
 
     def set_connect_cost(self, left_id, right_id, cost):
-        raise NotImplementedError
-        # if not self.is_copied_connect_table:
-        #      self.copy_connect_table()
-        # self.bytes_put_short(self.connect_table_bytes, self.connect_table_offset + 2 * left_id + 2 * self.left_id_size * right_id, cost)
+        # bytes_ must be ACCESS_COPY mode
+        self.bytes_put_short(self.connect_table_bytes, self.connect_table_offset + 2 * left_id + 2 * self.left_id_size * right_id, cost)
 
     def get_bos_parameter(self):
         return self.BOS_PARAMETER
@@ -82,13 +80,3 @@ class Grammar:
 
     def add_pos_list(self, grammar):
         self.pos_list.extend(grammar.pos_list)
-
-    def copy_connect_table(self) -> None:
-        bytes_ = bytearray()
-        original_offset = self.bytes.tell()
-        self.bytes.seek(self.connect_table_offset)
-        bytes_.append()
-        self.connect_table_bytes = bytes_
-        self.connect_table_offset = 0
-        self.is_copied_connect_table = True
-        self.bytes.seek(original_offset)

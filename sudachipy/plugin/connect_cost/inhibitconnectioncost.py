@@ -10,7 +10,7 @@ class InhibitConnectionPlugin(EditConnectionCostPlugin):
         self.inhibit_pairs = []
 
     def set_up(self, grammar: Grammar) -> None:
-        if config.settings.has('inhibitedPair'):
+        if 'inhibitedPair' in config.settings:
             self.inhibit_pairs = config.settings['inhibitedPair']
 
     def edit(self, grammar: Grammar) -> None:
