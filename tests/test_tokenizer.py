@@ -49,32 +49,6 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(1, ms.size())
         self.assertTrue(ms[0].dictionary_id() < 0)
 
-    # def test_multi_granular(self):
-    #    text = '医薬品安全管理責任者'
-    #    mode = tokenizer.Tokenizer.SplitMode.C
-    #    tokenized = [m.surface() for m in self.tokenizer_obj.tokenize(text, mode)]
-    #    self.assertEqual(['医薬品', '安全', '管理責任者'], tokenized)
-    #    mode = tokenizer.Tokenizer.SplitMode.B
-    #    tokenized = [m.surface() for m in self.tokenizer_obj.tokenize(text, mode)]
-    #    self.assertEqual(['医薬品', '安全', '管理', '責任者'], tokenized)
-    #    mode = tokenizer.Tokenizer.SplitMode.A
-    #    tokenized = [m.surface() for m in self.tokenizer_obj.tokenize(text, mode)]
-    #    self.assertEqual(['医薬', '品', '安全', '管理', '責任', '者'], tokenized)
-
-    # def test_morpheme(self):
-    #     mode = tokenizer.Tokenizer.SplitMode.A
-    #    m = self.tokenizer_obj.tokenize('食べ', mode)[0]
-    #    self.assertEqual('食べ', m.surface())
-    #    self.assertEqual('食べる', m.dictionary_form())
-    #    self.assertEqual('タベ', m.reading_form())
-    #    self.assertEqual(['動詞', '一般', '*', '*', '下一段-バ行', '連用形-一般'], m.part_of_speech())
-
-    # def test_normalize(self):
-    #    mode = tokenizer.Tokenizer.SplitMode.A
-    #    self.assertEqual('付属', self.tokenizer_obj.tokenize('附属', mode)[0].normalized_form())
-    #   self.assertEqual('サマー', self.tokenizer_obj.tokenize("SUMMER", mode)[0].normalized_form())
-    #    self.assertEqual('シミュレーション', self.tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form())
-
 
 if __name__ == '__main__':
     unittest.main()
