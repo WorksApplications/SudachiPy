@@ -4,11 +4,11 @@ import os
 import sys
 import time
 
-from . import config
 from . import dictionary
 from . import tokenizer
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
 from .dictionarylib.dictionaryheader import DictionaryHeader
+from .dictionarylib import BinaryDictionary
 from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
 from .dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 
@@ -62,7 +62,6 @@ def _matrix_file_checker(args, print_usage):
 
 
 def _command_user_build(args, print_usage):
-    from .dictionarylib import BinaryDictionary
     _system_dic_checker(args, print_usage)
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
@@ -86,8 +85,7 @@ def _command_build(args, print_usage):
 
 
 def _command_tokenize(args, print_usage):
-
-    config.settings.set_up(path=args.fpath_setting)
+    _input_files_checker(args, print_usage)
 
     if args.mode == "A":
         mode = tokenizer.Tokenizer.SplitMode.A
@@ -104,12 +102,12 @@ def _command_tokenize(args, print_usage):
 
     is_enable_dump = args.d
 
-    dict_ = dictionary.Dictionary()
+    dict_ = dictionary.Dictionary(config_path=args.fpath_setting)
     tokenizer_obj = dict_.create()
     if is_enable_dump:
         tokenizer_obj.set_dump_output(output)
 
-    input_ = fileinput.input(args.input_files, openhook=fileinput.hook_encoded("utf-8"))
+    input_ = fileinput.input(args.in_files, openhook=fileinput.hook_encoded("utf-8"))
     run(tokenizer_obj, mode, input_, output, print_all)
 
     output.close()
@@ -117,21 +115,18 @@ def _command_tokenize(args, print_usage):
 
 def main():
     parser = argparse.ArgumentParser(description="Japanese Morphological Analyzer")
-    subparsers = parser.add_subparsers()
 
-    # root parser
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s v0.1.1")
+    # root, tokenizer parser
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s v0.2.0")
+    parser.add_argument("-r", dest="fpath_setting", metavar="file", help="the setting file in JSON format")
+    parser.add_argument("-m", dest="mode", choices=["A", "B", "C"], default="C", help="the mode of splitting")
+    parser.add_argument("-o", dest="fpath_out", metavar="file", help="the output file")
+    parser.add_argument("-a", action="store_true", help="print all of the fields")
+    parser.add_argument("-d", action="store_true", help="print the debug information")
+    parser.add_argument("in_files", metavar="file", nargs=argparse.ONE_OR_MORE)
+    parser.set_defaults(handler=_command_tokenize, print_usage=parser.print_usage)
 
-    # tokenize parser
-    parser_tk = subparsers.add_parser('tokenize', help='see `tokenize -h`', description='Japanese Morphological Analyze')
-    parser_tk.add_argument("-r", dest="fpath_setting", metavar="file",
-                           default=config.DEFAULT_SETTINGFILE, help="the setting file in JSON format")
-    parser_tk.add_argument("-m", dest="mode", choices=["A", "B", "C"], default="C", help="the mode of splitting")
-    parser_tk.add_argument("-o", dest="fpath_out", metavar="file", help="the output file")
-    parser_tk.add_argument("-a", action="store_true", help="print all of the fields")
-    parser_tk.add_argument("-d", action="store_true", help="print the debug information")
-    parser_tk.add_argument("input_files", metavar="input file(s)", nargs=argparse.REMAINDER)
-    parser_tk.set_defaults(handler=_command_tokenize, print_usage=parser_tk.print_usage)
+    subparsers = parser.add_subparsers(description='dictionary build commands')
 
     # build dictionary parser
     parser_bd = subparsers.add_parser('build', help='see `build -h`', description='Build Sudachi Dictionary')
