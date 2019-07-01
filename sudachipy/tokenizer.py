@@ -1,18 +1,16 @@
 from enum import Enum
 from typing import List
 
-from .lattice import Lattice
-from .latticenode import LatticeNode
-from . import latticenode
-from . import morphemelist
-from .utf8inputtext import UTF8InputText
-from .utf8inputtextbuilder import UTF8InputTextBuilder
 from .dictionarylib.categorytype import CategoryType
-
 from .dictionarylib.grammar import Grammar
 from .dictionarylib.lexicon import Lexicon
+from .lattice import Lattice
+from .latticenode import LatticeNode
+from .morphemelist import MorphemeList
 from .plugin.input_text import InputTextPlugin
 from .plugin.path_rewrite import PathRewritePlugin
+from .utf8inputtext import UTF8InputText
+from .utf8inputtextbuilder import UTF8InputTextBuilder
 
 
 class Tokenizer:
@@ -75,14 +73,14 @@ class Tokenizer:
             else:
                 offset = node.get_begin()
                 for wid in wids:
-                    n = latticenode.LatticeNode(self.lexicon, 0, 0, 0, wid)
+                    n = LatticeNode(self.lexicon, 0, 0, 0, wid)
                     n.begin = offset
                     offset += n.get_word_info().head_word_length
                     n.end = offset
                     new_path.append(n)
         return new_path
 
-    def tokenize(self, text: str, mode=None) -> morphemelist.MorphemeList:
+    def tokenize(self, text: str, mode=None) -> MorphemeList:
         if not text:
             return []
         mode = mode or self.SplitMode.C
@@ -107,7 +105,7 @@ class Tokenizer:
         if mode is not self.SplitMode.C:
             path = self.split_path(path, mode)
         # dump_output
-        ml = morphemelist.MorphemeList(input_, self.grammar, self.lexicon, path)
+        ml = MorphemeList(input_, self.grammar, self.lexicon, path)
         return ml
 
     def set_dump_output(self, output):

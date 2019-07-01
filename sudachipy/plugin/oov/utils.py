@@ -1,7 +1,8 @@
 from typing import List
 
 from sudachipy import config
-from . import OovProviderPlugin, MeCabOovPlugin, SimpleOovPlugin
+
+from . import MeCabOovPlugin, OovProviderPlugin, SimpleOovPlugin
 
 
 def get_oov_plugin(json_obj) -> OovProviderPlugin:

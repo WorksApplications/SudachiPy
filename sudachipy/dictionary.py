@@ -1,11 +1,11 @@
 from . import config
 from . import dictionarylib
+from .dictionarylib.binarydictionary import BinaryDictionary
+from .dictionarylib.lexiconset import LexiconSet
 from .plugin.input_text import DefaultInputTextPlugin
 from .plugin.oov import get_oov_plugins
 from .plugin.path_rewrite import get_path_rewrite_plugins
 from .tokenizer import Tokenizer
-from .dictionarylib.binarydictionary import BinaryDictionary
-from .dictionarylib.lexiconset import LexiconSet
 
 
 class Dictionary:

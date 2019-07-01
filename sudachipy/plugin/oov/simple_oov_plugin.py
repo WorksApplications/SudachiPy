@@ -1,4 +1,5 @@
 from sudachipy.dictionarylib import wordinfo
+
 from . import OovProviderPlugin
 
 

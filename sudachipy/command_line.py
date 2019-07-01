@@ -6,10 +6,10 @@ import time
 
 from . import dictionary
 from . import tokenizer
-from .dictionarylib.dictionarybuilder import DictionaryBuilder
-from .dictionarylib.dictionaryheader import DictionaryHeader
 from .dictionarylib import BinaryDictionary
 from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
+from .dictionarylib.dictionarybuilder import DictionaryBuilder
+from .dictionarylib.dictionaryheader import DictionaryHeader
 from .dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 
 

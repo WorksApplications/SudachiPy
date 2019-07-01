@@ -1,7 +1,8 @@
 from typing import List
 
 from sudachipy import config
-from . import PathRewritePlugin, JoinKatakanaOovPlugin, JoinNumericPlugin
+
+from . import JoinKatakanaOovPlugin, JoinNumericPlugin, PathRewritePlugin
 
 
 def get_path_rewrite_plugin(json_obj) -> PathRewritePlugin:

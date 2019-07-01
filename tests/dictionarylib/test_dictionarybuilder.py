@@ -2,13 +2,13 @@ import os
 import shutil
 import tempfile
 import time
-from logging import getLogger
 from io import StringIO
+from logging import getLogger
 from unittest import TestCase, mock
 
+from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
 from sudachipy.dictionarylib.dictionarybuilder import DictionaryBuilder
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
-from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
 from sudachipy.dictionarylib.lexicon import Lexicon
 from sudachipy.dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 

@@ -2,8 +2,8 @@ import mmap
 import os
 import unittest
 
-from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
+from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 
 
 class TestDictionaryHeader(unittest.TestCase):

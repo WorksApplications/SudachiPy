@@ -4,8 +4,8 @@ import time
 from logging import getLogger
 from unittest import TestCase
 
-from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
+from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 
 from .test_dictionarybuilder import TestDictionaryBuilder

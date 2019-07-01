@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from .latticenode import LatticeNode
 from .dictionarylib.grammar import Grammar
+from .latticenode import LatticeNode
 
 
 class Lattice:

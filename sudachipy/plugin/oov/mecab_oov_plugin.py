@@ -4,6 +4,7 @@ from collections import defaultdict
 from sudachipy import config
 from sudachipy.dictionarylib import categorytype
 from sudachipy.dictionarylib import wordinfo
+
 from .oov_provider_plugin import OovProviderPlugin
 
 

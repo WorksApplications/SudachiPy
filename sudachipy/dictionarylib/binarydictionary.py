@@ -1,7 +1,7 @@
 import mmap
 
-from .dictionaryheader import DictionaryHeader
 from . import SYSTEM_DICT_VERSION, USER_DICT_VERSION_1, USER_DICT_VERSION_2
+from .dictionaryheader import DictionaryHeader
 from .doublearraylexicon import DoubleArrayLexicon
 from .grammar import Grammar
 
