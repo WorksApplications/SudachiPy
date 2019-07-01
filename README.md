@@ -137,15 +137,8 @@ tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 
 ### Code format
 
-You can use `./scripts/format.sh` and check if your code is in rule. `flake8` is required.
+You can use `./scripts/format.sh` and check if your code is in rule. `flake8` `flake8-import-order` `flake8-buitins` is required. See `requirements.txt`
 
 ### Test
 
 You can use `./script/test.sh` and check if not your change cause regression.
-Current test assumes
-
-- `sudachi-dictionary-20190531-core.dic`is in `resources` directory as `system.dic`.
-
-- `system.dic` for test in `tests/resources` directory   
-
-`system.dic` for test exists as `.travis/system.dic.test`.  Copy it into `tests/resources` before test.
