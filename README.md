@@ -24,32 +24,25 @@ The dictionary file is not included in the repository. You can get the built dic
 ### As a command
 
 After installing SudachiPy, you may also use it in the terminal via command `sudachipy`.
+`sudachipy` has 3 subcommands (in default `tokenize`)
 
 ```bash
-$ sudachipy -h
-usage: sudachipy [-h] [-v] [-r file] [-m {A,B,C}] [-o file] [-a] [-d]
-                 file [file ...] {build,ubuild} ...
+$ sudachipy tokenize -h
+usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d]
+                          file [file ...]
 
-Japanese Morphological Analyzer
+Tokenize Text
 
 positional arguments:
-  file
+  file        text written in utf-8
 
 optional arguments:
-  -h, --help      show this help message and exit
-  -v, --version   show program's version number and exit
-  -r file         the setting file in JSON format
-  -m {A,B,C}      the mode of splitting
-  -o file         the output file
-  -a              print all of the fields
-  -d              print the debug information
-
-subcommands:
-  dictionary build commands
-
-  {build,ubuild}
-    build         see `build -h`
-    ubuild        see `ubuild -h`
+  -h, --help  show this help message and exit
+  -r file     the setting file in JSON format
+  -m {A,B,C}  the mode of splitting
+  -o file     the output file
+  -a          print all of the fields
+  -d          print the debug information
 ```
 ```bash
 $ sudachipy build -h
