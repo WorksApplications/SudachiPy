@@ -97,15 +97,11 @@ optional arguments:
 Here is an example usage;
 
 ```python
-import json
-
 from sudachipy import tokenizer
 from sudachipy import dictionary
-from sudachipy import config
 
-with open(config.SETTINGFILE, "r", encoding="utf-8") as f:
-    settings = json.load(f)
-tokenizer_obj = dictionary.Dictionary(settings).create()
+
+tokenizer_obj = dictionary.Dictionary().create()
 
 
 # Multi-granular tokenization

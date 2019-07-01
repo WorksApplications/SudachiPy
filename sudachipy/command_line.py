@@ -1,6 +1,5 @@
 import argparse
 import fileinput
-import json
 import os
 import sys
 import time
@@ -88,8 +87,6 @@ def _command_build(args, print_usage):
 
 def _command_tokenize(args, print_usage):
 
-    # with open(args.fpath_setting, "r", encoding="utf-8") as f:
-    #     settings = json.load(f)
     config.settings.set_up(path=args.fpath_setting)
 
     if args.mode == "A":
@@ -128,7 +125,7 @@ def main():
     # tokenize parser
     parser_tk = subparsers.add_parser('tokenize', help='see `tokenize -h`', description='Japanese Morphological Analyze')
     parser_tk.add_argument("-r", dest="fpath_setting", metavar="file",
-                           default=config.SETTINGFILE, help="the setting file in JSON format")
+                           default=config.DEFAULT_SETTINGFILE, help="the setting file in JSON format")
     parser_tk.add_argument("-m", dest="mode", choices=["A", "B", "C"], default="C", help="the mode of splitting")
     parser_tk.add_argument("-o", dest="fpath_out", metavar="file", help="the output file")
     parser_tk.add_argument("-a", action="store_true", help="print all of the fields")

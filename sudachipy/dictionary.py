@@ -1,5 +1,3 @@
-import os.path
-
 from . import config
 from . import dictionarylib
 from .plugin.input_text import DefaultInputTextPlugin
@@ -11,7 +9,9 @@ from .dictionarylib.lexiconset import LexiconSet
 
 
 class Dictionary:
-    def __init__(self, settings=config.settings, resource_dir=config.RESOURCEDIR):
+
+    def __init__(self, config_path=None, resource_dir=None):
+        config.settings.set_up(config_path, resource_dir)
         self.grammar = None
         self.lexicon = None
         self.input_text_plugins = []
@@ -20,14 +20,14 @@ class Dictionary:
         self.path_rewrite_plugins = []
         self.dictionaries = []
         self.header = None
-        self._read_system_dictionary(os.path.join(resource_dir, settings["systemDict"]))
+        self._read_system_dictionary(config.settings.system_dict_path())
 
         # self.edit_connection_plugin = [InhibitConnectionPlugin()]
         # for p in self.edit_connection_plugin:
         #     p.set_up(self.grammar)
         #     p.edit(self.grammar)
 
-        self._read_character_definition(os.path.join(resource_dir, settings["characterDefinitionFile"]))
+        self._read_character_definition(config.settings.char_def_path())
 
         default_input_text_plugin = DefaultInputTextPlugin()
         self.input_text_plugins = [default_input_text_plugin]
@@ -44,10 +44,8 @@ class Dictionary:
         for p in self.path_rewrite_plugins:
             p.set_up(self.grammar)
 
-        if 'userDict' in settings:
-            filenames = [os.path.join(resource_dir, filename) for filename in settings['userDict']]
-            for filename in filenames:
-                self._read_user_dictionary(filename)
+        for filename in config.settings.user_dict_paths():
+            self._read_user_dictionary(filename)
 
     def _read_system_dictionary(self, filename):
         if filename is None:

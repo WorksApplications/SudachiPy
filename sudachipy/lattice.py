@@ -44,7 +44,6 @@ class Lattice:
 
     def get_nodes(self, begin: int, end: int) -> List[LatticeNode]:
         return [node for node in self.end_lists[end] if node.begin == begin]
-        # return filter(lambda node: node.begin is begin, self.end_lists[end])
 
     def get_minumum_node(self, begin: int, end: int) -> Optional[LatticeNode]:
         nodes = self.get_nodes(begin, end)

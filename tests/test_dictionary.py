@@ -1,7 +1,6 @@
 import os
 import unittest
 
-from sudachipy import config
 from sudachipy import tokenizer
 from sudachipy.dictionary import Dictionary
 
@@ -10,8 +9,7 @@ class TestDictionary(unittest.TestCase):
 
     def setUp(self):
         resource_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources')
-        config.settings.set_up(os.path.join(resource_dir, 'sudachi.json'), resource_dir)
-        self.dict_ = Dictionary(resource_dir=resource_dir)
+        self.dict_ = Dictionary(os.path.join(resource_dir, 'sudachi.json'), resource_dir=resource_dir)
 
     def tearDown(self) -> None:
         self.dict_.close()

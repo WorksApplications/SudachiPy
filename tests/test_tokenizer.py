@@ -1,15 +1,14 @@
 import unittest
 import os
 
-from sudachipy import config, dictionary
+from sudachipy import dictionary
 
 
 class TestTokenizer(unittest.TestCase):
 
     def setUp(self):
         resource_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources')
-        config.settings.set_up(os.path.join(resource_dir, 'sudachi.json'), resource_dir)
-        self.dict_ = dictionary.Dictionary(resource_dir=resource_dir)
+        self.dict_ = dictionary.Dictionary(os.path.join(resource_dir, 'sudachi.json'), resource_dir)
         self.tokenizer_obj = self.dict_.create()
 
     def test_tokenize_small_katanana_only(self):

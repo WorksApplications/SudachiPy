@@ -1,8 +1,8 @@
 import json
 import os
 
-SETTINGFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "resources/sudachi.json")
-RESOURCEDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "resources")
+DEFAULT_SETTINGFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "resources/sudachi.json")
+DEFAULT_RESOURCEDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "resources")
 
 
 class _Settings(object):
@@ -10,9 +10,13 @@ class _Settings(object):
     def __init__(self):
         self.__is_active = False
         self.__dict_ = None
-        self.resource_dir = RESOURCEDIR
+        self.resource_dir = DEFAULT_RESOURCEDIR
 
-    def set_up(self, path=SETTINGFILE, resource_dir=RESOURCEDIR):
+    def set_up(self, path=None, resource_dir=None):
+        if not path:
+            path = DEFAULT_SETTINGFILE
+        if not resource_dir:
+            resource_dir = DEFAULT_RESOURCEDIR
         with open(path, "r", encoding="utf-8") as f:
             self.__dict_ = json.load(f)
         self.__is_active = True
@@ -31,6 +35,21 @@ class _Settings(object):
 
     def has(self, key):
         return key in self.__dict_
+
+    def system_dict_path(self):
+        if 'systemDict' in self.__dict_:
+            return os.path.join(self.resource_dir, self.__dict_['systemDict'])
+        raise KeyError('`systemDict` not defined in setting file')
+
+    def char_def_path(self):
+        if 'characterDefinitionFile' in self.__dict_:
+            return os.path.join(self.resource_dir, self.__dict_['characterDefinitionFile'])
+        raise KeyError('`characterDefinitionFile` not defined in setting file')
+
+    def user_dict_paths(self):
+        if 'userDict' in self.__dict_:
+            return [os.path.join(self.resource_dir, path) for path in self.__dict_['userDict']]
+        return []
 
 
 settings = _Settings()

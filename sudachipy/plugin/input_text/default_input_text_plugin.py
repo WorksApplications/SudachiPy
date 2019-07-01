@@ -13,7 +13,7 @@ class DefaultInputTextPlugin(InputTextPlugin):
         self.replace_char_map = {}
 
     def set_up(self) -> None:
-        rewrite_def = os.path.join(config.RESOURCEDIR, "rewrite.def")
+        rewrite_def = os.path.join(config.DEFAULT_RESOURCEDIR, "rewrite.def")
         if not rewrite_def:
             raise AttributeError("rewriteDef is not defined")
         self.read_rewrite_lists(rewrite_def)
