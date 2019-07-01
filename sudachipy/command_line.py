@@ -101,7 +101,6 @@ def _command_user_build(args, print_usage):
 
 
 def _command_build(args, print_usage):
-    print('hoge')
     _matrix_file_checker(args, print_usage)
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
