@@ -18,7 +18,7 @@ setup(name="SudachiPy",
       url="https://github.com/WorksApplications/Sudachi",
       license="Apache-2.0",
       packages=[
-          "sudachipy"
+          "sudachipy",
           "sudachipy.dartsclone",
           "sudachipy.dictionarylib",
           "sudachipy.plugin",
