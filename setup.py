@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_namespace_packages
 
 
 def readme():
@@ -17,15 +17,7 @@ setup(name="SudachiPy",
       long_description=readme(),
       url="https://github.com/WorksApplications/Sudachi",
       license="Apache-2.0",
-      packages=[
-          "sudachipy",
-          "sudachipy.dartsclone",
-          "sudachipy.dictionarylib",
-          "sudachipy.plugin",
-          "sudachipy.plugin.input_text",
-          "sudachipy.plugin.oov",
-          "sudachipy.plugin.path_rewrite",
-      ],
+      packages=find_namespace_packages(include=['sudachipy.*']),
       entry_points = {
             "console_scripts": ["sudachipy=sudachipy.command_line:main"],
       },
