@@ -24,41 +24,27 @@ The dictionary file is not included in the repository. You can get the built dic
 ### As a command
 
 After installing SudachiPy, you may also use it in the terminal via command `sudachipy`.
+`sudachipy` has 3 subcommands (in default `tokenize`)
 
-```
-$ sudachipy
-usage: sudachipy [-h] [-v] {tokenize,build,ubuild} ...
-
-Japanese Morphological Analyzer
-
-positional arguments:
-  {tokenize,build,ubuild}
-    tokenize            see `tokenize -h`
-    build               see `build -h`
-    ubuild              see `ubuild -h`
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, --version         show program's version number and exit
-```
-```
+```bash
 $ sudachipy tokenize -h
-usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d] ...
+usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d]
+                          file [file ...]
 
-Japanese Morphological Analyze
+Tokenize Text
 
 positional arguments:
-  input file(s)
+  file        text written in utf-8
 
 optional arguments:
-  -h, --help     show this help message and exit
-  -r file        the setting file in JSON format
-  -m {A,B,C}     the mode of splitting
-  -o file        the output file
-  -a             print all of the fields
-  -d             print the debug information
+  -h, --help  show this help message and exit
+  -r file     the setting file in JSON format
+  -m {A,B,C}  the mode of splitting
+  -o file     the output file
+  -a          print all of the fields
+  -d          print the debug information
 ```
-```
+```bash
 $ sudachipy build -h
 usage: sudachipy build [-h] [-o file] [-d string] -m file file [file ...]
 
@@ -75,7 +61,7 @@ optional arguments:
 required named arguments:
   -m file     connection matrix file with MeCab's matrix.def format
 ```
-```
+```bash
 $ sudachipy ubuild -h
 usage: sudachipy ubuild [-h] [-d string] [-o file] [-s file] file [file ...]
 
@@ -89,7 +75,6 @@ optional arguments:
   -d string   description comment to be embedded on dictionary
   -o file     output file (default: user.dic)
   -s file     system dictionary (default: ${SUDACHIPY}/resouces/system.dic)
-
 ```
 
 ### As a Python package
@@ -97,38 +82,33 @@ optional arguments:
 Here is an example usage;
 
 ```python
-import json
-
 from sudachipy import tokenizer
 from sudachipy import dictionary
-from sudachipy import config
 
-with open(config.SETTINGFILE, "r", encoding="utf-8") as f:
-    settings = json.load(f)
-tokenizer_obj = dictionary.Dictionary(settings).create()
+
+tokenizer_obj = dictionary.Dictionary().create()
 
 
 # Multi-granular tokenization
 # (following results are w/ `system_full.dic`
 # you may not be able to replicate this particular example w/ `system_core.dic`)
 
-
 mode = tokenizer.Tokenizer.SplitMode.C
-[m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
+[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
 # => ['医薬品安全管理責任者']
 
 mode = tokenizer.Tokenizer.SplitMode.B
-[m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
+[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
 # => ['医薬品', '安全', '管理', '責任者']
 
 mode = tokenizer.Tokenizer.SplitMode.A
-[m.surface() for m in tokenizer_obj.tokenize(mode, "医薬品安全管理責任者")]
+[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
 # => ['医薬', '品', '安全', '管理', '責任', '者']
 
 
 # Morpheme information
 
-m = tokenizer_obj.tokenize(mode, "食べ")[0]
+m = tokenizer_obj.tokenize("食べ", mode)[0]
 
 m.surface() # => '食べ'
 m.dictionary_form() # => '食べる'
@@ -138,11 +118,11 @@ m.part_of_speech() # => ['動詞', '一般', '*', '*', '下一段-バ行', '連�
 
 # Normalization
 
-tokenizer_obj.tokenize(mode, "附属")[0].normalized_form()
+tokenizer_obj.tokenize("附属", mode)[0].normalized_form()
 # => '付属'
-tokenizer_obj.tokenize(mode, "SUMMER")[0].normalized_form()
+tokenizer_obj.tokenize("SUMMER", mode)[0].normalized_form()
 # => 'サマー'
-tokenizer_obj.tokenize(mode, "シュミレーション")[0].normalized_form()
+tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 # => 'シミュレーション'
 ```
 
@@ -150,15 +130,8 @@ tokenizer_obj.tokenize(mode, "シュミレーション")[0].normalized_form()
 
 ### Code format
 
-You can use `./scripts/format.sh` and check if your code is in rule. `flake8` is required.
+You can use `./scripts/format.sh` and check if your code is in rule. `flake8` `flake8-import-order` `flake8-buitins` is required. See `requirements.txt`
 
 ### Test
 
 You can use `./script/test.sh` and check if not your change cause regression.
-Current test assumes
-
-- `sudachi-dictionary-20190531-core.dic`is in `resources` directory as `system.dic`.
-
-- `system.dic` for test in `tests/resources` directory   
-
-`system.dic` for test exists as `.travis/system.dic.test`.  Copy it into `tests/resources` before test.

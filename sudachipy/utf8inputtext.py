@@ -2,7 +2,7 @@ import copy
 
 
 class UTF8InputText:
-    def __init__(self, grammar, original_text, modified_text, bytes_, offsets, byte_indexes, char_categories, char_category_continuities):
+    def __init__(self, grammar, original_text, modified_text, bytes_, offsets, byte_indexes, char_categories, char_category_continuities, can_bow_list=None):
         self.original_text = original_text
         self.modified_text = modified_text
         self.bytes = bytes_
@@ -10,6 +10,7 @@ class UTF8InputText:
         self.byte_indexes = byte_indexes
         self.char_categories = char_categories
         self.char_category_continuities = char_category_continuities
+        self.can_bow_list = can_bow_list
 
     def get_original_text(self):
         return self.original_text
@@ -62,3 +63,6 @@ class UTF8InputText:
                 return length
             length += 1
         return length
+
+    def can_bow(self, idx: int) -> bool:
+        return self.is_char_alignment(idx) and self.can_bow_list[self.byte_indexes[idx]]

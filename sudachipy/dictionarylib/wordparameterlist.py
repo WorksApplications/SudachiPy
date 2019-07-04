@@ -6,7 +6,7 @@ class WordParameterList(object):
         bytes_.seek(offset)
         self.size = int.from_bytes(bytes_.read(4), 'little')
         self.offset = offset + 4
-        self.is_copied = False
+        # self.is_copied = False
 
     def storage_size(self):
         return 4 + self.ELEMENT_SIZE * self.size
@@ -27,7 +27,6 @@ class WordParameterList(object):
         return int.from_bytes(self.bytes.read(2), 'little', signed=True)
 
     def set_cost(self, word_id, cost):
-        if not self.is_copied:
-            self.copy_buffer()
+        # bytes_ must be ACCESS_COPY mode
         self.bytes.seek(self.offset + self.ELEMENT_SIZE * word_id + 4)
-        self.bytes.write(2, cost.to_bytes(2, 'little', signed=True))
+        self.bytes.write(cost.to_bytes(2, 'little', signed=True))

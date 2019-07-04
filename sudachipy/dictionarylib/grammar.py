@@ -42,13 +42,12 @@ class Grammar:
     def get_part_of_speech_id(self, pos):
         return self.pos_list.index(pos) if pos in self.pos_list else -1
 
-    def get_connect_cost(self, left_id, right_id):
-        return self.bytes_get_short(self.connect_table_bytes, self.connect_table_offset + left_id * 2 + 2 * self.left_id_size * right_id)
+    def get_connect_cost(self, left_id: int, right_id: int) -> int:
+        return self.bytes_get_short(self.connect_table_bytes, self.connect_table_offset + 2 * left_id + 2 * self.left_id_size * right_id)
 
     def set_connect_cost(self, left_id, right_id, cost):
-        if not self.is_copied_connect_table:
-            self.copy_connect_table()
-        self.bytes_put_short(self.connect_table_bytes, self.connect_table_offset + left_id * 2 + 2 * self.left_id_size * right_id, cost)
+        # bytes_ must be ACCESS_COPY mode
+        self.bytes_put_short(self.connect_table_bytes, self.connect_table_offset + 2 * left_id + 2 * self.left_id_size * right_id, cost)
 
     def get_bos_parameter(self):
         return self.BOS_PARAMETER
@@ -78,3 +77,6 @@ class Grammar:
     def bytes_put_short(bytes_, offset, data):
         bytes_.seek(offset)
         bytes_.write(data.to_bytes(2, 'little'))
+
+    def add_pos_list(self, grammar):
+        self.pos_list.extend(grammar.pos_list)

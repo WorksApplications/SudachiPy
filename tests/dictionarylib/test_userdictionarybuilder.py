@@ -1,10 +1,11 @@
 import os
 import tempfile
 import time
+from logging import getLogger
 from unittest import TestCase
 
+from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
-from sudachipy.dictionarylib.dictionaryversion import DictionaryVersion
 from sudachipy.dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 
 from .test_dictionarybuilder import TestDictionaryBuilder
@@ -21,9 +22,11 @@ class TestUserDictionaryBuilder(TestCase):
         self.dict_filename = os.path.join(test_resources_dir, 'system.dic')
         _, _, self.grammar, self.lexicon_set = \
             TestDictionaryBuilder.read_system_dictionary(self.dict_filename)
+        self.logger = getLogger()
+        self.logger.disabled = True
 
     def test_parseline_with_userdefined_POS(self):
-        builder = UserDictionaryBuilder(self.grammar, self.lexicon_set)
+        builder = UserDictionaryBuilder(self.grammar, self.lexicon_set, logger=self.logger)
         builder.parse_line('田中,0,0,0,田中,存在,しない,品詞,*,*,*,タナカ,田中,*,A,*,*,*\n'.split(','))
         self.assertEqual(1, len(builder.pos_table.get_list()))
 
@@ -39,9 +42,9 @@ class TestUserDictionaryBuilder(TestCase):
             wf.write('市,-1,-1,0,市,名詞,普通名詞,一般,*,*,*,シ,市,*,A,*,*,*\n')
 
         _, _, grammar, lexicon_set = TestDictionaryBuilder.read_system_dictionary(self.dict_filename)
-        header = DictionaryHeader(DictionaryVersion.SYSTEM_DICT_VERSION, int(time.time()), 'test')
+        header = DictionaryHeader(SYSTEM_DICT_VERSION, int(time.time()), 'test')
         out_stream.write(header.to_bytes())
-        builder = UserDictionaryBuilder(grammar, lexicon_set)
+        builder = UserDictionaryBuilder(grammar, lexicon_set, logger=self.logger)
         lexicon_paths = [in_path]
         builder.build(lexicon_paths, None, out_stream)
         out_stream.close()
@@ -50,7 +53,7 @@ class TestUserDictionaryBuilder(TestCase):
         lexicon = lexicon_set.lexicons[0]
 
         # header
-        self.assertEqual(DictionaryVersion.SYSTEM_DICT_VERSION, header.version)
+        self.assertEqual(SYSTEM_DICT_VERSION, header.version)
         self.assertEqual('test', header.description)
 
         # lexicon
@@ -66,8 +69,9 @@ class TestUserDictionaryBuilder(TestCase):
         self.assertEqual([], wi.b_unit_split)
         self.assertEqual([4, 3, 1 | (1 << 28)], wi.word_structure)
         lst = lexicon.lookup('東京都市'.encode('utf-8'), 0)
-        self.assertEqual(1, len(lst))
-        self.assertEqual((0, len('東京都市'.encode('utf-8'))), lst[0])
+        self.assertEqual((0, len('東京都市'.encode('utf-8'))), lst.__next__())
+        with self.assertRaises(StopIteration):
+            lst.__next__()
 
         self.assertEqual(-1, lexicon.get_left_id(1))
         self.assertEqual(0, lexicon.get_cost(1))
@@ -80,4 +84,5 @@ class TestUserDictionaryBuilder(TestCase):
         self.assertEqual([], wi.a_unit_split)
         self.assertEqual([], wi.b_unit_split)
         lst = lexicon.lookup('東'.encode('utf-8'), 0)
-        self.assertEqual(0, len(lst))
+        with self.assertRaises(StopIteration):
+            lst.__next__()

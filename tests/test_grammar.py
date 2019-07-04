@@ -21,7 +21,7 @@ class TestGrammar(unittest.TestCase):
             wf.write(bytes(storage))
         self.mmap = None
         with open(f, 'rb') as rf:
-            self.mmap = mmap.mmap(rf.fileno(), 0, access=mmap.ACCESS_READ)
+            self.mmap = mmap.mmap(rf.fileno(), 0, access=mmap.ACCESS_COPY)
         self.storage_size = self.mmap.size()
         offset = 0
         self.grammar = Grammar(self.mmap, offset)
@@ -48,9 +48,9 @@ class TestGrammar(unittest.TestCase):
         self.assertEqual(-100, self.grammar.get_connect_cost(2, 1))
         self.assertEqual(200, self.grammar.get_connect_cost(1, 2))
 
-    # def test_set_connect_cost(self):
-    #     self.grammar.set_connect_cost(0, 0, 300)
-    #     self.assertEqual(300, self.grammar.get_connect_cost(0, 0))
+    def test_set_connect_cost(self):
+        self.grammar.set_connect_cost(0, 0, 300)
+        self.assertEqual(300, self.grammar.get_connect_cost(0, 0))
 
     def test_get_bos_parameters(self):
         self.assertEqual(0, self.grammar.get_bos_parameter()[0])

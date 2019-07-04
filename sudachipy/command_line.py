@@ -1,23 +1,49 @@
 import argparse
 import fileinput
-import json
 import os
 import sys
 import time
 
-from . import config
 from . import dictionary
 from . import tokenizer
+from .dictionarylib import BinaryDictionary
+from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
 from .dictionarylib.dictionaryheader import DictionaryHeader
-from .dictionarylib.dictionaryversion import DictionaryVersion
 from .dictionarylib.userdictionarybuilder import UserDictionaryBuilder
+
+
+def _set_default_subparser(self, name, args=None):
+    """
+    copy and modify code from https://bitbucket.org/ruamel/std.argparse
+    """
+    subparser_found = False
+    for arg in sys.argv[1:]:
+        if arg in ['-h', '--help']:  # global help if no subparser
+            break
+    else:
+        for x in self._subparsers._actions:
+            if not isinstance(x, argparse._SubParsersAction):
+                continue
+            for sp_name in x._name_parser_map.keys():
+                if sp_name in sys.argv[1:]:
+                    subparser_found = True
+        if not subparser_found:
+            # insert default in first position, this implies no
+            # global options without a sub_parsers specified
+            if args is None:
+                sys.argv.insert(1, name)
+            else:
+                args.insert(0, name)
+
+
+argparse.ArgumentParser.set_default_subparser = _set_default_subparser
 
 
 def run(tokenizer, mode, input, output, print_all):
     for line in input:
         line = line.rstrip('\n')
-        for m in tokenizer.tokenize(mode, line):
+        for m in tokenizer.tokenize(line, mode):
             list_info = [
                 m.surface(),
                 ",".join(m.part_of_speech()),
@@ -66,11 +92,11 @@ def _command_user_build(args, print_usage):
     _system_dic_checker(args, print_usage)
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
-        DictionaryVersion.USER_DICT_VERSION_2, int(time.time()), args.description)
-    _, _, grammar, system_lexicon = _read_system_dictionary(args.system_dic)
+        USER_DICT_VERSION_2, int(time.time()), args.description)
+    dict_ = BinaryDictionary.from_system_dictionary(args.system_dic)
     with open(args.out_file, 'wb') as wf:
         wf.write(header.to_bytes())
-        builder = UserDictionaryBuilder(grammar, system_lexicon)
+        builder = UserDictionaryBuilder(dict_.grammar, dict_.lexicon)
         builder.build(args.in_files, None, wf)
 
 
@@ -78,7 +104,7 @@ def _command_build(args, print_usage):
     _matrix_file_checker(args, print_usage)
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
-        DictionaryVersion.SYSTEM_DICT_VERSION, int(time.time()), args.description)
+        SYSTEM_DICT_VERSION, int(time.time()), args.description)
     with open(args.out_file, 'wb') as wf, open(args.matrix_file, 'r') as rf:
         wf.write(header.to_bytes())
         builder = DictionaryBuilder()
@@ -86,9 +112,7 @@ def _command_build(args, print_usage):
 
 
 def _command_tokenize(args, print_usage):
-
-    with open(args.fpath_setting, "r", encoding="utf-8") as f:
-        settings = json.load(f)
+    _input_files_checker(args, print_usage)
 
     if args.mode == "A":
         mode = tokenizer.Tokenizer.SplitMode.A
@@ -105,12 +129,12 @@ def _command_tokenize(args, print_usage):
 
     is_enable_dump = args.d
 
-    dict_ = dictionary.Dictionary(settings)
+    dict_ = dictionary.Dictionary(config_path=args.fpath_setting)
     tokenizer_obj = dict_.create()
     if is_enable_dump:
         tokenizer_obj.set_dump_output(output)
 
-    input_ = fileinput.input(args.input_files, openhook=fileinput.hook_encoded("utf-8"))
+    input_ = fileinput.input(args.in_files, openhook=fileinput.hook_encoded("utf-8"))
     run(tokenizer_obj, mode, input_, output, print_all)
 
     output.close()
@@ -118,20 +142,19 @@ def _command_tokenize(args, print_usage):
 
 def main():
     parser = argparse.ArgumentParser(description="Japanese Morphological Analyzer")
-    subparsers = parser.add_subparsers()
 
-    # root parser
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s v0.1.1")
+    subparsers = parser.add_subparsers(description='')
 
-    # tokenize parser
-    parser_tk = subparsers.add_parser('tokenize', help='see `tokenize -h`', description='Japanese Morphological Analyze')
-    parser_tk.add_argument("-r", dest="fpath_setting", metavar="file",
-                           default=config.SETTINGFILE, help="the setting file in JSON format")
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s v0.2.0")
+
+    # root, tokenizer parser
+    parser_tk = subparsers.add_parser('tokenize', help='(default) see `tokenize -h`', description='Tokenize Text')
+    parser_tk.add_argument("-r", dest="fpath_setting", metavar="file", help="the setting file in JSON format")
     parser_tk.add_argument("-m", dest="mode", choices=["A", "B", "C"], default="C", help="the mode of splitting")
     parser_tk.add_argument("-o", dest="fpath_out", metavar="file", help="the output file")
     parser_tk.add_argument("-a", action="store_true", help="print all of the fields")
     parser_tk.add_argument("-d", action="store_true", help="print the debug information")
-    parser_tk.add_argument("input_files", metavar="input file(s)", nargs=argparse.REMAINDER)
+    parser_tk.add_argument("in_files", metavar="file", nargs=argparse.ONE_OR_MORE, help='text written in utf-8')
     parser_tk.set_defaults(handler=_command_tokenize, print_usage=parser_tk.print_usage)
 
     # build dictionary parser
@@ -159,6 +182,8 @@ def main():
                             help='source files with CSV format (one or more)')
     parser_ubd.set_defaults(handler=_command_user_build, print_usage=parser_ubd.print_usage)
 
+    parser.set_default_subparser('tokenize')
+
     args = parser.parse_args()
 
     if hasattr(args, 'handler'):
@@ -169,7 +194,6 @@ def main():
 
 # Todo: delete this function in the future
 def _read_system_dictionary(filename):
-    from .dictionarylib.dictionaryversion import DictionaryVersion
     from .dictionarylib.dictionaryheader import DictionaryHeader
     from . import dictionarylib
     """
@@ -187,7 +211,7 @@ def _read_system_dictionary(filename):
 
     offset = 0
     header = DictionaryHeader.from_bytes(bytes_, offset)
-    if header.version != DictionaryVersion.SYSTEM_DICT_VERSION:
+    if header.version != SYSTEM_DICT_VERSION:
         raise Exception("invalid system dictionary")
     offset += header.storage_size()
 

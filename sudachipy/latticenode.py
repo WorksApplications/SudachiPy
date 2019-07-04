@@ -1,65 +1,76 @@
+from .dictionarylib.wordinfo import WordInfo
+
+
 class LatticeNode:
+
+    __NULL_SURFACE = '(null)'
+
+    begin = 0
+    end = 0
+    total_cost = 0
+    word_id = 0
+    _is_oov = False
+    best_previous_node = None
+    is_connected_to_bos = None
+    extra_word_info = None
+
     def __init__(self, lexicon=None, left_id=None, right_id=None, cost=None, word_id=None):
-        self.begin = 0
-        self.end = 0
 
-        self.total_cost = 0
-        self.best_previous_node = None
-        self.is_connected_to_bos = None
-
-        self.is_oov = False
-        self.extra_word_info = None
-
+        self.undefined_word_info =\
+            WordInfo(self.__NULL_SURFACE, 0, -1, self.__NULL_SURFACE, -1,
+                     self.__NULL_SURFACE, self.__NULL_SURFACE, [], [], [])
+        self.is_defined = True
         if lexicon is left_id is right_id is cost is word_id is None:
-            self.word_id = -1
+            self.is_defined = False
             return
-
         self.lexicon = lexicon
         self.left_id = left_id
         self.right_id = right_id
         self.cost = cost
         self.word_id = word_id
 
-    def set_parameter(self, left_id, right_id, cost):
+    def set_parameter(self, left_id: int, right_id: int, cost: int) -> None:
         self.left_id = left_id
         self.right_id = right_id
         self.cost = cost
 
-    def get_begin(self):
+    def get_begin(self) -> int:
         return self.begin
 
-    def get_end(self):
+    def get_end(self) -> int:
         return self.end
 
-    def set_range(self, begin, end):
+    def set_range(self, begin: int, end: int) -> None:
         self.begin = begin
         self.end = end
 
     def is_oov(self):
-        return self.is_oov
+        return self._is_oov
 
     def set_oov(self):
-        self.is_oov = True
+        self._is_oov = True
 
-    def get_word_info(self):
-        if self.word_id >= 0:
-            return self.lexicon.get_word_info(self.word_id)
-        elif(self.extra_word_info is not None):
+    def get_word_info(self) -> WordInfo:
+        if not self.is_defined:
+            return self.undefined_word_info
+        if self.extra_word_info:
             return self.extra_word_info
-        raise IndexError("this node has no WordInfo")
+        return self.lexicon.get_word_info(self.word_id)
 
-    def set_word_info(self, word_info):
+    def set_word_info(self, word_info: WordInfo) -> None:
         self.extra_word_info = word_info
-        self.word_id = -1
+        self.is_defined = True
 
-    def get_path_cost(self):
+    def get_path_cost(self) -> int:
         return self.cost
 
-    def get_word_id(self):
+    def get_word_id(self) -> int:
         return self.word_id
 
-    def get_dictionary_id(self):
-        return self.word_id >> 28
+    def get_dictionary_id(self) -> int:
+        if not self.is_defined or self.extra_word_info:
+            return -1
+        return self.lexicon.get_dictionary_id(self.word_id)  # self.word_id >> 28
 
     def __str__(self):
         surface = ""

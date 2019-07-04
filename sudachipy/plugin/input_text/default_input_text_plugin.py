@@ -1,23 +1,24 @@
 import os
 from unicodedata import normalize
 
-
 from sudachipy import config
 
+from . import InputTextPlugin
 
-class DefaultInputTextPlugin:
+
+class DefaultInputTextPlugin(InputTextPlugin):
     def __init__(self):
         self.ignore_normalize_set = set()
         self.key_lengths = {}
         self.replace_char_map = {}
 
-    def set_up(self):
-        rewrite_def = os.path.join(config.RESOURCEDIR, "rewrite.def")
+    def set_up(self) -> None:
+        rewrite_def = os.path.join(config.DEFAULT_RESOURCEDIR, "rewrite.def")
         if not rewrite_def:
             raise AttributeError("rewriteDef is not defined")
         self.read_rewrite_lists(rewrite_def)
 
-    def rewrite(self, builder):
+    def rewrite(self, builder: InputTextPlugin.Builder) -> None:
         offset = 0
         next_offset = 0
         text = builder.get_text()
