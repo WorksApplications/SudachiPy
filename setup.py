@@ -1,26 +1,16 @@
-import os
-from setuptools import setup, find_namespace_packages
+from setuptools import setup, find_packages
 
-
-def readme():
-    with open("README.md", encoding="utf-8") as f:
-        return f.read()
-
-
-this_dir = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(this_dir, 'requirements.txt'), 'r') as rf:
-    install_requires = [line for line in rf.read().splitlines() if not line.startswith('#')]
 
 setup(name="SudachiPy",
       version="0.1.0",
       description="Python version of Sudachi, the Japanese Morphological Analyzer",
-      long_description=readme(),
+      long_description="",
       url="https://github.com/WorksApplications/Sudachi",
       license="Apache-2.0",
-      packages=find_namespace_packages(include=['sudachipy.*']),
-      entry_points = {
-            "console_scripts": ["sudachipy=sudachipy.command_line:main"],
+      packages=find_packages(include=["sudachipy", "sudachipy.*"]),
+      entry_points={
+          "console_scripts": ["sudachipy=sudachipy.command_line:main"],
       },
+      install_requires=["sortedcontainers>=2.1.0,<2.2.0"],
       include_package_data=True,
-      install_requires=install_requires
       )
