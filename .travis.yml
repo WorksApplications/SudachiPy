@@ -11,3 +11,11 @@ before_script:
 script:
  - ./scripts/format.sh
  - python -m unittest discover tests
+deploy:
+ provider: pypi
+ user: worksapplications
+ password:
+  secure: kqWFR7M+SFjDbWNLcoKWIhSNUr5aHwyeSl9x0b3XN8v/VXXluAyZxAvlpI8WUZsesT6ZB00/KQT+3rL6xDOMpjECbDkNWBncaiW2++VnzN18a+LyNQHX3mmgwdMHjTxaMCnT9wOfkHXHGWfXoDLWYxZpwa6gaKnBkSdPB1CQg1WiFmzrxK8vsi0Mhwya9GHPb5D2snRp0MWs9nnwkLZuVt+E/ZDGfkrRnyE6cB2S4kUVkjmw9erqWyprTVmzyb2jBeeLm1F55kB0VSKbEmhXH+UYwHDfbP5+xXcYgwqf0tchvWit7w3J9Yk49naWu3e0ZFGnJwnbWLZNSXeHyiG0Dpz2HCraNmTLIHCVJXdHgODz6yL/bu/UlMHrbbmsgko4wbwjTyTPjYWrhGk9HJBdXb0rfh8PSKWpJpJ106cAX2M0sa0OXzk8OtqNTOBsirJspTo63Xtn+4mtGzHpJugXlmIIxSq03dFr6+d1xLIrd1ZXlwldP9mpVhsZLB40b9KqkNpR2zO3Vj2uju22lboUNBGRpzBnmR9is1zdS7f+0YZ1iBc5Qc6+OTl9gdCqZLnOkyAX2e1DbLoXBl0GUCFQ56MAeWiep8oLBlQiBk19mNdKrB06Oy5tQIhkG+i9TCted4sCzlut+dg36xVuJn34yyQS1t00WNB/PRkkXLeH9HY=
+ distributions: sdist bdist_wheel
+ on:
+  tags: true
