@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name="SudachiPy",
-      version="0.2.0",
+      version="0.2.0-test",
       description="Python version of Sudachi, the Japanese Morphological Analyzer",
       long_description=open('README.md').read(),
       long_description_content_type="text/markdown",
