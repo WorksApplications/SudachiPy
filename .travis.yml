@@ -7,7 +7,7 @@ python:
 install:
  - pip install flake8 flake8-import-order flake8-builtins && pip install -r requirements.txt
 before_script:
- - mv .travis/system.dic.test tests/resources/system.dic && mv .travis/user.dic.test tests/resources/user.dic
+ - cp .travis/system.dic.test tests/resources/system.dic && cp .travis/user.dic.test tests/resources/user.dic
 script:
  - ./scripts/format.sh
  - python -m unittest discover tests
