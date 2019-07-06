@@ -173,7 +173,7 @@ and overwrite `systemDict` value with the absolute path for your `system.dic`.
 
 ```
 {
-    "systemDict" : "/absolute/path/to/system.dic}",
+    "systemDict" : "/absolute/path/to/system.dic",
     ...
 }
 ```
