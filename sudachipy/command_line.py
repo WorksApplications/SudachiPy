@@ -161,7 +161,7 @@ def main():
 
     subparsers = parser.add_subparsers(description='')
 
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s v0.2.0")
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s v" + SUDACHIPY_VERSION)
 
     # root, tokenizer parser
     parser_tk = subparsers.add_parser('tokenize', help='(default) see `tokenize -h`', description='Tokenize Text')

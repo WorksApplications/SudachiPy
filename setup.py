@@ -1,7 +1,8 @@
 from setuptools import setup, find_packages
+from sudachipy import SUDACHIPY_VERSION
 
 setup(name="SudachiPy",
-      version="0.2.1",
+      version=SUDACHIPY_VERSION,
       description="Python version of Sudachi, the Japanese Morphological Analyzer",
       long_description=open('README.md').read(),
       long_description_content_type="text/markdown",
