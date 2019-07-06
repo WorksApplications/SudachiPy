@@ -6,6 +6,8 @@ import time
 
 from . import dictionary
 from . import tokenizer
+from . import SUDACHIPY_VERSION
+from .config import set_default_dict_package, unlink_default_dict_package
 from .dictionarylib import BinaryDictionary
 from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
@@ -111,6 +113,20 @@ def _command_build(args, print_usage):
         builder.build(args.in_files, rf, wf)
 
 
+def _command_link(args, print_usage):
+    if args.unlink:
+        unlink_default_dict_package(msg=True)
+        return
+
+    try:
+        dict_package = 'sudachidict_' + args.dict_type
+        return set_default_dict_package(dict_package, msg=True)
+    except ImportError:
+        print_usage()
+        print('{} not installed'.format(dict_package))
+        exit()
+
+
 def _command_tokenize(args, print_usage):
     _input_files_checker(args, print_usage)
 
@@ -156,6 +172,12 @@ def main():
     parser_tk.add_argument("-d", action="store_true", help="print the debug information")
     parser_tk.add_argument("in_files", metavar="file", nargs=argparse.ONE_OR_MORE, help='text written in utf-8')
     parser_tk.set_defaults(handler=_command_tokenize, print_usage=parser_tk.print_usage)
+
+    # link default dict package
+    parser_ln = subparsers.add_parser('link', help='see `link -h`', description='Link Default Dict Package')
+    parser_ln.add_argument("-t", dest="dict_type", choices=["small", "core", "full"], default="core", help="dict dict")
+    parser_ln.add_argument("-u", dest="unlink", action="store_true", help="unlink sudachidict")
+    parser_ln.set_defaults(handler=_command_link, print_usage=parser_ln.print_usage)
 
     # build dictionary parser
     parser_bd = subparsers.add_parser('build', help='see `build -h`', description='Build Sudachi Dictionary')
