@@ -8,37 +8,33 @@ DEFAULT_SETTINGFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "
 DEFAULT_RESOURCEDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources")
 
 
-def unlink_default_dict_package(msg=False):
+def unlink_default_dict_package(output):
     try:
         dst_path = Path(import_module('sudachidict').__file__).parent
     except ImportError:
-        if msg:
-            print('sudachidict not exists')
+        print('sudachidict not exists', file=output)
         return
 
     if dst_path.is_symlink():
-        if msg:
-            print('unlinking sudachidict')
+        print('unlinking sudachidict', file=output)
         dst_path.unlink()
-        if msg:
-            print('sudachidict unlinked')
+        print('sudachidict unlinked', file=output)
     if dst_path.exists():
         raise IOError('unlink failed (directory exists)')
 
 
-def set_default_dict_package(dict_package, msg=False):
-    unlink_default_dict_package(msg)
+def set_default_dict_package(dict_package, output):
+    unlink_default_dict_package(output)
 
     src_path = Path(import_module(dict_package).__file__).parent
     dst_path = src_path.parent / 'sudachidict'
     dst_path.symlink_to(src_path)
-    if msg:
-        print('default dict package = {}'.format(dict_package))
+    print('default dict package = {}'.format(dict_package), file=output)
 
     return dst_path
 
 
-def create_default_link_for_sudachidict_core(msg=False):
+def create_default_link_for_sudachidict_core(output):
     try:
         dict_path = Path(import_module('sudachidict').__file__).parent
     except ImportError:
@@ -56,7 +52,7 @@ def create_default_link_for_sudachidict_core(msg=False):
             raise KeyError('Multiple packages of `SudachiDict_*` installed. Set default dict with link command.')
         except ImportError:
             pass
-        dict_path = set_default_dict_package('sudachidict_core', msg=msg)
+        dict_path = set_default_dict_package('sudachidict_core', output=output)
     return dict_path / 'resources' / 'system.dic'
 
 
@@ -92,7 +88,8 @@ class _Settings(object):
         if 'systemDict' in self.__dict_:
             return os.path.join(self.resource_dir, self.__dict_['systemDict'])
         else:
-            dict_path = create_default_link_for_sudachidict_core()
+            with open(os.devnull, 'w') as f:
+                dict_path = create_default_link_for_sudachidict_core(output=f)
             self.__dict_['systemDict'] = dict_path
             return dict_path
 

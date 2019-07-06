@@ -114,13 +114,14 @@ def _command_build(args, print_usage):
 
 
 def _command_link(args, print_usage):
+    output = sys.stdout
     if args.unlink:
-        unlink_default_dict_package(msg=True)
+        unlink_default_dict_package(output=output)
         return
 
+    dict_package = 'sudachidict_' + args.dict_type
     try:
-        dict_package = 'sudachidict_' + args.dict_type
-        return set_default_dict_package(dict_package, msg=True)
+        return set_default_dict_package(dict_package, output=output)
     except ImportError:
         print_usage()
         print('{} not installed'.format(dict_package))
