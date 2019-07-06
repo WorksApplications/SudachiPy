@@ -147,7 +147,7 @@ tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 
 ## Install dict packages
 
-Also, you can download and install the built dictionaries from [Python packages · WorksApplications/SudachiDict](https://github.com/WorksApplications/SudachiDict#python-packages).
+You can download and install the built dictionaries from [Python packages · WorksApplications/SudachiDict](https://github.com/WorksApplications/SudachiDict#python-packages).
 
 ```bash
 $ pip install SudachiDict_full-20190531.tar.gz
