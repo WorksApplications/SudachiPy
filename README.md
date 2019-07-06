@@ -7,6 +7,20 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 
 **Warning: SudachiPy is still under development, and some of the functions are still not complete. Please use it at your own risk.**
 
+## Breaking changes
+### v0.3.0
+
+- `resources/` directory was moved to `sudachipy/`.
+
+### V0.2.2
+
+- Distribute SudachiPy package via PyPI
+  - `pip install SudachiPy`
+
+### v0.2.0
+
+- User dictionary feature added 
+
 
 ## Setup
 
