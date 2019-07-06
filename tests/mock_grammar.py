@@ -19,6 +19,7 @@ def mocked_get_character_category():
     test_resources_dir = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         os.pardir,
+        'sudachipy',
         'resources')
     try:
         cat.read_character_definition(os.path.join(test_resources_dir, 'char.def'))
