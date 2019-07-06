@@ -183,11 +183,11 @@ $ sudachipy link -u
 
 If you need to apply customized `system.dic`, 
 place [sudachi.json](https://github.com/WorksApplications/Sudachi/blob/develop/src/main/resources/sudachi.json) to anywhere you like,
-and overwrite `systemDict` value with the absolute path for your `system.dic`.
+and overwrite `systemDict` value with the relative path from `sudachi.json` to your `system.dic`.
 
 ```
 {
-    "systemDict" : "/absolute/path/to/system.dic",
+    "systemDict" : "relative/path/to/system.dic",
     ...
 }
 ```
