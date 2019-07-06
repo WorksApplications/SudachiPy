@@ -168,8 +168,8 @@ $ sudachipy link -u
 ## Customized dictionary
 
 If you need to apply customized `system.dic`, 
-place [sudachi.json](https://github.com/WorksApplications/SudachiPy/blob/develop/sudachi/resources/sudachi.json) to anywhere you like,
-and add below line to the root level map of it.
+place [sudachi.json](https://github.com/WorksApplications/Sudachi/blob/develop/src/main/resources/sudachi.json) to anywhere you like,
+and overwrite `systemDict` value with the absolute path for your `system.dic`.
 
 ```
 {
