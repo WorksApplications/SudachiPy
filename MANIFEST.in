@@ -1,2 +1,1 @@
 include README.md LICENSE requirements.txt
-recursive-include resources *.def *.json *.dic

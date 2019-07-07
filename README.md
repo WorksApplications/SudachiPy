@@ -7,42 +7,69 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 
 **Warning: SudachiPy is still under development, and some of the functions are still not complete. Please use it at your own risk.**
 
+## Breaking changes
+### v0.3.0
 
-## Setup
+- `resources/` directory was moved to `sudachipy/`.
+
+### V0.2.2
+
+- Distribute SudachiPy package via PyPI
+  - `pip install SudachiPy`
+
+### v0.2.0
+
+- User dictionary feature added 
+
+
+## Easy Setup
 
 SudachiPy requires Python3.5+.
 
-SudachiPy is not registered to PyPI just yet, so you may not install it via `pip` command at the moment.
+You can install SudachiPy and SudachiDict_core packages together from download site.
 
+```bash
+$ pip install https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20190531.tar.gz
 ```
-$ pip install -e git+git://github.com/WorksApplications/SudachiPy@develop#egg=SudachiPy
-```
-The dictionary file is not included in the repository. You can get the built dictionary from [Releases · WorksApplications/Sudachi](https://github.com/WorksApplications/Sudachi/releases). Please download either `sudachi-x.y.z-dictionary-core.zip` or `sudachi-x.y.z-dictionary-full.zip`, unzip and rename it to `system.dic`, then place it under `SudachiPy/resources/`. In the end, we would like to make a flow to get these resources via the code, like [NLTK](https://www.nltk.org/data.html) (e.g., `import nltk; nltk.download()`) or [spaCy](https://spacy.io/usage/models) (e.g., `$python -m spacy download en`).
+
+SudachiPy(>=0.3.0) refers to system.dic of SudachiDict_core package by default.
 
 ## Usage
 
 ### As a command
 
 After installing SudachiPy, you may also use it in the terminal via command `sudachipy`.
-`sudachipy` has 3 subcommands (in default `tokenize`)
+`sudachipy` has 4 subcommands (in default `tokenize`)
 
 ```bash
 $ sudachipy tokenize -h
-usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d]
-                          file [file ...]
+usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d] [-v]
+                          [file [file ...]]
 
 Tokenize Text
 
 positional arguments:
-  file        text written in utf-8
+  file           text written in utf-8
 
 optional arguments:
-  -h, --help  show this help message and exit
-  -r file     the setting file in JSON format
-  -m {A,B,C}  the mode of splitting
-  -o file     the output file
-  -a          print all of the fields
-  -d          print the debug information
+  -h, --help     show this help message and exit
+  -r file        the setting file in JSON format
+  -m {A,B,C}     the mode of splitting
+  -o file        the output file
+  -a             print all of the fields
+  -d             print the debug information
+  -v, --version  print sudachipy version
+```
+```bash
+$ sudachipy link -h
+usage: sudachipy link [-h] [-t {small,core,full}] [-u]
+
+Link Default Dict Package
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t {small,core,full}  dict dict
+  -u                    unlink sudachidict
 ```
 ```bash
 $ sudachipy build -h
@@ -125,6 +152,56 @@ tokenizer_obj.tokenize("SUMMER", mode)[0].normalized_form()
 tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 # => 'シミュレーション'
 ```
+
+## Install module package
+
+SudachiPy is registered to PyPI. You can install package via `pip install`.
+
+```bash
+$ pip install SudachiPy
+```
+
+The SudachiPy package does not include the dict package.
+
+## Install dict packages
+
+You can download and install the built dictionaries from [Python packages · WorksApplications/SudachiDict](https://github.com/WorksApplications/SudachiDict#python-packages).
+
+```bash
+$ pip install SudachiDict_full-20190531.tar.gz
+```
+
+You can change the default dict package by executing link command.
+
+```bash
+$ sudachipy link -t full
+```
+
+You can remove default dict setting.
+
+```bash
+$ sudachipy link -u
+```
+
+## Customized dictionary
+
+If you need to apply customized `system.dic`, 
+place [sudachi.json](https://github.com/WorksApplications/Sudachi/blob/develop/src/main/resources/sudachi.json) to anywhere you like,
+and overwrite `systemDict` value with the relative path from `sudachi.json` to your `system.dic`.
+
+```
+{
+    "systemDict" : "relative/path/to/system.dic",
+    ...
+}
+```
+
+Then you can specify `sudachi.json` with `-r` option.
+```bash
+$ sudachipy -r path/to/sudachi.json
+``` 
+
+In the end, we would like to make a flow to get these resources via the code, like [NLTK](https://www.nltk.org/data.html) (e.g., `import nltk; nltk.download()`) or [spaCy](https://spacy.io/usage/models) (e.g., `$python -m spacy download en`).
 
 ## For developer
 
