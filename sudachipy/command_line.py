@@ -6,6 +6,8 @@ import time
 
 from . import dictionary
 from . import tokenizer
+from . import SUDACHIPY_VERSION
+from .config import set_default_dict_package, unlink_default_dict_package
 from .dictionarylib import BinaryDictionary
 from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
@@ -70,10 +72,6 @@ def _system_dic_checker(args, print_usage):
 
 
 def _input_files_checker(args, print_usage):
-    if not args.in_files:
-        print_usage()
-        print('{}: error: no input files'.format(__name__))
-        exit()
     for file in args.in_files:
         if not os.path.exists(file):
             print_usage()
@@ -111,7 +109,26 @@ def _command_build(args, print_usage):
         builder.build(args.in_files, rf, wf)
 
 
+def _command_link(args, print_usage):
+    output = sys.stdout
+    if args.unlink:
+        unlink_default_dict_package(output=output)
+        return
+
+    dict_package = 'sudachidict_' + args.dict_type
+    try:
+        return set_default_dict_package(dict_package, output=output)
+    except ImportError:
+        print_usage()
+        print('{} not installed'.format(dict_package))
+        exit()
+
+
 def _command_tokenize(args, print_usage):
+    if args.version:
+        print_version()
+        return
+
     _input_files_checker(args, print_usage)
 
     if args.mode == "A":
@@ -140,12 +157,14 @@ def _command_tokenize(args, print_usage):
     output.close()
 
 
+def print_version():
+    print('sudachipy v{}'.format(SUDACHIPY_VERSION))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Japanese Morphological Analyzer")
 
     subparsers = parser.add_subparsers(description='')
-
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s v0.2.0")
 
     # root, tokenizer parser
     parser_tk = subparsers.add_parser('tokenize', help='(default) see `tokenize -h`', description='Tokenize Text')
@@ -154,8 +173,15 @@ def main():
     parser_tk.add_argument("-o", dest="fpath_out", metavar="file", help="the output file")
     parser_tk.add_argument("-a", action="store_true", help="print all of the fields")
     parser_tk.add_argument("-d", action="store_true", help="print the debug information")
-    parser_tk.add_argument("in_files", metavar="file", nargs=argparse.ONE_OR_MORE, help='text written in utf-8')
+    parser_tk.add_argument("-v", "--version", action="store_true", dest="version", help="print sudachipy version")
+    parser_tk.add_argument("in_files", metavar="file", nargs=argparse.ZERO_OR_MORE, help='text written in utf-8')
     parser_tk.set_defaults(handler=_command_tokenize, print_usage=parser_tk.print_usage)
+
+    # link default dict package
+    parser_ln = subparsers.add_parser('link', help='see `link -h`', description='Link Default Dict Package')
+    parser_ln.add_argument("-t", dest="dict_type", choices=["small", "core", "full"], default="core", help="dict dict")
+    parser_ln.add_argument("-u", dest="unlink", action="store_true", help="unlink sudachidict")
+    parser_ln.set_defaults(handler=_command_link, print_usage=parser_ln.print_usage)
 
     # build dictionary parser
     parser_bd = subparsers.add_parser('build', help='see `build -h`', description='Build Sudachi Dictionary')
