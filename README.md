@@ -26,13 +26,25 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 
 SudachiPy requires Python3.5+.
 
-You can install SudachiPy and SudachiDict_core packages together from PyPI.
+### Step 1: Install SudachiPy
+
+SudachiPy is distributed from PyPI. You can install SudachiPy by executing `pip install SudachiPy` from the command line.
 
 ```bash
 $ pip install SudachiPy
 ```
 
-SudachiPy(>=v0.3.0) refers to system.dic of SudachiDict_core package by default.
+SudachiPy(>=v0.3.0) refers to system.dic of SudachiDict_core (not included in SudachiPy) package by default.
+Please proceed to Step 2 to install the dict package.
+
+### Step 2: Install SudachiDict_core
+
+The default dict package `SudachiDict_core` is distributed from our download site.
+Run `pip install` like below:
+
+```bash
+$ pip install https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20190531.tar.gz
+```
 
 ## Usage
 
