@@ -53,7 +53,7 @@ def create_default_link_for_sudachidict_core(output):
         except ImportError:
             pass
         dict_path = set_default_dict_package('sudachidict_core', output=output)
-    return dict_path / 'resources' / 'system.dic'
+    return str(dict_path / 'resources' / 'system.dic')
 
 
 class _Settings(object):
