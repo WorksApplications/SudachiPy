@@ -26,19 +26,25 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 
 SudachiPy requires Python3.5+.
 
-You can install SudachiPy and SudachiDict_core packages together from download site.
+You can install SudachiPy and SudachiDict_core packages together from PyPI.
 
 ```bash
-$ pip install https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20190531.tar.gz
+$ pip install SudachiPy
 ```
 
-SudachiPy(>=0.3.0) refers to system.dic of SudachiDict_core package by default.
+SudachiPy(>=v0.3.0) refers to system.dic of SudachiDict_core package by default.
 
 ## Usage
 
 ### As a command
 
 After installing SudachiPy, you may also use it in the terminal via command `sudachipy`.
+
+You can excute `sudachipy` with standard input by this way:
+```bash
+$ sudachipy
+```
+
 `sudachipy` has 4 subcommands (in default `tokenize`)
 
 ```bash
@@ -152,16 +158,6 @@ tokenizer_obj.tokenize("SUMMER", mode)[0].normalized_form()
 tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 # => 'シミュレーション'
 ```
-
-## Install module package
-
-SudachiPy is registered to PyPI. You can install package via `pip install`.
-
-```bash
-$ pip install SudachiPy
-```
-
-The SudachiPy package does not include the dict package.
 
 ## Install dict packages
 
