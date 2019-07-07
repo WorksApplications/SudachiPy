@@ -10,7 +10,7 @@ class UTF8InputTextBuilder:
         self.original_text = text
         self.modified_text = text
         self.text_offsets = list(range(len(self.original_text) + 1))
-        # 注: サロゲートペア文字は考慮していない
+        # Attention: surrogate pairs ignored
 
     def replace(self, begin, end, str_):
         if begin < 0:
