@@ -22,18 +22,11 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 - User dictionary feature added 
 
 
-## Setup
+## Easy Setup
 
 SudachiPy requires Python3.5+.
 
-SudachiPy is registered to PyPI. You can install via `pip install`.
-
-```bash
-$ pip install SudachiPy
-```
-
-The dictionary file is not included in the SudachiPy package.
-You can install SudachiDict_core package from download site.
+You can install SudachiPy and SudachiDict_core packages together from download site.
 
 ```bash
 $ pip install https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20190531.tar.gz
@@ -50,21 +43,22 @@ After installing SudachiPy, you may also use it in the terminal via command `sud
 
 ```bash
 $ sudachipy tokenize -h
-usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d]
-                          file [file ...]
+usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d] [-v]
+                          [file [file ...]]
 
 Tokenize Text
 
 positional arguments:
-  file        text written in utf-8
+  file           text written in utf-8
 
 optional arguments:
-  -h, --help  show this help message and exit
-  -r file     the setting file in JSON format
-  -m {A,B,C}  the mode of splitting
-  -o file     the output file
-  -a          print all of the fields
-  -d          print the debug information
+  -h, --help     show this help message and exit
+  -r file        the setting file in JSON format
+  -m {A,B,C}     the mode of splitting
+  -o file        the output file
+  -a             print all of the fields
+  -d             print the debug information
+  -v, --version  print sudachipy version
 ```
 ```bash
 $ sudachipy link -h
@@ -158,6 +152,16 @@ tokenizer_obj.tokenize("SUMMER", mode)[0].normalized_form()
 tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 # => 'シミュレーション'
 ```
+
+## Install module package
+
+SudachiPy is registered to PyPI. You can install package via `pip install`.
+
+```bash
+$ pip install SudachiPy
+```
+
+The SudachiPy package does not include the dict package.
 
 ## Install dict packages
 
