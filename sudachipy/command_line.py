@@ -4,9 +4,9 @@ import os
 import sys
 import time
 
+from . import SUDACHIPY_VERSION
 from . import dictionary
 from . import tokenizer
-from . import SUDACHIPY_VERSION
 from .config import set_default_dict_package, unlink_default_dict_package
 from .dictionarylib import BinaryDictionary
 from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
