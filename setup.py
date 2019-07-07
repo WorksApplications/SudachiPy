@@ -15,5 +15,8 @@ setup(name="SudachiPy",
       entry_points={
           "console_scripts": ["sudachipy=sudachipy.command_line:main"],
       },
-      install_requires=["sortedcontainers>=2.1.0,<2.2.0"],
+      install_requires=[
+            "sortedcontainers>=2.1.0,<2.2.0",
+            "https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20190531.tar.gz",
+      ],
       )
