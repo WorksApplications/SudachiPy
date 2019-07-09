@@ -4,7 +4,7 @@ from sudachipy import SUDACHIPY_VERSION
 setup(name="SudachiPy",
       version=SUDACHIPY_VERSION,
       description="Python version of Sudachi, the Japanese Morphological Analyzer",
-      long_description=open('README.md').read(),
+      long_description=open('README.md', encoding='utf-8').read(),
       long_description_content_type="text/markdown",
       url="https://github.com/WorksApplications/SudachiPy",
       license="Apache-2.0",

@@ -18,7 +18,7 @@ class UserDictionaryBuilder(DictionaryBuilder):
         """
         self.logger.info('reading the source file...')
         for path in lexicon_paths:
-            with open(path) as rf:
+            with open(path, 'r', encoding='utf-8') as rf:
                 self.build_lexicon(rf)
         self.logger.info('{} words\n'.format(len(self.entries)))
 
