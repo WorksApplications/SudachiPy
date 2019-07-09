@@ -18,10 +18,10 @@ class TestDictionaryBuilder(TestCase):
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
         self.matrix_path = os.path.join(self.test_dir, 'matrix.txt')
-        with open(self.matrix_path, 'w') as wf:
+        with open(self.matrix_path, 'w', encoding='utf-8') as wf:
             wf.write('1 1\n0 0 200\n')
         self.input_path = os.path.join(self.test_dir, 'input.txt')
-        with open(self.input_path, 'w') as wf:
+        with open(self.input_path, 'w', encoding='utf-8') as wf:
             wf.write("東京都,0,0,0,東京都,名詞,固有名詞,地名,一般,*,*,ヒガシキョウト,東京都,*,B,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/2\",*,1/2\n")
             wf.write("東,-1,-1,0,東,名詞,普通名詞,一般,*,*,*,ヒガシ,ひがし,*,A,*,*,*\n")
             wf.write("京都,0,0,0,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*\n")
@@ -182,7 +182,7 @@ class TestDictionaryBuilder(TestCase):
 
         out_stream = open(out_path, 'wb')
         lexicon_paths = [self.input_path]
-        matrix_input_stream = open(self.matrix_path, 'r')
+        matrix_input_stream = open(self.matrix_path, 'r', encoding='utf-8')
 
         header = DictionaryHeader(SYSTEM_DICT_VERSION, int(time.time()), 'test')
         out_stream.write(header.to_bytes())

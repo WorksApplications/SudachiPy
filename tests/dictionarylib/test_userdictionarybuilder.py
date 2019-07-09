@@ -37,7 +37,7 @@ class TestUserDictionaryBuilder(TestCase):
         out_stream = open(out_path, 'wb')
         # lexicon_paths = [self.input_path]
         # matrix_input_stream = open(self.matrix_path, 'r')
-        with open(in_path, 'w') as wf:
+        with open(in_path, 'w', encoding='utf-8') as wf:
             wf.write("東京都市,0,0,0,東京都市,名詞,固有名詞,地名,一般,*,*,ヒガシキョウトシ,東京都市,*,B,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/3/U1\",*,\"4/3/市,名詞,普通名詞,一般,*,*,*,シ\"\n")
             wf.write('市,-1,-1,0,市,名詞,普通名詞,一般,*,*,*,シ,市,*,A,*,*,*\n')
 
