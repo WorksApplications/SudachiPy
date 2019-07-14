@@ -97,7 +97,7 @@ class Lattice:
         if not self.eos_node.is_connected_to_bos:    # EOS node
             raise AttributeError("EOS is not connected to BOS")
         result = []
-        node = self.eos_node
+        node = self.eos_node.best_previous_node
         while node is not self.end_lists[0][0]:
             result.append(node)
             node = node.best_previous_node

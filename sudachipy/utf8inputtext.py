@@ -66,3 +66,6 @@ class UTF8InputText:
 
     def can_bow(self, idx: int) -> bool:
         return self.is_char_alignment(idx) and self.can_bow_list[self.byte_indexes[idx]]
+
+    def code_point_count(self, begin: int, end: int):
+        return self.byte_indexes[end] - self.byte_indexes[begin]
