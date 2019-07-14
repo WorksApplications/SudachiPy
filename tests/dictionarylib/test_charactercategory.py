@@ -38,9 +38,10 @@ class TestCharacterCategory(unittest.TestCase):
             wf.write("#\n \n")
             wf.write("0x0030..0x0039 NUMERIC\n")
             wf.write("0x3007         KANJI\n")
+            wf.write("0x0030         KANJI\n")
         cat = charactercategory.CharacterCategory()
         cat.read_character_definition(f)
-        self.assertEqual({categorytype.CategoryType.NUMERIC}, cat.get_category_types(0x0030))
+        self.assertEqual({categorytype.CategoryType.NUMERIC, categorytype.CategoryType.KANJI}, cat.get_category_types(0x0030))
         self.assertEqual({categorytype.CategoryType.NUMERIC}, cat.get_category_types(0x0039))
         self.assertEqual({categorytype.CategoryType.KANJI}, cat.get_category_types(0x3007))
 

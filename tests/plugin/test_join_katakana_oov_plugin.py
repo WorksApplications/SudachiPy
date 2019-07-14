@@ -40,6 +40,25 @@ class TestJoinKatakanaOOVPlugin(unittest.TestCase):
         self.assertEqual(1, len(path))
         self.assertFalse(path[0].is_oov())
 
+    def test_starts_with_middle(self):
+        self.plugin._min_length = 3
+        path = self.get_path('アイウアイアイウ')
+        self.assertEqual(1, len(path))
+
+    def test_starts_with_tail(self):
+        self.plugin._min_length = 3
+        path = self.get_path('アイウアイウアイ')
+        self.assertEqual(1, len(path))
+
+    def test_with_nooovbow(self):
+        self.plugin._min_length = 3
+        path = self.get_path('ァアイアイウ')
+        self.assertEqual(2, len(path))
+        self.assertEqual('ァ', path[0].get_word_info().surface)
+
+        path = self.get_path('アイウァアイウ')
+        self.assertEqual(1, len(path))
+
     def get_path(self, text: str):
         input_ = UTF8InputTextBuilder(text, self.tokenizer.grammar).build()
         self.tokenizer.build_lattice(input_)
