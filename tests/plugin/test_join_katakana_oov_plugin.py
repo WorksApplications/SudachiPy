@@ -33,6 +33,13 @@ class TestJoinKatakanaOOVPlugin(unittest.TestCase):
         path = self.get_path('アイアイウ')
         self.assertEqual(1, len(path))
 
+    def test_pos(self):
+        # アイアイウ is 名詞-固有名詞-地名-一般 in the dictionary
+        self.plugin._min_length = 3
+        path = self.get_path('アイアイウ')
+        self.assertEqual(1, len(path))
+        self.assertFalse(path[0].is_oov())
+
     def get_path(self, text: str):
         input_ = UTF8InputTextBuilder(text, self.tokenizer.grammar).build()
         self.tokenizer.build_lattice(input_)

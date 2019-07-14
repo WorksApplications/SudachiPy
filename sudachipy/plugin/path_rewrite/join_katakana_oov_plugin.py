@@ -27,14 +27,14 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
                 break
             node = path[i]
             if not (node.is_oov() or self.is_shorter(self._min_length, text, node)) or \
-                    not self.is_katakana_node(text, node, lattice):
+                    not self.is_katakana_node(text, node):
                 i += 1
                 continue
             begin = i - 1
             while True:
                 if begin < 0:
                     break
-                if not self.is_katakana_node(text, path[begin], lattice):
+                if not self.is_katakana_node(text, path[begin]):
                     begin += 1
                     break
                 begin -= 1
@@ -43,7 +43,7 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
             while True:
                 if end >= len(path):
                     break
-                if not self.is_katakana_node(text, path[end], lattice):
+                if not self.is_katakana_node(text, path[end]):
                     break
                 end += 1
             pass
@@ -54,9 +54,7 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
                 i = begin + 1  # skip next node, as we already know it is not a joinable katakana
             i += 1
 
-    def is_katakana_node(self, text, node, lattice):
-        if lattice.eos_node == node:
-            return False
+    def is_katakana_node(self, text, node):
         return CategoryType.KATAKANA in self.get_char_category_types(text, node)
 
     def is_one_char(self, text, node):
