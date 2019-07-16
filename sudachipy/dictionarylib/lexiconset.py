@@ -9,7 +9,7 @@ class LexiconSet(Lexicon):
 
     def __init__(self, system_lexicon: Lexicon):
         self.lexicons = [system_lexicon]
-        self.pos_offsets = []
+        self.pos_offsets = [0]
 
     def add(self, lexicon: Lexicon, pos_offset: int) -> None:
         if lexicon not in self.lexicons:
@@ -47,7 +47,7 @@ class LexiconSet(Lexicon):
         dic_id = self.get_dictionary_id(word_id)
         winfo = self.lexicons[dic_id].get_word_info(self.get_word_id1(word_id))
         pos_id = winfo.pos_id
-        if dic_id > 0 and pos_id >= self.pos_offsets[1]:
+        if dic_id > 0 and pos_id >= self.pos_offsets[1]:  # user defined part-of-speech
             winfo.pos_id = winfo.pos_id - self.pos_offsets[1] + self.pos_offsets[dic_id]
         winfo.a_unit_split = self.convert_split(winfo.a_unit_split, dic_id)
         winfo.b_unit_split = self.convert_split(winfo.b_unit_split, dic_id)
