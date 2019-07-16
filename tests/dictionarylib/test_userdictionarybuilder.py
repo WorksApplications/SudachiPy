@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 import time
 from logging import getLogger
@@ -24,6 +25,9 @@ class TestUserDictionaryBuilder(TestCase):
             TestDictionaryBuilder.read_system_dictionary(self.dict_filename)
         self.logger = getLogger()
         self.logger.disabled = True
+
+    def tearDown(self):
+        shutil.rmtree(self.test_dir)
 
     def test_parseline_with_userdefined_POS(self):
         builder = UserDictionaryBuilder(self.grammar, self.lexicon_set, logger=self.logger)
