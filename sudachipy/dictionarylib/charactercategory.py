@@ -26,10 +26,13 @@ class CharacterCategory(object):
         self.range_list = []
 
     def get_category_types(self, code_point):
+        bucket = set()
         for range_ in self.range_list:
             if range_.contains(code_point):
-                return range_.categories
-        return set(categorytype.CategoryType.DEFAULT)
+                bucket = bucket.union(range_.categories)
+        if bucket:
+            return bucket
+        return {categorytype.CategoryType.DEFAULT}
 
     def read_character_definition(self, char_def=None):
         """
@@ -68,11 +71,6 @@ class CharacterCategory(object):
                     raise AttributeError("{} is invalid type at line {}".format(cols[j], i))
                 range_.categories.add(type_)
             self.range_list.append(range_)
-        default_range = self.Range()
-        default_range.low = 0
-        default_range.high = float('inf')
-        default_range.categories.add(categorytype.CategoryType.DEFAULT)
         self.range_list.reverse()
-        self.range_list.append(default_range)
 
         f.close()

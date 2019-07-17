@@ -97,7 +97,7 @@ class Tokenizer:
             self.lattice.dump(self.dump_output)
         path = self.lattice.get_best_path()
         # dump
-        path.pop()  # remove EOS
+        # path.pop()  # remove EOS
         # dump_output
         for plugin in self.path_rewrite_plugins:
             plugin.rewrite(input_, path, self.lattice)

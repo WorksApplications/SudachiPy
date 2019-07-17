@@ -60,7 +60,6 @@ class PathRewritePlugin(ABC):
         node = lattice.create_node()
         node.set_range(b, e)
         node.set_word_info(wi)
-        node.set_oov()
 
         path[begin:end] = [node]
         return node

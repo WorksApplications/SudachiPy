@@ -1,19 +1,24 @@
 from sudachipy.dictionarylib.categorytype import CategoryType
+from sudachipy.latticenode import LatticeNode
 from sudachipy.plugin.path_rewrite.path_rewrite_plugin import PathRewritePlugin
+from sudachipy.utf8inputtext import UTF8InputText
 
 
 class JoinKatakanaOovPlugin(PathRewritePlugin):
+
     def __init__(self, json_obj):
         self.__pos = json_obj['oovPOS']
+        self._min_length = 1
+        if 'minLength' in json_obj:
+            self._min_length = json_obj['minLength']
         self.oov_pos_id = None
 
     def set_up(self, grammar):
-        # pos = ["名詞", "普通名詞", "一般", "*", "*", "*"]
         if not self.__pos:
-            raise AttributeError("oovPOS is undefined")
+            raise ValueError("oovPOS is undefined")
         self.oov_pos_id = grammar.get_part_of_speech_id(self.__pos)
         if self.oov_pos_id < 0:
-            raise AttributeError("oovPOS is invalid")
+            raise ValueError("oovPOS is invalid")
 
     def rewrite(self, text, path, lattice):
         i = 0
@@ -21,30 +26,32 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
             if i >= len(path):
                 break
             node = path[i]
-            if (node.is_oov or (self.is_one_char(text, node) and self.can_oov_bow_node(text, node))) and \
-                    self.is_katakana_node(text, node):
-                begin = i - 1
-                while True:
-                    if begin < 0:
-                        break
-                    if not self.is_katakana_node(text, path[begin]):
-                        begin += 1
-                        break
-                    begin -= 1
+            if not (node.is_oov() or self.is_shorter(self._min_length, text, node)) or \
+                    not self.is_katakana_node(text, node):
+                i += 1
+                continue
+            begin = i - 1
+            while True:
                 if begin < 0:
-                    begin = 0
-                while begin != i and not self.can_oov_bow_node(text, path[begin]):
+                    break
+                if not self.is_katakana_node(text, path[begin]):
                     begin += 1
-                end = i + 1
-                while True:
-                    if end >= len(path):
-                        break
-                    if not self.is_katakana_node(text, path[end]):
-                        break
-                    end += 1
-                if (end - begin) > 1:
-                    self.concatenate_oov(path, begin, end, self.oov_pos_id, lattice)
-                    i = begin + 1  # skip next node, as we already know it is not a joinable katakana
+                    break
+                begin -= 1
+            begin = max(0, begin)
+            end = i + 1
+            while True:
+                if end >= len(path):
+                    break
+                if not self.is_katakana_node(text, path[end]):
+                    break
+                end += 1
+            pass
+            while begin != end and not self.can_oov_bow_node(text, path[begin]):
+                begin += 1
+            if (end - begin) > 1:
+                self.concatenate_oov(path, begin, end, self.oov_pos_id, lattice)
+                i = begin + 1  # skip next node, as we already know it is not a joinable katakana
             i += 1
 
     def is_katakana_node(self, text, node):
@@ -56,3 +63,7 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
 
     def can_oov_bow_node(self, text, node):
         return CategoryType.NOOOVBOW not in text.get_char_category_types(node.get_begin())
+
+    @staticmethod
+    def is_shorter(length: int, text: UTF8InputText, node: LatticeNode):
+        return text.code_point_count(node.begin, node.end) < length

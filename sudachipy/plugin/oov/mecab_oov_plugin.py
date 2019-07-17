@@ -24,8 +24,12 @@ class MeCabOovPlugin(OovProviderPlugin):
             self.pos_id = None
 
     def __init__(self, json_obj=None):
-        self.__chardef_filename = json_obj['charDef']
-        self.__unkdef_filename = json_obj['unkDef']
+        if json_obj:
+            self.__chardef_filename = json_obj['charDef']
+            self.__unkdef_filename = json_obj['unkDef']
+        else:
+            self.__chardef_filename = None
+            self.__unkdef_filename = None
         self.categories = {}
         self.oov_list = defaultdict(list)
 
@@ -41,30 +45,32 @@ class MeCabOovPlugin(OovProviderPlugin):
         self.read_oov(unk_def, grammar)
 
     def provide_oov(self, input_text, offset, has_other_words):
-        nodes = []
         length = input_text.get_char_category_continuous_length(offset)
-        if length > 0:
-            for type_ in input_text.get_char_category_types(offset):
-                if type_ not in self.categories:
-                    continue
-                cinfo = self.categories[type_]
-                llength = length
-                if cinfo.type_ not in self.oov_list:
-                    continue
-                oovs = self.oov_list[cinfo.type_]
-                if cinfo.is_group and (cinfo.is_invoke or not has_other_words):
-                    s = input_text.get_substring(offset, offset + length)
-                    for oov in oovs:
-                        nodes.append(self.get_oov_node(s, oov, length))
-                        llength = -1
-                if cinfo.is_invoke or not has_other_words:
-                    for i in range(1, cinfo.length + 1):
-                        sublength = input_text.get_code_points_offset_length(offset, i)
-                        if sublength > llength:
-                            break
-                        s = input_text.get_substring(offset, offset + sublength)
-                        for oov in oovs:
-                            nodes.append(self.get_oov_node(s, oov, sublength))
+        if length < 1:
+            return []
+        nodes = []
+        for type_ in input_text.get_char_category_types(offset):
+            if type_ not in self.categories:
+                continue
+            cinfo = self.categories[type_]
+            llength = length
+            if cinfo.type_ not in self.oov_list:
+                continue
+            oovs = self.oov_list[cinfo.type_]
+            if not cinfo.is_invoke and has_other_words:
+                continue
+            if cinfo.is_group:
+                s = input_text.get_substring(offset, offset + length)
+                for oov in oovs:
+                    nodes.append(self.get_oov_node(s, oov, length))
+                    llength -= 1
+            for i in range(1, cinfo.length + 1):
+                sublength = input_text.get_code_points_offset_length(offset, i)
+                if sublength > llength:
+                    break
+                s = input_text.get_substring(offset, offset + sublength)
+                for oov in oovs:
+                    nodes.append(self.get_oov_node(s, oov, sublength))
         return nodes
 
     def get_oov_node(self, text, oov, length):
@@ -80,19 +86,17 @@ class MeCabOovPlugin(OovProviderPlugin):
         with open(char_def, "r", encoding="utf-8") as f:
             for i, line in enumerate(f, start=1):
                 line = line.strip()
-                if not line or line.startswith("#"):
+                if not line or line.startswith("#") or line.startswith("0x"):
                     continue
                 cols = line.split()
-                if len(cols) < 2:
-                    raise RuntimeError("invalid format at line {}".format(i))
-                if cols[0].startswith("0x"):
-                    continue
+                if len(cols) < 4:
+                    raise ValueError("invalid format at line {}".format(i))
                 try:
                     type_ = getattr(categorytype.CategoryType, cols[0])
                 except AttributeError:
-                    raise RuntimeError("`{}` is invalid type at line {}".format(cols[0], i))
+                    raise ValueError("`{}` is invalid type at line {}".format(cols[0], i))
                 if type_ in self.categories:
-                    raise RuntimeError("`{}` is already defined at line {}".format(cols[0], i))
+                    raise ValueError("`{}` is already defined at line {}".format(cols[0], i))
 
                 info = self.CategoryInfo()
                 info.type_ = type_
@@ -109,13 +113,13 @@ class MeCabOovPlugin(OovProviderPlugin):
                     continue
                 cols = line.split(",")
                 if len(cols) < 10:
-                    raise RuntimeError("invalid format at line {}".format(i))
+                    raise ValueError("invalid format at line {}".format(i))
                 try:
                     type_ = getattr(categorytype.CategoryType, cols[0])
                 except AttributeError:
-                    raise RuntimeError("`{}` is invalid type at line {}".format(cols[0], i))
+                    raise ValueError("`{}` is invalid type at line {}".format(cols[0], i))
                 if type_ not in self.categories:
-                    raise RuntimeError("`{}` is undefined at line {}".format(cols[0], i))
+                    raise ValueError("`{}` is undefined at line {}".format(cols[0], i))
 
                 oov = self.OOV()
                 oov.left_id = int(cols[1])
