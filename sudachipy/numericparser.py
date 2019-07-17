@@ -27,7 +27,7 @@ class NumericParser(object):
         def shift_scale(self, i: int) -> None:
             if self.is_zero():
                 self._significand.write('1')
-            self._scale += 1
+            self._scale += i
 
         def add(self, number: 'StringNumber') -> bool:  # noqa: F821
             if number.is_zero():
@@ -45,7 +45,7 @@ class NumericParser(object):
                 self.fill_zero(self._scale - length)
                 if number.point >= 0:
                     self._point = self._significand.tell() + number.point
-                self._significand.write(str(number))
+                self._significand.write(number.significand_value())
                 self._scale = number.scale
                 return True
 
@@ -77,7 +77,7 @@ class NumericParser(object):
                 self._scale -= n_scale
                 self._point = -1
 
-        def fill_zero(self, length: int):
+        def fill_zero(self, length: int) -> None:
             if length > 0:
                 self._significand.write('0' * length)
 
@@ -96,6 +96,13 @@ class NumericParser(object):
         def significand_value(self) -> str:
             return self._significand.getvalue()
 
+        def insert_significand(self, idx: int, text: str) -> None:
+            self._significand.seek(idx)
+            post_fix = self._significand.read()
+            self._significand.seek(idx)
+            self._significand.write(text)
+            self._significand.write(post_fix)
+
         def __str__(self):
             if self.is_zero():
                 return '0'
@@ -104,18 +111,16 @@ class NumericParser(object):
             if self._scale > 0:
                 self.fill_zero(self._scale)
             elif self._point >= 0:
-                orig_point = self._significand.tell()
-                self._significand.seek(self._point)
-                self._significand.write('.')
+                self.insert_significand(self._point, '.')
                 if self._point == 0:
-                    self._significand.seek(0)
-                    self._significand.write('0')
-                self._significand.seek(orig_point)
+                    self.insert_significand(0, '0')
                 i = self._significand.tell() - 1
+                self._significand.seek(i)
                 while i >= 0 and self._significand.read(1) == '0':
                     i -= 1
-                self._significand.seek(i + 1)
+                    self._significand.seek(i)
                 self._significand.truncate(i + 1)
+                self._significand.seek(i)
                 if self._significand.read(1) == '.':
                     self._significand.truncate(i)
 
@@ -244,7 +249,7 @@ class NumericParser(object):
         if self._is_first_digit:
             return False
         if not self._has_comma:
-            return self._digit_length <= 3 and not self._tmp.is_zero() and self._tmp.is_all_zero
+            return self._digit_length <= 3 and not self._tmp.is_zero() and not self._tmp.is_all_zero
         return self._digit_length == 3
 
     @staticmethod
@@ -254,3 +259,7 @@ class NumericParser(object):
     @staticmethod
     def is_large_unit(num: int):
         return num <= -4
+
+    @property
+    def error_state(self):
+        return self._error_state
