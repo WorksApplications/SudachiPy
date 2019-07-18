@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from sudachipy.numericparser import NumericParser
+from sudachipy.plugin.path_rewrite.numericparser import NumericParser
 
 
 class TestNumericParser(TestCase):
