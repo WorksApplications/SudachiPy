@@ -1,0 +1,25 @@
+{
+    "systemDict" : "system.dic",
+    "userDict" : [ "user.dic" ],
+    "characterDefinitionFile" : "joinnumeric/char.def",
+    "inputTextPlugin" : [
+        { "class" : "sudachipy.plugin.connect_cost.ProlongedSoundMarkInputTextPlugin",
+          "prolongedSoundMarks": ["ー", "〜", "〰"],
+          "replacementSymbol": "ー"}
+    ],
+    "oovProviderPlugin" : [
+        { "class" : "sudachipy.plugin.oov.SimpleOovProviderPlugin",
+          "oovPOS" : [ "名詞", "普通名詞", "一般", "*", "*", "*" ],
+          "leftId" : 8,
+          "rightId" : 8,
+          "cost" : 6000 }
+    ],
+    "pathRewritePlugin" : [
+        { "class" : "sudachipy.plugin.path_rewrite.JoinNumericPlugin",
+          "joinKanjiNumeric" : true },
+        { "class" : "sudachipy.plugin.path_rewrite.JoinKatakanaOovPlugin",
+          "oovPOS" : [ "名詞", "普通名詞", "一般", "*", "*", "*" ],
+          "minLength" : 3
+        }
+    ]
+}
