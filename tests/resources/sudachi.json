@@ -16,7 +16,7 @@
     ],
     "pathRewritePlugin" : [
         { "class" : "sudachipy.plugin.path_rewrite.JoinNumericPlugin",
-          "joinKanjiNumeric" : true },
+          "enableNormalize" : true },
         { "class" : "sudachipy.plugin.path_rewrite.JoinKatakanaOovPlugin",
           "oovPOS" : [ "名詞", "普通名詞", "一般", "*", "*", "*" ],
           "minLength" : 3

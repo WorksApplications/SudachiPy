@@ -1,3 +1,5 @@
+import warnings
+
 from sudachipy.dictionarylib.categorytype import CategoryType
 
 from .numericparser import NumericParser
@@ -14,7 +16,7 @@ class JoinNumericPlugin(PathRewritePlugin):
         if not json_obj:
             return
         if 'joinKanjiNumeric' in json_obj:
-            pass  # Todo warn
+            warnings.warn('joinKanjiNumeric is already nonsense key', SyntaxWarning)
         if 'enableNormalize' in json_obj:
             self._enable_normalize = json_obj['enableNormalize']
 
