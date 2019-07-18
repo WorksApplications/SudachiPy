@@ -1,7 +1,7 @@
 {
     "systemDict" : "system.dic",
     "userDict" : [ "user.dic" ],
-    "characterDefinitionFile" : "char.def",
+    "characterDefinitionFile" : "joinnumeric/char.def",
     "inputTextPlugin" : [
         { "class" : "sudachipy.plugin.connect_cost.ProlongedSoundMarkInputTextPlugin",
           "prolongedSoundMarks": ["ー", "〜", "〰"],
