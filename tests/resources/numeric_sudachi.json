@@ -3,9 +3,7 @@
     "userDict" : [ "user.dic" ],
     "characterDefinitionFile" : "joinnumeric/char.def",
     "inputTextPlugin" : [
-        { "class" : "sudachipy.plugin.connect_cost.ProlongedSoundMarkInputTextPlugin",
-          "prolongedSoundMarks": ["ー", "〜", "〰"],
-          "replacementSymbol": "ー"}
+        { "class" : "sudachipy.plugin.input_text.DefaultInputTextPlugin" }
     ],
     "oovProviderPlugin" : [
         { "class" : "sudachipy.plugin.oov.SimpleOovProviderPlugin",
