@@ -1,7 +1,10 @@
 {
     "characterDefinitionFile" : "char.def",
     "inputTextPlugin" : [
-        { "class" : "sudachipy.plugin.input_text.DefaultInputTextPlugin" }
+        { "class" : "sudachipy.plugin.input_text.DefaultInputTextPlugin" },
+        { "class" : "sudachipy.plugin.input_text.ProlongedSoundMarkInputTextPlugin",
+          "prolongedSoundMarks": ["ー", "-", "⁓", "〜", "〰"],
+          "replacementSymbol": "ー"}
     ],
     "oovProviderPlugin" : [
         { "class" : "sudachipy.plugin.oov.MeCabOovProviderPlugin",

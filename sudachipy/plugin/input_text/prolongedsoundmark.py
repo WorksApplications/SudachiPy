@@ -7,7 +7,7 @@ class ProlongedSoundMarkInputTextPlugin(InputTextPlugin):
 
     def __init__(self):
         self.psm_set = set()
-        self.replace_symbol = ''
+        self.replace_symbol = 'ー'
 
     def set_up(self) -> None:
         for s in config.settings['prolongedSoundMarks']:
@@ -26,9 +26,9 @@ class ProlongedSoundMarkInputTextPlugin(InputTextPlugin):
                 is_psm = True
                 m_start_idx = i
             elif is_psm and cp not in self.psm_set:
-                if (i - m_start_idx) > 1:
+                if i - m_start_idx > 1:
                     builder.replace(m_start_idx - offset, i - offset, self.replace_symbol)
                     offset += i - m_start_idx - 1
                 is_psm = False
-        if is_psm and (n - m_start_idx) > 1:
+        if is_psm and n - m_start_idx > 1:
             builder.replace(m_start_idx - offset, n - offset, self.replace_symbol)
