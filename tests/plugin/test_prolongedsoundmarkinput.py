@@ -9,9 +9,9 @@ from tests.mock_grammar import mocked_grammar
 class TestProlongedSoundMarkInputTextPlugin(TestCase):
 
     def setUp(self) -> None:
-        self.plugin = ProlongedSoundMarkInputTextPlugin()
+        self.plugin = ProlongedSoundMarkInputTextPlugin(None)
         for psm in ['ー', '〜', '〰']:
-            self.plugin.psm_set.add(ord(psm))
+            self.plugin._psm_set.add(ord(psm))
 
     def test_combine_continuous_prolonged_sound_mark(self):
         original = 'ゴーール'

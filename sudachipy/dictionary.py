@@ -2,7 +2,7 @@ from . import config
 from . import dictionarylib
 from .dictionarylib.binarydictionary import BinaryDictionary
 from .dictionarylib.lexiconset import LexiconSet
-from .plugin.input_text import DefaultInputTextPlugin
+from .plugin.input_text import get_input_text_plugins
 from .plugin.oov import get_oov_plugins
 from .plugin.path_rewrite import get_path_rewrite_plugins
 from .tokenizer import Tokenizer
@@ -29,8 +29,7 @@ class Dictionary:
 
         self._read_character_definition(config.settings.char_def_path())
 
-        default_input_text_plugin = DefaultInputTextPlugin()
-        self.input_text_plugins = [default_input_text_plugin]
+        self.input_text_plugins = get_input_text_plugins()
         for p in self.input_text_plugins:
             p.set_up()
 
