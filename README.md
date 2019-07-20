@@ -1,5 +1,8 @@
 # SudachiPy
+[![PyPi version](https://img.shields.io/pypi/v/sudachipy.svg)](https://pypi.python.org/pypi/sudachipy/)
+[![](https://img.shields.io/badge/python-3.5+-blue.svg)](https://www.python.org/download/releases/3.5.0/)
 [![Build Status](https://travis-ci.com/WorksApplications/SudachiPy.svg?branch=develop)](https://travis-ci.com/WorksApplications/SudachiPy)
+[![](https://img.shields.io/github/license/WorksApplications/SudachiPy.svg)](https://github.com/WorksApplications/SudachiPy/blob/develop/LICENSE)
 
 SudachiPy is a Python version of [Sudachi](https://github.com/WorksApplications/Sudachi), a Japanese morphological analyzer.
 
