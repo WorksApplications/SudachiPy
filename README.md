@@ -179,7 +179,7 @@ tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 You can download and install the built dictionaries from [Python packages · WorksApplications/SudachiDict](https://github.com/WorksApplications/SudachiDict#python-packages).
 
 ```bash
-$ pip install SudachiDict_full-20190531.tar.gz
+$ pip install SudachiDict_full-20190718.tar.gz
 ```
 
 You can change the default dict package by executing link command.
@@ -213,6 +213,25 @@ $ sudachipy -r path/to/sudachi.json
 ``` 
 
 In the end, we would like to make a flow to get these resources via the code, like [NLTK](https://www.nltk.org/data.html) (e.g., `import nltk; nltk.download()`) or [spaCy](https://spacy.io/usage/models) (e.g., `$python -m spacy download en`).
+
+## User defined Dictionary
+
+If you need to apply customized `user.dic`, 
+place [sudachi.json](https://github.com/WorksApplications/Sudachi/blob/develop/src/main/resources/sudachi.json) to anywhere you like,
+and overwrite `userDict` value with the relative path from `sudachi.json` to your `user.dic`.
+
+```
+{
+    "userDict" : "relative/path/to/user.dic",
+    ...
+}
+```
+
+You can also build user dictionary with sub-command `ubuild`.  
+
+
+About input file format, see [here](https://github.com/WorksApplications/Sudachi/blob/develop/docs/user_dict.md) 
+(written in Japanese, English document is unavailable right now.)
 
 ## For developer
 
