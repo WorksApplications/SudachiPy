@@ -10,7 +10,7 @@ for FILE in `find ./sudachipy -type f -name "*.py"`
 do
     FILECONTENTS=`cat ${FILE}`
     if [[ ${FILECONTENTS} != ${HEADER}* ]]; then
-        echo ${HEADER} | echo - ${FILECONTENTS} > tmp && mv tmp ${FILE}
+        >&2 echo "no license header on ${FILE}"
     fi
 done
 
@@ -18,11 +18,11 @@ for FILE in `find ./tests -type f -name "*.py"`
 do
     FILECONTENTS=`cat ${FILE}`
     if [[ ${FILECONTENTS} != ${HEADER}* ]]; then
-        echo ${FILE}
+        >&2 echo "no license header on ${FILE}"
     fi
 done
 
 FILECONTENTS=`cat setup.py`
 if [[ ${FILECONTENTS} != ${HEADER}* ]]; then
-    echo ${FILE}
+    >&2 echo "no license header on setup.py"
 fi
