@@ -207,7 +207,7 @@ class DAWGBuilder(object):
             hash_id = find_result[1]
 
             if match_id is not 0:
-                self.is_intersections.set(match_id, True)
+                self.is_intersections.set_(match_id, True)
             else:
                 unit_id = 0
                 for i in range(num_siblings):
@@ -295,7 +295,7 @@ class DAWGBuilder(object):
         while id is not 0:
             unit = self.units[id].unit
             label = self.labels[id]
-            hash_value ^= self.hash((label << 24) ^ unit)
+            hash_value ^= self.hash_((label << 24) ^ unit)
 
             if not self.units[id].has_sibling():
                 break
@@ -307,7 +307,7 @@ class DAWGBuilder(object):
         while id_ is not 0:
             unit = self.nodes[id_].unit()
             label = self.nodes[id_].label
-            hash_value ^= self.hash(((label & 0xFF) << 24) ^ unit)
+            hash_value ^= self.hash_(((label & 0xFF) << 24) ^ unit)
             id_ = self.nodes[id_].sibling
         return hash_value
 
@@ -331,7 +331,7 @@ class DAWGBuilder(object):
     def free_node(self, id):
         self.recycle_bin.append(id)
 
-    def hash(self, key):
+    def hash_(self, key):
         key = ~key + (key << 15)  # key = (key << 15) - key - 1
         key = key ^ (key >> 12)
         key = key + (key << 2)
