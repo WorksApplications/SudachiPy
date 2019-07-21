@@ -64,8 +64,8 @@ class DoubleArrayBuilder(object):
     def num_blocks(self):
         return int(len(self.units) / self.BLOCK_SIZE)
 
-    def get_extras(self, id):
-        return self.extras[id % self.NUM_EXTRAS]
+    def get_extras(self, id_):
+        return self.extras[id_ % self.NUM_EXTRAS]
 
     def build_dawg(self, key_set, dawg_builder):
         dawg_builder.init()
@@ -246,9 +246,9 @@ class DoubleArrayBuilder(object):
 
         return offset
 
-    def find_valid_offset(self, id):
+    def find_valid_offset(self, id_):
         if self.extras_head >= len(self.units):
-            return len(self.units) | (id & self.LOWER_MASK)
+            return len(self.units) | (id_ & self.LOWER_MASK)
 
         unfixed_id = self.extras_head
         memo = []
@@ -260,20 +260,20 @@ class DoubleArrayBuilder(object):
                 raise RuntimeError(unfixed_id, memo)
 
             offset = unfixed_id ^ self.labels[0]
-            if self.is_valid_offset(id, offset):
+            if self.is_valid_offset(id_, offset):
                 return offset
             unfixed_id = self.get_extras(unfixed_id).next
 
             if unfixed_id is self.extras_head:
                 break
 
-        return len(self.units) | (id & self.LOWER_MASK)
+        return len(self.units) | (id_ & self.LOWER_MASK)
 
-    def is_valid_offset(self, id, offset):
+    def is_valid_offset(self, id_, offset):
         if self.get_extras(offset).is_used:
             return False
 
-        rel_offset = id ^ offset
+        rel_offset = id_ ^ offset
         if (rel_offset & self.LOWER_MASK) is not 0 and (rel_offset & self.UPPER_MASK) is not 0:
             return False
 
@@ -283,17 +283,17 @@ class DoubleArrayBuilder(object):
 
         return True
 
-    def reserve_id(self, id):
-        if id >= len(self.units):
+    def reserve_id(self, id_):
+        if id_ >= len(self.units):
             self.expand_units()
 
-        if id is self.extras_head:
-            self.extras_head = self.get_extras(id).next
-            if self.extras_head is id:
+        if id_ is self.extras_head:
+            self.extras_head = self.get_extras(id_).next
+            if self.extras_head is id_:
                 self.extras_head = len(self.units)
-        self.get_extras(self.get_extras(id).prev).next = self.get_extras(id).next
-        self.get_extras(self.get_extras(id).next).prev = self.get_extras(id).prev
-        self.get_extras(id).is_fixed = True
+        self.get_extras(self.get_extras(id_).prev).next = self.get_extras(id_).next
+        self.get_extras(self.get_extras(id_).next).prev = self.get_extras(id_).prev
+        self.get_extras(id_).is_fixed = True
 
     def expand_units(self):
         src_num_units = len(self.units)

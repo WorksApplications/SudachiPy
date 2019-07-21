@@ -56,8 +56,8 @@ def _set_default_subparser(self, name, args=None):
 argparse.ArgumentParser.set_default_subparser = _set_default_subparser
 
 
-def run(tokenizer, mode, input, output, print_all):
-    for line in input:
+def run(tokenizer, mode, input_, output, print_all):
+    for line in input_:
         line = line.rstrip('\n')
         for m in tokenizer.tokenize(line, mode):
             list_info = [
