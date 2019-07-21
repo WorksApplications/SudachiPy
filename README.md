@@ -216,9 +216,9 @@ In the end, we would like to make a flow to get these resources via the code, li
 
 ## User defined Dictionary
 
-If you need to apply customized `user.dic`, 
+If you need to apply customized user dictionary, `user.dic`, 
 place [sudachi.json](https://github.com/WorksApplications/Sudachi/blob/develop/src/main/resources/sudachi.json) to anywhere you like,
-and overwrite `userDict` value with the relative path from `sudachi.json` to your `user.dic`.
+and add `userDict` value with the relative path from `sudachi.json` to your `user.dic`.
 
 ```
 {
@@ -227,11 +227,10 @@ and overwrite `userDict` value with the relative path from `sudachi.json` to you
 }
 ```
 
-You can also build user dictionary with sub-command `ubuild`.  
+Also, you can build user dictionary with sub-command `ubuild`.  
 
-
-About input file format, see [here](https://github.com/WorksApplications/Sudachi/blob/develop/docs/user_dict.md) 
-(written in Japanese, English document is unavailable right now.)
+About file format, see [here](https://github.com/WorksApplications/Sudachi/blob/develop/docs/user_dict.md) 
+(written in Japanese, English document is unavailable now)
 
 ## For developer
 
