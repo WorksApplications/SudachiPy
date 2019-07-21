@@ -80,26 +80,26 @@ class DAWGBuilder(object):
     def root(self):
         return 0
 
-    def child(self, id):
-        return self.units[id].child()
+    def child(self, id_):
+        return self.units[id_].child()
 
-    def sibling(self, id):
-        return id + 1 if self.units[id].has_sibling() else 0
+    def sibling(self, id_):
+        return id_ + 1 if self.units[id_].has_sibling() else 0
 
-    def value(self, id):
-        return self.units[id].value()
+    def value(self, id_):
+        return self.units[id_].value()
 
-    def is_leaf(self, id):
-        return self.label(id) is 0
+    def is_leaf(self, id_):
+        return self.label(id_) is 0
 
-    def label(self, id):
-        return self.labels[id]
+    def label(self, id_):
+        return self.labels[id_]
 
-    def is_intersection(self, id):
-        return self.is_intersections.get(id)
+    def is_intersection(self, id_):
+        return self.is_intersections.get(id_)
 
-    def intersecrion_id(self, id):
-        return self.is_intersections.rank(id) - 1
+    def intersecrion_id(self, id_):
+        return self.is_intersections.rank(id_) - 1
 
     def num_intersections(self):
         return self.is_intersections.get_num_ones()
@@ -188,8 +188,8 @@ class DAWGBuilder(object):
         self.recycle_bin = []
         self.num_states = 0
 
-    def flush(self, id):
-        while self.stack_top(self.node_stack) is not id:
+    def flush(self, id_):
+        while self.stack_top(self.node_stack) is not id_:
             node_id = self.stack_top(self.node_stack)
             self.stack_pop(self.node_stack)
 
@@ -242,9 +242,9 @@ class DAWGBuilder(object):
                 hash_id = find_result[1]
                 self.table[hash_id] = id_
 
-    def find_unit(self, id):
+    def find_unit(self, id_):
         result = [0] * 2
-        hash_id = self.hash_unit(id) % len(self.table)
+        hash_id = self.hash_unit(id_) % len(self.table)
         while True:
             unit_id = self.table[hash_id]
             if unit_id is 0:
@@ -290,16 +290,16 @@ class DAWGBuilder(object):
 
         return True
 
-    def hash_unit(self, id):
+    def hash_unit(self, id_):
         hash_value = 0
-        while id is not 0:
-            unit = self.units[id].unit
-            label = self.labels[id]
+        while id_ is not 0:
+            unit = self.units[id_].unit
+            label = self.labels[id_]
             hash_value ^= self.hash_((label << 24) ^ unit)
 
-            if not self.units[id].has_sibling():
+            if not self.units[id_].has_sibling():
                 break
-            id += 1
+            id_ += 1
         return hash_value
 
     def hash_node(self, id_):
@@ -328,8 +328,8 @@ class DAWGBuilder(object):
             self.stack_pop(self.recycle_bin)
         return id_
 
-    def free_node(self, id):
-        self.recycle_bin.append(id)
+    def free_node(self, id_):
+        self.recycle_bin.append(id_)
 
     def hash_(self, key):
         key = ~key + (key << 15)  # key = (key << 15) - key - 1

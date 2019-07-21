@@ -21,8 +21,8 @@ class KeySet(object):
     def size(self):
         return len(self.keys)
 
-    def get_key(self, id):
-        return self.keys[id]
+    def get_key(self, id_):
+        return self.keys[id_]
 
     def get_key_byte(self, key_id, byte_id):
         if byte_id >= len(self.keys[key_id]):
@@ -32,5 +32,5 @@ class KeySet(object):
     def has_values(self):
         return self.values is not None
 
-    def get_value(self, id):
-        return self.values[id] if self.has_values() else id
+    def get_value(self, id_):
+        return self.values[id_] if self.has_values() else id_

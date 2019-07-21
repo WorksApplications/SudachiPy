@@ -21,13 +21,13 @@ class BitVector(object):
         self.num_ones = 0
         self.size = 0
 
-    def get(self, id):
-        return (self.units[int(id / self.UNIT_SIZE)] >> (id % self.UNIT_SIZE) & 1) is 1
+    def get(self, id_):
+        return (self.units[int(id_ / self.UNIT_SIZE)] >> (id_ % self.UNIT_SIZE) & 1) is 1
 
-    def rank(self, id):
-        unit_id = int(id / self.UNIT_SIZE)
+    def rank(self, id_):
+        unit_id = int(id_ / self.UNIT_SIZE)
         return self.ranks[unit_id] \
-            + self.pop_count(self.units[unit_id] & (~0 >> (self.UNIT_SIZE - (id % self.UNIT_SIZE) - 1)))
+            + self.pop_count(self.units[unit_id] & (~0 >> (self.UNIT_SIZE - (id_ % self.UNIT_SIZE) - 1)))
 
     def set_(self, id_, bit):
         if bit:
