@@ -18,8 +18,10 @@ from importlib import import_module
 from pathlib import Path
 from typing import List
 
-DEFAULT_SETTINGFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources/sudachi.json")
-DEFAULT_RESOURCEDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources")
+DEFAULT_RESOURCEDIR = Path(__file__).absolute().parent / 'resources'
+DEFAULT_SETTINGFILE = DEFAULT_RESOURCEDIR / 'sudachi.json'
+DEFAULT_RESOURCEDIR = DEFAULT_RESOURCEDIR.as_posix()
+DEFAULT_SETTINGFILE = DEFAULT_SETTINGFILE.as_posix()
 
 
 def unlink_default_dict_package(output):
@@ -75,14 +77,12 @@ class _Settings(object):
     def __init__(self):
         self.__is_active = False
         self.__dict_ = None
-        self.resource_dir = DEFAULT_RESOURCEDIR
+        self.resource_dir = None
 
     def set_up(self, path=None, resource_dir=None) -> None:
-        if not path:
-            path = DEFAULT_SETTINGFILE
-        if not resource_dir:
-            resource_dir = DEFAULT_RESOURCEDIR
-        with open(path, "r", encoding="utf-8") as f:
+        path = path or DEFAULT_SETTINGFILE
+        resource_dir = resource_dir or os.path.dirname(path)
+        with open(path, 'r', encoding='utf-8') as f:
             self.__dict_ = json.load(f)
         self.__is_active = True
         self.resource_dir = resource_dir
@@ -99,22 +99,24 @@ class _Settings(object):
         return item in self.__dict_.keys()
 
     def system_dict_path(self) -> str:
-        if 'systemDict' in self.__dict_:
-            return os.path.join(self.resource_dir, self.__dict_['systemDict'])
-        else:
-            with open(os.devnull, 'w') as f:
-                dict_path = create_default_link_for_sudachidict_core(output=f)
-            self.__dict_['systemDict'] = dict_path
-            return dict_path
+        key = 'systemDict'
+        if key in self.__dict_:
+            return os.path.join(self.resource_dir, self.__dict_[key])
+        with open(os.devnull, 'w') as f:
+            dict_path = create_default_link_for_sudachidict_core(output=f)
+        self.__dict_[key] = dict_path
+        return dict_path
 
     def char_def_path(self) -> str:
-        if 'characterDefinitionFile' in self.__dict_:
-            return os.path.join(self.resource_dir, self.__dict_['characterDefinitionFile'])
-        raise KeyError('`characterDefinitionFile` not defined in setting file')
+        key = 'characterDefinitionFile'
+        if key in self.__dict_:
+            return os.path.join(self.resource_dir, self.__dict_[key])
+        raise KeyError('`{}` not defined in setting file'.format(key))
 
     def user_dict_paths(self) -> List[str]:
-        if 'userDict' in self.__dict_:
-            return [os.path.join(self.resource_dir, path) for path in self.__dict_['userDict']]
+        key = 'userDict'
+        if key in self.__dict_:
+            return [os.path.join(self.resource_dir, path) for path in self.__dict_[key]]
         return []
 
 
