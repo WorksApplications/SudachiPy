@@ -61,7 +61,7 @@ class DoubleArray(object):
         # for i, binary in enumerate(self.array):
         #     print("{0:03d}".format(i), "{0:032b}".format(binary), file=sys.stderr)
 
-    def open(self, input_file, position, total_size):
+    def open_(self, input_file, position, total_size):
         if position < 0:
             position = 0
 

@@ -29,13 +29,13 @@ class BitVector(object):
         return self.ranks[unit_id] \
             + self.pop_count(self.units[unit_id] & (~0 >> (self.UNIT_SIZE - (id % self.UNIT_SIZE) - 1)))
 
-    def set(self, id, bit):
+    def set_(self, id_, bit):
         if bit:
-            self.units[int(id / self.UNIT_SIZE)] \
-                = self.units[int(id / self.UNIT_SIZE)] | 1 << (id % self.UNIT_SIZE)
+            self.units[int(id_ / self.UNIT_SIZE)] \
+                = self.units[int(id_ / self.UNIT_SIZE)] | 1 << (id_ % self.UNIT_SIZE)
         else:
-            self.units[int(id / self.UNIT_SIZE)] \
-                = self.units[int(id / self.UNIT_SIZE)] & ~(1 << (id % self.UNIT_SIZE))
+            self.units[int(id_ / self.UNIT_SIZE)] \
+                = self.units[int(id_ / self.UNIT_SIZE)] & ~(1 << (id_ % self.UNIT_SIZE))
 
     def is_empty(self):
         return len(self.units) is 0
