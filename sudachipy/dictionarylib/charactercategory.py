@@ -77,7 +77,7 @@ class CharacterCategory(object):
                 f.close()
                 raise AttributeError("invalid range at line {}".format(i))
             for j in range(1, len(cols)):
-                if re.match("#", cols[j]) or cols[j] is '':
+                if re.match("#", cols[j]) or cols[j] == '':
                     break
                 type_ = categorytype.CategoryType.get(cols[j])
                 if type_ is None:

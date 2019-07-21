@@ -91,7 +91,7 @@ class DoubleArrayBuilder(object):
         self.units[0].set_offset(1)
         self.units[0].set_label(0)
 
-        if dawg.child(dawg.root()) is not 0:
+        if dawg.child(dawg.root()) != 0:
             self.build_from_dawg_insert(dawg, dawg.root(), 0)
 
         self.fix_all_blocks()
@@ -105,9 +105,9 @@ class DoubleArrayBuilder(object):
         if dawg.is_intersection(dawg_child_id):
             intersection_id = dawg.intersection_id(dawg_child_id)
             offset = self.table[intersection_id]
-            if offset is not 0:
+            if offset != 0:
                 offset ^= dic_id
-                if (offset & self.UPPER_MASK) is 0 or (offset & self.LOWER_MASK) is 0:
+                if (offset & self.UPPER_MASK) == 0 or (offset & self.LOWER_MASK) == 0:
                     if dawg.is_leaf(dawg_child_id):
                         self.units[dic_id].set_has_leaf(True)
                     self.units[dic_id].set_offset(offset)
@@ -120,17 +120,17 @@ class DoubleArrayBuilder(object):
         while True:
             child_label = dawg.label(dawg_child_id)
             dic_child_id = offset ^ child_label
-            if child_label is not 0:
+            if child_label != 0:
                 self.build_from_dawg_insert(dawg, dawg_child_id, dic_child_id)
             dawg_child_id = dawg.sibling(dawg_child_id)
-            if dawg_child_id is 0:
+            if dawg_child_id == 0:
                 break
 
     def arrange_from_dawg(self, dawg, dawg_id, dic_id):
         self.labels.clear()
 
         dawg_child_id = dawg.child(dawg_id)
-        while(dawg_child_id is not 0):
+        while dawg_child_id != 0:
             self.labels.append(dawg.label(dawg_child_id))
             dawg_child_id = dawg.sibling(dawg_child_id)
 
@@ -186,7 +186,7 @@ class DoubleArrayBuilder(object):
         offset = self.arrange_from_key_set(key_set, begin, end, depth, dic_id)
 
         while begin < end:
-            if key_set.get_key_byte(begin, depth) is not 0:
+            if key_set.get_key_byte(begin, depth) != 0:
                 break
             begin += 1
         if begin is end:
@@ -212,7 +212,7 @@ class DoubleArrayBuilder(object):
         value = -1
         for i in range(begin, end):
             label = key_set.get_key_byte(i, depth)
-            if label is 0:
+            if label == 0:
                 if depth < len(key_set.get_key(i)):
                     raise AttributeError("invalid null character")
                 elif key_set.get_value(i) < 0:
@@ -224,7 +224,7 @@ class DoubleArrayBuilder(object):
                     # self.progress_function.accept(i + 1, key_set.size() + 1)
                     self.progress_function(i + 1, key_set.size() + 1)
 
-            if len(self.labels) is 0:
+            if len(self.labels) == 0:
                 self.labels.append(label)
             elif label is not self.labels[-1]:
                 if label < self.labels[-1]:
@@ -234,14 +234,14 @@ class DoubleArrayBuilder(object):
         offset = self.find_valid_offset(dic_id)
         self.units[dic_id].set_offset(dic_id ^ offset)
 
-        for l in self.labels:
-            dic_child_id = offset ^ l
+        for label in self.labels:
+            dic_child_id = offset ^ label
             self.reserve_id(dic_child_id)
-            if (l is 0):
+            if label == 0:
                 self.units[dic_id].set_has_leaf(True)
                 self.units[dic_child_id].set_value(value)
             else:
-                self.units[dic_child_id].set_label(l)
+                self.units[dic_child_id].set_label(label)
         self.get_extras(offset).is_used = True
 
         return offset
@@ -274,7 +274,7 @@ class DoubleArrayBuilder(object):
             return False
 
         rel_offset = id_ ^ offset
-        if (rel_offset & self.LOWER_MASK) is not 0 and (rel_offset & self.UPPER_MASK) is not 0:
+        if (rel_offset & self.LOWER_MASK) != 0 and (rel_offset & self.UPPER_MASK) != 0:
             return False
 
         for i in range(1, len(self.labels)):

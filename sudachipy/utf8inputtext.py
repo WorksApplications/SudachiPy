@@ -49,7 +49,7 @@ class UTF8InputText:
         return self.byte_indexes[index]
 
     def is_char_alignment(self, index):
-        return (self.bytes[index] & 0xC0) is not 0x80
+        return (self.bytes[index] & 0xC0) != 0x80
 
     def get_original_index(self, index):
         return self.offsets[index]

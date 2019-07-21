@@ -57,7 +57,7 @@ class MorphemeList:
         else:
             return [self.__getitem__(index)]
 
-        if len(word_ids) is 0 or len(word_ids) is 1:
+        if len(word_ids) == 0 or len(word_ids) == 1:
             return [self.__getitem__(index)]
 
         offset = self.path[index].get_begin()
