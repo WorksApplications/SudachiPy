@@ -22,7 +22,7 @@ class BitVector(object):
         self.size = 0
 
     def get(self, id_):
-        return (self.units[int(id_ / self.UNIT_SIZE)] >> (id_ % self.UNIT_SIZE) & 1) is 1
+        return (self.units[int(id_ / self.UNIT_SIZE)] >> (id_ % self.UNIT_SIZE) & 1) == 1
 
     def rank(self, id_):
         unit_id = int(id_ / self.UNIT_SIZE)
@@ -38,7 +38,7 @@ class BitVector(object):
                 = self.units[int(id_ / self.UNIT_SIZE)] & ~(1 << (id_ % self.UNIT_SIZE))
 
     def is_empty(self):
-        return len(self.units) is 0
+        return len(self.units) == 0
 
     def get_num_ones(self):
         return self.num_ones
@@ -47,7 +47,7 @@ class BitVector(object):
         return self.size
 
     def append(self):
-        if (self.size % self.UNIT_SIZE) is 0:
+        if (self.size % self.UNIT_SIZE) == 0:
             self.units.append(0)
         self.size += 1
 

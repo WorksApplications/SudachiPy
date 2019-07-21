@@ -40,7 +40,7 @@ class DAWGBuilder(object):
             self.child = value
 
         def unit(self):
-            if self.label is 0:
+            if self.label == 0:
                 return (self.child << 1) | (1 if self.has_sibling else 0)
             return (self.child << 2) | (2 if self.is_state else 0) | (1 if self.has_sibling else 0)
 
@@ -57,13 +57,13 @@ class DAWGBuilder(object):
             return self.unit >> 2
 
         def has_sibling(self):
-            return (self.unit & 1) is 1
+            return (self.unit & 1) == 1
 
         def value(self):
             return self.unit >> 1
 
         def is_state(self):
-            return (self.unit & 2) is 2
+            return (self.unit & 2) == 2
 
     def __init__(self):
         self.INITIAL_TABLE_SIZE = 1 << 10
@@ -90,7 +90,7 @@ class DAWGBuilder(object):
         return self.units[id_].value()
 
     def is_leaf(self, id_):
-        return self.label(id_) is 0
+        return self.label(id_) == 0
 
     def label(self, id_):
         return self.labels[id_]
@@ -134,7 +134,7 @@ class DAWGBuilder(object):
     def insert(self, key, value):
         if value < 0:
             raise AttributeError("negative value")
-        if len(key) is 0:
+        if len(key) == 0:
             raise AttributeError("zero-length key")
 
         id_ = 0
@@ -142,11 +142,11 @@ class DAWGBuilder(object):
 
         while key_pos <= len(key):
             child_id = self.nodes[id_].child
-            if child_id is 0:
+            if child_id == 0:
                 break
 
             key_label = key[key_pos] if key_pos < len(key) else 0
-            if key_pos < len(key) and key_label is 0:
+            if key_pos < len(key) and key_label == 0:
                 raise AttributeError("invalid null character")
 
             unit_label = self.nodes[child_id].label
@@ -166,7 +166,7 @@ class DAWGBuilder(object):
             key_label = key[key_pos] if key_pos < len(key) else 0
             child_id = self.append_node()
 
-            if self.nodes[id_].child is 0:
+            if self.nodes[id_].child == 0:
                 self.nodes[child_id].is_state = True
             self.nodes[child_id].sibling = self.nodes[id_].child
             self.nodes[child_id].label = key_label
@@ -198,7 +198,7 @@ class DAWGBuilder(object):
 
             num_siblings = 0
             n = node_id
-            while n is not 0:
+            while n != 0:
                 num_siblings += 1
                 n = self.nodes[n].sibling
 
@@ -206,14 +206,14 @@ class DAWGBuilder(object):
             match_id = find_result[0]
             hash_id = find_result[1]
 
-            if match_id is not 0:
+            if match_id != 0:
                 self.is_intersections.set_(match_id, True)
             else:
                 unit_id = 0
                 for i in range(num_siblings):
                     unit_id = self.append_unit()
                 n = node_id
-                while n is not 0:
+                while n != 0:
                     self.units[unit_id].unit = self.nodes[n].unit()
                     self.labels[unit_id] = self.nodes[n].label
                     unit_id -= 1
@@ -223,7 +223,7 @@ class DAWGBuilder(object):
                 self.num_states += 1
 
             n = node_id
-            while n is not 0:
+            while n != 0:
                 next_ = self.nodes[n].sibling
                 self.free_node(n)
                 n = next_
@@ -237,7 +237,7 @@ class DAWGBuilder(object):
         self.table = [0] * table_size
 
         for id_ in range(1, len(self.units)):
-            if self.labels[id_] is 0 or self.units[id_].is_state():
+            if self.labels[id_] == 0 or self.units[id_].is_state():
                 find_result = self.find_unit(id_)
                 hash_id = find_result[1]
                 self.table[hash_id] = id_
@@ -247,7 +247,7 @@ class DAWGBuilder(object):
         hash_id = self.hash_unit(id_) % len(self.table)
         while True:
             unit_id = self.table[hash_id]
-            if unit_id is 0:
+            if unit_id == 0:
                 break
             hash_id = (hash_id + 1) % len(self.table)
         result[1] = hash_id
@@ -258,7 +258,7 @@ class DAWGBuilder(object):
         hash_id = self.hash_node(node_id) % len(self.table)
         while True:
             unit_id = self.table[hash_id]
-            if unit_id is 0:
+            if unit_id == 0:
                 break
 
             if self.are_equal(node_id, unit_id):
@@ -272,7 +272,7 @@ class DAWGBuilder(object):
 
     def are_equal(self, node_id, unit_id):
         n = self.nodes[node_id].sibling
-        while n is not 0:
+        while n != 0:
             if not self.units[unit_id].has_sibling():
                 return False
             unit_id += 1
@@ -282,7 +282,7 @@ class DAWGBuilder(object):
             return False
 
         n = node_id
-        while n is not 0:
+        while n != 0:
             if (self.nodes[n].unit() is not self.units[unit_id].unit) or (self.nodes[n].label is not self.labels[unit_id]):
                 return False
             n = self.nodes[n].sibling
@@ -292,7 +292,7 @@ class DAWGBuilder(object):
 
     def hash_unit(self, id_):
         hash_value = 0
-        while id_ is not 0:
+        while id_ != 0:
             unit = self.units[id_].unit
             label = self.labels[id_]
             hash_value ^= self.hash_((label << 24) ^ unit)
@@ -304,7 +304,7 @@ class DAWGBuilder(object):
 
     def hash_node(self, id_):
         hash_value = 0
-        while id_ is not 0:
+        while id_ != 0:
             unit = self.nodes[id_].unit()
             label = self.nodes[id_].label
             hash_value ^= self.hash_(((label & 0xFF) << 24) ^ unit)
@@ -319,7 +319,7 @@ class DAWGBuilder(object):
         return self.is_intersections.get_size() - 1
 
     def append_node(self):
-        if len(self.recycle_bin) is 0:
+        if len(self.recycle_bin) == 0:
             id_ = len(self.nodes)
             self.nodes.append(self.Node())
         else:
