@@ -221,7 +221,6 @@ class DoubleArrayBuilder(object):
                 if value is -1:
                     value = key_set.get_value(i)
                 if self.progress_function is not None:
-                    # self.progress_function.accept(i + 1, key_set.size() + 1)
                     self.progress_function(i + 1, key_set.size() + 1)
 
             if len(self.labels) == 0:
@@ -251,14 +250,7 @@ class DoubleArrayBuilder(object):
             return len(self.units) | (id_ & self.LOWER_MASK)
 
         unfixed_id = self.extras_head
-        memo = []
         while True:
-            # debug
-            if unfixed_id not in memo:
-                memo.append(unfixed_id)
-            else:
-                raise RuntimeError(unfixed_id, memo)
-
             offset = unfixed_id ^ self.labels[0]
             if self.is_valid_offset(id_, offset):
                 return offset
