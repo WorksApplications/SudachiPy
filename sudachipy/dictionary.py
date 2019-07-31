@@ -93,6 +93,6 @@ class Dictionary:
         for dict_ in self.dictionaries:
             dict_.close()
 
-    def create(self):
+    def create(self, mode=None):
         return Tokenizer(
-            self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, self.path_rewrite_plugins)
+            self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, self.path_rewrite_plugins, mode=mode)

@@ -31,7 +31,8 @@ class Tokenizer:
     SplitMode = Enum("SplitMode", "A B C")
 
     def __init__(self, grammar: Grammar, lexicon: Lexicon, input_text_plugins: List[InputTextPlugin],
-                 oov_provider_plugins: List, path_rewrite_plugins: List[PathRewritePlugin]):
+                 oov_provider_plugins: List, path_rewrite_plugins: List[PathRewritePlugin],
+                 mode: SplitMode=None):
         self.grammar = grammar
         self.lexicon = lexicon
         self.input_text_plugins = input_text_plugins
@@ -39,6 +40,7 @@ class Tokenizer:
         self.path_rewrite_plugins = path_rewrite_plugins
         self.dump_output = None
         self.lattice = Lattice(grammar)
+        self.mode = mode or self.SplitMode.C
 
         if self.oov_provider_plugins:
             self.default_oov_provider = self.oov_provider_plugins[-1]
@@ -97,7 +99,7 @@ class Tokenizer:
     def tokenize(self, text: str, mode=None) -> MorphemeList:
         if not text:
             return []
-        mode = mode or self.SplitMode.C
+        mode = mode or self.mode
 
         builder = UTF8InputTextBuilder(text, self.grammar)
         for plugin in self.input_text_plugins:
