@@ -18,7 +18,8 @@ import os
 import sys
 import time
 
-from . import SUDACHIPY_VERSION
+from setuptools_scm import get_version
+
 from . import dictionary
 from . import tokenizer
 from .config import set_default_dict_package, unlink_default_dict_package
@@ -172,7 +173,8 @@ def _command_tokenize(args, print_usage):
 
 
 def print_version():
-    print('sudachipy v{}'.format(SUDACHIPY_VERSION))
+    version = get_version(root='..', relative_to=__file__)
+    print('sudachipy {}'.format(version))
 
 
 def main():

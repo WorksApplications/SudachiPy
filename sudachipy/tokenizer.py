@@ -32,7 +32,7 @@ class Tokenizer:
 
     def __init__(self, grammar: Grammar, lexicon: Lexicon, input_text_plugins: List[InputTextPlugin],
                  oov_provider_plugins: List, path_rewrite_plugins: List[PathRewritePlugin],
-                 mode: SplitMode=None):
+                 mode: SplitMode = None):
         self.grammar = grammar
         self.lexicon = lexicon
         self.input_text_plugins = input_text_plugins
