@@ -13,10 +13,10 @@
 # limitations under the License.
 
 from setuptools import setup, find_packages
-from sudachipy import SUDACHIPY_VERSION
 
 setup(name="SudachiPy",
-      version=SUDACHIPY_VERSION,
+      use_scm_version=True,
+      setup_requires=['setuptools_scm'],
       description="Python version of Sudachi, the Japanese Morphological Analyzer",
       long_description=open('README.md', encoding='utf-8').read(),
       long_description_content_type="text/markdown",
