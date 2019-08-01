@@ -31,5 +31,6 @@ setup(name="SudachiPy",
       },
       install_requires=[
             "sortedcontainers>=2.1.0,<2.2.0",
+            "setuptools_scm"
       ],
       )

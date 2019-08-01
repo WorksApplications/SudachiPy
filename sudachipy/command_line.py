@@ -18,7 +18,7 @@ import os
 import sys
 import time
 
-from pkg_resources import get_distribution
+from setuptools_scm import get_version
 
 from . import dictionary
 from . import tokenizer
@@ -173,7 +173,7 @@ def _command_tokenize(args, print_usage):
 
 
 def print_version():
-    version = get_distribution(__name__).version
+    version = get_version(root='..', relative_to=__file__)
     print('sudachipy {}'.format(version))
 
 

@@ -15,3 +15,10 @@
 from . import utf8inputtextbuilder
 from . import tokenizer
 from . import config
+
+from pkg_resources import get_distribution, DistributionNotFound
+try:
+    __version__ = get_distribution(__name__).version
+except DistributionNotFound:
+    # package is not installed
+    pass
