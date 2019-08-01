@@ -138,20 +138,20 @@ tokenizer_obj = dictionary.Dictionary().create()
 
 
 # Multi-granular tokenization
-# (following results are w/ `system_full.dic`
-# you may not be able to replicate this particular example w/ `system_core.dic`)
+# following results are made by `system_full.dic` and `system_full.dic` version 20190781
+# you may not be able to replicate this particular example due to dictionary you use
 
 mode = tokenizer.Tokenizer.SplitMode.C
-[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
-# => ['医薬品安全管理責任者']
+[m.surface() for m in tokenizer_obj.tokenize("国家公務員", mode)]
+# => ['国家公務員']
 
 mode = tokenizer.Tokenizer.SplitMode.B
-[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
-# => ['医薬品', '安全', '管理', '責任者']
+[m.surface() for m in tokenizer_obj.tokenize("国家公務員", mode)]
+# => ['国家', '公務員']
 
 mode = tokenizer.Tokenizer.SplitMode.A
-[m.surface() for m in tokenizer_obj.tokenize("医薬品安全管理責任者", mode)]
-# => ['医薬', '品', '安全', '管理', '責任', '者']
+[m.surface() for m in tokenizer_obj.tokenize("国家公務員", mode)]
+# => ['国家', '公務', '員']
 
 
 # Morpheme information
