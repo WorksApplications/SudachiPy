@@ -8,7 +8,7 @@ SudachiPy is a Python version of [Sudachi](https://github.com/WorksApplications/
 
 Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](http://nlp.worksap.co.jp/), an institute under [Works Applications](http://www.worksap.com/) that focuses on Natural Language Processing (NLP).
 
-**Warning: SudachiPy is still under development, and some of the functions are still not complete. Please use it at your own risk.**
+**Warning: some functions are still incompatible with Java Sudachi.**
 
 ## Breaking changes
 ### v0.3.0
