@@ -138,7 +138,7 @@ tokenizer_obj = dictionary.Dictionary().create()
 
 
 # Multi-granular tokenization
-# following results are made by `system_full.dic` and `system_full.dic` version 20190781
+# using `system_full.dic` or `system_full.dic` version 20190781
 # you may not be able to replicate this particular example due to dictionary you use
 
 mode = tokenizer.Tokenizer.SplitMode.C
