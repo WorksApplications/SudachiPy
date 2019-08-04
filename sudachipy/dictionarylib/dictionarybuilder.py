@@ -227,7 +227,6 @@ class DictionaryBuilder(object):
 
         trie.build(keys, lengths=[len(k) for k in keys], values=vals)
         self.logger.info('done\n')
-
         self.logger.info('writing the trie...')
         self.byte_buffer.clear()
         self.byte_buffer.write_int(trie.size(), 'int')
@@ -237,6 +236,7 @@ class DictionaryBuilder(object):
 
         io_out.write(trie.array())
         self.__logging_size(trie.size() * 4 + 4)
+        trie.clear()
         del trie
 
         self.logger.info('writing the word-ID table...')
