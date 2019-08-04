@@ -226,6 +226,7 @@ class DictionaryBuilder(object):
         self.logger.info('building the trie...')
 
         trie.build(keys, lengths=[len(k) for k in keys], values=vals)
+        self.logger.info('done\n')
 
         self.logger.info('done\n')
         self.logger.info('writing the trie...')
