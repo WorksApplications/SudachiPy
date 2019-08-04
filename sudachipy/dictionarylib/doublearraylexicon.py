@@ -13,13 +13,13 @@
 # limitations under the License.
 
 import mmap
-import struct
+
+from dartsclone import DoubleArray
 
 from . import wordidtable
 from . import wordinfolist
 from . import wordparameterlist
 from .lexicon import Lexicon
-from .. import dartsclone
 
 
 class DoubleArrayLexicon(Lexicon):
@@ -28,14 +28,19 @@ class DoubleArrayLexicon(Lexicon):
     __SIGNED_SHORT_MAX = 32767
     __USER_DICT_COST_PER_MORPH = -20
 
+    trie: DoubleArray = None
+    word_id_table: wordidtable.WordIdTable = None
+    word_params: wordparameterlist = None
+
     def __init__(self, bytes_: mmap.mmap, offset: int):
-        self.trie = dartsclone.doublearray.DoubleArray()
+        self.trie = DoubleArray()
         bytes_.seek(offset)
         size = int.from_bytes(bytes_.read(4), 'little')
         offset += 4
-        # bytes_.seek(offset)
-        array = struct.unpack_from("<{}I".format(size), bytes_, offset)
+        array = memoryview(bytes_)[offset:offset + size * 4]
+        array = array.cast('i')
         self.trie.set_array(array, size)
+
         offset += self.trie.total_size()
 
         self.word_id_table = wordidtable.WordIdTable(bytes_, offset)
@@ -47,10 +52,11 @@ class DoubleArrayLexicon(Lexicon):
         self.word_infos = wordinfolist.WordInfoList(bytes_, offset, self.word_params.get_size())
 
     def lookup(self, text: bytes, offset: int) -> Lexicon.Itr:
-        result = self.trie.common_prefix_search(text, offset)
+        key = text[offset:]
+        result = self.trie.common_prefix_search(key, length=len(key))
         for item in result:
             word_ids = self.word_id_table.get(item[0])
-            length = item[1]
+            length = item[1] + offset
             for word_id in word_ids:
                 yield (word_id, length)
 

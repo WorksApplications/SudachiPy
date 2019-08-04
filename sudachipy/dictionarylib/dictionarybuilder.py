@@ -16,9 +16,10 @@ import csv
 import re
 from logging import DEBUG, StreamHandler, getLogger
 
+from dartsclone import DoubleArray
+
 from sortedcontainers import SortedDict
 
-from sudachipy.dartsclone.doublearray import DoubleArray
 from sudachipy.dictionarylib.jtypedbytebuffer import JTypedByteBuffer
 from sudachipy.dictionarylib.wordinfo import WordInfo
 
@@ -224,21 +225,18 @@ class DictionaryBuilder(object):
 
         self.logger.info('building the trie...')
 
-        def progress_func(n, s):
-            if (n % (s / 10 + 1)) == 0:
-                self.logger('.')
-        trie.build(keys, vals, progress_func)
+        trie.build(keys, lengths=[len(k) for k in keys], values=vals)
         self.logger.info('done\n')
 
         self.logger.info('writing the trie...')
         self.byte_buffer.clear()
-        self.byte_buffer.write_int(trie.size, 'int')
+        self.byte_buffer.write_int(trie.size(), 'int')
         self.byte_buffer.seek(0)
         io_out.write(self.byte_buffer.read())
         self.byte_buffer.clear()
 
-        io_out.write(trie.byte_array().read())
-        self.__logging_size(trie.size * 4 + 4)
+        io_out.write(trie.array())
+        self.__logging_size(trie.size() * 4 + 4)
         del trie
 
         self.logger.info('writing the word-ID table...')

@@ -42,8 +42,11 @@ class TestDoubleArrayLexicon(unittest.TestCase):
     def test_lookup(self):
         res = self.lexicon.lookup('東京都'.encode('utf-8'), 0)
         self.assertEqual((4, 3), res.__next__())  # 東
+
         self.assertEqual((5, 6), res.__next__())  # 東京
+
         self.assertEqual((6, 9), res.__next__())  # 東京都
+
         with self.assertRaises(StopIteration):
             res.__next__()
 
