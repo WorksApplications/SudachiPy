@@ -28,9 +28,9 @@ class DoubleArrayLexicon(Lexicon):
     __SIGNED_SHORT_MAX = 32767
     __USER_DICT_COST_PER_MORPH = -20
 
-    trie: DoubleArray = None
-    word_id_table: wordidtable.WordIdTable = None
-    word_params: wordparameterlist = None
+    trie = None
+    word_id_table = None
+    word_params = None
 
     def __init__(self, bytes_: mmap.mmap, offset: int):
         self.trie = DoubleArray()
