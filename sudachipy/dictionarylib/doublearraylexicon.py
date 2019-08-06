@@ -51,6 +51,9 @@ class DoubleArrayLexicon(Lexicon):
 
         self.word_infos = wordinfolist.WordInfoList(bytes_, offset, self.word_params.get_size())
 
+    def __del__(self):
+        del self.word_params
+
     def lookup(self, text: bytes, offset: int) -> Lexicon.Itr:
         key = text[offset:]
         result = self.trie.common_prefix_search(key, length=len(key))
