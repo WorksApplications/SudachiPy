@@ -62,7 +62,7 @@ class BinaryDictionary(object):
         return cls(*args)
 
     def close(self):
-        self.grammar.close()
+        del self._grammar
         self._bytes.close()
 
     @property
