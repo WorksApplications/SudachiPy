@@ -45,6 +45,17 @@ class Grammar:
 
         self.storage_size = (offset - original_offset) + 2 * self.left_id_size * self.right_id_size
 
+        self._matrix_view = \
+            memoryview(self.bytes)[self.connect_table_offset: self.connect_table_offset + 2 * self.left_id_size * self.right_id_size]
+        try:
+            self._matrix_view = self._matrix_view.cast('h', shape=[self.left_id_size, self.right_id_size])
+        except TypeError:
+            # zero sized connection matrix
+            pass
+
+    def close(self):
+        self._matrix_view.release()
+
     def get_storage_size(self):
         return self.storage_size
 
@@ -58,7 +69,7 @@ class Grammar:
         return self.pos_list.index(pos) if pos in self.pos_list else -1
 
     def get_connect_cost(self, left_id: int, right_id: int) -> int:
-        return self.bytes_get_short(self.connect_table_bytes, self.connect_table_offset + 2 * left_id + 2 * self.left_id_size * right_id)
+        return self._matrix_view[right_id, left_id]
 
     def set_connect_cost(self, left_id, right_id, cost):
         # bytes_ must be ACCESS_COPY mode
