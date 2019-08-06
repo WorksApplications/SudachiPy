@@ -63,6 +63,7 @@ class BinaryDictionary(object):
 
     def close(self):
         del self._grammar
+        del self._lexicon
         self._bytes.close()
 
     @property
