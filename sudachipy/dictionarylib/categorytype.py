@@ -12,26 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from enum import Enum
+from enum import Flag, auto
 
 
-class CategoryType(Enum):
-    DEFAULT = 1
-    SPACE = 1 << 1
-    KANJI = 1 << 2
-    SYMBOL = 1 << 3
-    NUMERIC = 1 << 4
-    ALPHA = 1 << 5
-    HIRAGANA = 1 << 6
-    KATAKANA = 1 << 7
-    KANJINUMERIC = 1 << 8
-    GREEK = 1 << 9
-    CYRILLIC = 1 << 10
-    USER1 = 1 << 11
-    USER2 = 1 << 12
-    USER3 = 1 << 13
-    USER4 = 1 << 14
-    NOOOVBOW = 1 << 15
+class CategoryType(Flag):
+    NONE = 0
+    DEFAULT = auto()
+    SPACE = auto()
+    KANJI = auto()
+    SYMBOL = auto()
+    NUMERIC = auto()
+    ALPHA = auto()
+    HIRAGANA = auto()
+    KATAKANA = auto()
+    KANJINUMERIC = auto()
+    GREEK = auto()
+    CYRILLIC = auto()
+    USER1 = auto()
+    USER2 = auto()
+    USER3 = auto()
+    USER4 = auto()
+    NOOOVBOW = auto()
 
     def get_id(self):
         return self.id

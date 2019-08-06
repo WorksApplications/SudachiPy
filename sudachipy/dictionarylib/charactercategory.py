@@ -14,7 +14,7 @@
 
 import re
 
-from . import categorytype
+from .categorytype import CategoryType
 
 
 class CharacterCategory(object):
@@ -22,12 +22,13 @@ class CharacterCategory(object):
         def __init__(self):
             self.low = 0
             self.high = 0
-            self.categories = set()
+            self.category = CategoryType.NONE
 
         def contains(self, cp):
-            if cp >= self.low and cp <= self.high:
-                return True
-            return False
+            return self.low <= cp <= self.high
+
+        def is_passed_over(self, cp):
+            return self.low > cp
 
         def containing_length(self, text):
             for i in range(len(text)):
@@ -40,13 +41,13 @@ class CharacterCategory(object):
         self.range_list = []
 
     def get_category_types(self, code_point):
-        bucket = set()
+        bucket = CategoryType.NONE
         for range_ in self.range_list:
             if range_.contains(code_point):
-                bucket = bucket.union(range_.categories)
-        if bucket:
-            return bucket
-        return {categorytype.CategoryType.DEFAULT}
+                bucket |= range_.category
+        if bucket == CategoryType.NONE:
+            return CategoryType.DEFAULT
+        return bucket
 
     def read_character_definition(self, char_def=None):
         """
@@ -79,11 +80,11 @@ class CharacterCategory(object):
             for j in range(1, len(cols)):
                 if re.match("#", cols[j]) or cols[j] == '':
                     break
-                type_ = categorytype.CategoryType.get(cols[j])
+                type_ = CategoryType.get(cols[j])
                 if type_ is None:
                     f.close()
                     raise AttributeError("{} is invalid type at line {}".format(cols[j], i))
-                range_.categories.add(type_)
+                range_.category |= type_
             self.range_list.append(range_)
         self.range_list.reverse()
 

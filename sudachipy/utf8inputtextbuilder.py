@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
-
 from . import utf8inputtext
 
 
@@ -82,7 +80,7 @@ class UTF8InputTextBuilder:
         if len(text) == 0:
             return []
 
-        char_category_types = [None for i in range(len(text))]
+        char_category_types = [None for _ in range(len(text))]
         for i in range(len(text)):
             types = self.grammar.get_character_category().get_category_types(ord(text[i]))
             char_category_types[i] = types
@@ -104,10 +102,11 @@ class UTF8InputTextBuilder:
         return char_category_continuities
 
     def get_char_category_continuous_length(self, char_categories, offset):
-        continuous_category = copy.deepcopy(char_categories[offset])
+        from .dictionarylib.categorytype import CategoryType
+        continuous_category = char_categories[offset]
         for length in range(1, len(char_categories) - offset):
-            continuous_category = continuous_category & char_categories[offset + length]
-            if len(continuous_category) == 0:
+            continuous_category &= char_categories[offset + length]
+            if continuous_category == CategoryType.NONE:
                 return length
         return len(char_categories) - offset
 
