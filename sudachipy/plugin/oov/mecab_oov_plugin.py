@@ -63,13 +63,12 @@ class MeCabOovPlugin(OovProviderPlugin):
         if length < 1:
             return []
         nodes = []
-        for type_ in input_text.get_char_category_types(offset).type_wise():
-            if type_ not in self.categories:
-                continue
-            cinfo = self.categories[type_]
+        types_ = input_text.get_char_category_types(offset)
+        cinfos = [cinfo for cinfo in self.categories.values() if cinfo.type_ & types_ != categorytype.CategoryType.NONE]
+        cinfos = [cinfo for cinfo in cinfos if cinfo.type_ in self.oov_list]
+        cinfos = [cinfo for cinfo in cinfos if cinfo.is_invoke or not has_other_words]
+        for cinfo in cinfos:
             llength = length
-            if cinfo.type_ not in self.oov_list:
-                continue
             oovs = self.oov_list[cinfo.type_]
             if not cinfo.is_invoke and has_other_words:
                 continue
@@ -85,6 +84,29 @@ class MeCabOovPlugin(OovProviderPlugin):
                 s = input_text.get_substring(offset, offset + sublength)
                 for oov in oovs:
                     nodes.append(self.get_oov_node(s, oov, sublength))
+
+        # for type_ in input_text.get_char_category_types(offset).type_wise():
+        #     if type_ not in self.categories:
+        #         continue
+        #     cinfo = self.categories[type_]
+        #     llength = length
+        #     if cinfo.type_ not in self.oov_list:
+        #         continue
+        #     oovs = self.oov_list[cinfo.type_]
+        #     if not cinfo.is_invoke and has_other_words:
+        #         continue
+        #     if cinfo.is_group:
+        #         s = input_text.get_substring(offset, offset + length)
+        #         for oov in oovs:
+        #             nodes.append(self.get_oov_node(s, oov, length))
+        #             llength -= 1
+        #     for i in range(1, cinfo.length + 1):
+        #         sublength = input_text.get_code_points_offset_length(offset, i)
+        #         if sublength > llength:
+        #             break
+        #         s = input_text.get_substring(offset, offset + sublength)
+        #         for oov in oovs:
+        #             nodes.append(self.get_oov_node(s, oov, sublength))
         return nodes
 
     def get_oov_node(self, text, oov, length):
