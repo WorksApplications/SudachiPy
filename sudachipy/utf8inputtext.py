@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
+from .dictionarylib.categorytype import CategoryType
 
 
 class UTF8InputText:
@@ -54,16 +54,16 @@ class UTF8InputText:
     def get_original_index(self, index):
         return self.offsets[index]
 
-    def get_char_category_types(self, begin, end=None):
+    def get_char_category_types(self, begin, end=None) -> CategoryType:
         if end is None:
             return self.char_categories[self.byte_indexes[begin]]
         if begin + self.get_char_category_continuous_length(begin) < end:
-            return []
+            return CategoryType.NONE
         b = self.byte_indexes[begin]
         e = self.byte_indexes[end]
-        continuous_category = copy.deepcopy(self.char_categories[b])
+        continuous_category = self.char_categories[b]
         for i in range(b + 1, e):
-            continuous_category = continuous_category & self.char_categories[i]
+            continuous_category &= self.char_categories[i]
         return continuous_category
 
     def get_char_category_continuous_length(self, index):

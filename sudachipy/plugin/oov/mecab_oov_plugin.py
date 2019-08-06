@@ -63,7 +63,7 @@ class MeCabOovPlugin(OovProviderPlugin):
         if length < 1:
             return []
         nodes = []
-        for type_ in input_text.get_char_category_types(offset):
+        for type_ in input_text.get_char_category_types(offset).type_wise():
             if type_ not in self.categories:
                 continue
             cinfo = self.categories[type_]

@@ -27,9 +27,6 @@ class CharacterCategory(object):
         def contains(self, cp):
             return self.low <= cp <= self.high
 
-        def is_passed_over(self, cp):
-            return self.low > cp
-
         def containing_length(self, text):
             for i in range(len(text)):
                 c = ord(text[i])

@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import List
+
 from . import utf8inputtext
+from .dictionarylib.categorytype import CategoryType
 
 
 class UTF8InputTextBuilder:
@@ -76,14 +79,14 @@ class UTF8InputTextBuilder:
         char_category_continuities = self.get_char_category_continuities(modified_string_text, length, char_categories)
         return utf8inputtext.UTF8InputText(self.grammar, self.original_text, modified_string_text, byte_text, offsets, byte_indexes, char_categories, char_category_continuities)
 
-    def get_char_category_types(self, text):
+    def get_char_category_types(self, text) -> List[CategoryType]:
         if len(text) == 0:
             return []
 
-        char_category_types = [None for _ in range(len(text))]
-        for i in range(len(text)):
-            types = self.grammar.get_character_category().get_category_types(ord(text[i]))
-            char_category_types[i] = types
+        char_category_types = []
+        for c in text:
+            types = self.grammar.get_character_category().get_category_types(ord(c))
+            char_category_types.append(types)
         return char_category_types
 
     def get_char_category_continuities(self, text, byte_length, char_categories):

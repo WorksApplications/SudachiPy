@@ -49,3 +49,10 @@ class CategoryType(Flag):
             return CategoryType[str_]
         except KeyError:
             return None
+
+    def type_wise(self):
+        for type_ in CategoryType:
+            value = self & type_
+            if value == CategoryType.NONE:
+                continue
+            yield value

@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from copy import deepcopy
 from unittest import mock
 
+from sudachipy.dictionarylib.categorytype import CategoryType
 from sudachipy.utf8inputtext import UTF8InputText
-
 
 mocked_input_text = mock.Mock(spec=UTF8InputText)
 text = ''
@@ -26,13 +25,13 @@ types = []
 def set_text(text_: str) -> None:
     global text, types
     text = text_
-    types = [set() for _ in text]
+    types = [CategoryType.NONE for _ in text]
 
 
 def set_category_type(begin: int, end: int, type_) -> None:
     global types
     for i in range(begin, end):
-        types[i].add(type_)
+        types[i] |= type_
 
 
 mocked_input_text.get_text.return_value = text
@@ -52,9 +51,9 @@ def _mocked_get_char_category_types(begin: int, end: int = None) -> set:
     global text, types
     if end is None:
         return types[begin]
-    continuous_category = deepcopy(types[begin])
+    continuous_category = types[begin]
     for i in range(begin + 1, end):
-        continuous_category = continuous_category.intersection(types[i])
+        continuous_category &= types[i]
     return continuous_category
 
 
@@ -63,10 +62,10 @@ mocked_input_text.get_char_category_types.side_effect = _mocked_get_char_categor
 
 def _mocked_get_char_category_continuous_length(idx: int) -> int:
     global text, types
-    continuous_category = deepcopy(types[idx])
+    continuous_category = types[idx]
     for i in range(idx + 1, len(text)):
-        continuous_category = continuous_category.intersection(types[i])
-        if not continuous_category:
+        continuous_category &= types[i]
+        if continuous_category == CategoryType.NONE:
             return i - idx
     return len(text) - idx
 
