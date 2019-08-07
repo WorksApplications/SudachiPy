@@ -191,6 +191,8 @@ class TestUTF8InputText(unittest.TestCase):
         self.assertEqual(input_.get_code_points_offset_length(23, 3), 9)
 
     class MockGrammar:
+        char_category = None
+
         def get_part_of_speech_size(self):
             return 0
 
@@ -213,12 +215,12 @@ class TestUTF8InputText(unittest.TestCase):
             return None
 
         def get_character_category(self):
-            char_category = dictionarylib.charactercategory.CharacterCategory()
-            char_category.read_character_definition(os.path.join(sudachipy.config.DEFAULT_RESOURCEDIR, "char.def"))
-            return char_category
+            # char_category = dictionarylib.charactercategory.CharacterCategory()
+            # char_category.read_character_definition(os.path.join(sudachipy.config.DEFAULT_RESOURCEDIR, "char.def"))
+            return self.char_category
 
         def set_character_category(self, char_category):
-            return
+            self.char_category = char_category
 
 
 if __name__ == '__main__':

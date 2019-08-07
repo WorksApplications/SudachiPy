@@ -17,7 +17,8 @@ import shutil
 import tempfile
 import unittest
 
-from sudachipy.dictionarylib import categorytype, charactercategory
+from sudachipy.dictionarylib import charactercategory
+from sudachipy.dictionarylib.categorytype import CategoryType
 
 
 class TestCharacterCategory(unittest.TestCase):
@@ -43,8 +44,8 @@ class TestCharacterCategory(unittest.TestCase):
     def test_get_category_types(self):
         cat = charactercategory.CharacterCategory()
         cat.read_character_definition(os.path.join(self.test_resources_dir, 'char.def'))
-        self.assertEqual({categorytype.CategoryType.KANJI}, cat.get_category_types(ord('熙')))
-        self.assertNotEqual({categorytype.CategoryType.DEFAULT}, cat.get_category_types(ord('熙')))
+        self.assertEqual({CategoryType.KANJI}, cat.get_category_types(ord('熙')))
+        self.assertNotEqual({CategoryType.DEFAULT}, cat.get_category_types(ord('熙')))
 
     def test_read_character_definition(self):
         f = os.path.join(self.test_dir, 'test_file.txt')
@@ -55,9 +56,24 @@ class TestCharacterCategory(unittest.TestCase):
             wf.write("0x0030         KANJI\n")
         cat = charactercategory.CharacterCategory()
         cat.read_character_definition(f)
-        self.assertEqual({categorytype.CategoryType.NUMERIC, categorytype.CategoryType.KANJI}, cat.get_category_types(0x0030))
-        self.assertEqual({categorytype.CategoryType.NUMERIC}, cat.get_category_types(0x0039))
-        self.assertEqual({categorytype.CategoryType.KANJI}, cat.get_category_types(0x3007))
+        self.assertEqual({CategoryType.NUMERIC, CategoryType.KANJI}, cat.get_category_types(0x0030))
+        self.assertEqual({CategoryType.NUMERIC}, cat.get_category_types(0x0039))
+        self.assertEqual({CategoryType.KANJI}, cat.get_category_types(0x3007))
+
+        f = os.path.join(self.test_dir, 'test_file.txt')
+        with open(f, 'w') as wf:
+            wf.write("#\n \n")
+            wf.write("0x0030..0x0039 KATAKANA\n")
+            wf.write("0x3007         KANJI\n")
+            wf.write("0x0039..0x0040 ALPHA\n")
+            wf.write("0x0030..0x0039 NUMERIC\n")
+            wf.write("0x0030         KANJI\n")
+        cat = charactercategory.CharacterCategory()
+        cat.read_character_definition(f)
+        self.assertEqual({CategoryType.NUMERIC, CategoryType.KANJI, CategoryType.KATAKANA}, cat.get_category_types(0x0030))
+        self.assertEqual({CategoryType.NUMERIC, CategoryType.KATAKANA, CategoryType.ALPHA}, cat.get_category_types(0x0039))
+        self.assertEqual({CategoryType.KANJI}, cat.get_category_types(0x3007))
+        self.assertEqual({CategoryType.DEFAULT}, cat.get_category_types(0x4007))
 
     def test_read_character_definition_with_invalid_format(self):
         f = os.path.join(self.test_dir, 'test_file.txt')
