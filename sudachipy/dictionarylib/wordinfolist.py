@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import wordinfo
+import struct
+
+from .wordinfo import WordInfo
 
 
 class WordInfoList(object):
@@ -44,9 +46,8 @@ class WordInfoList(object):
 
         self.bytes.seek(orig_pos)
 
-        return wordinfo.WordInfo(surface, head_word_length, pos_id, normalized_form,
-                                 dictionary_form_word_id, dictionary_form, reading_form,
-                                 a_unit_split, b_unit_split, word_structure)
+        return WordInfo(surface, head_word_length, pos_id, normalized_form, dictionary_form_word_id,
+                        dictionary_form, reading_form, a_unit_split, b_unit_split, word_structure)
 
     def word_id_to_offset(self, word_id):
         i = self.offset + 4 * word_id
@@ -65,10 +66,8 @@ class WordInfoList(object):
 
     def buffer_to_int_array(self):
         length = self.bytes.read_byte()
-        array = []
-        for _ in range(length):
-            array.append(int.from_bytes(self.bytes.read(4), 'little', signed=True))
-        return array
+        _bytes = self.bytes.read(4 * length)
+        return list(struct.unpack('{}i'.format(length), _bytes))
 
     def size(self):
         return self._word_size

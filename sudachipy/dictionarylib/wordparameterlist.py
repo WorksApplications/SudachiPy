@@ -14,14 +14,22 @@
 
 
 class WordParameterList(object):
-    def __init__(self, bytes_, offset):
-        self.ELEMENT_SIZE = 2 * 3
 
-        self.bytes = bytes_
+    ELEMENT_SIZE = 2 * 3
+    ELEMENT_SIZE_AS_SHORT = 3
+
+    def __init__(self, bytes_, offset):
+        original_offset = bytes_.tell()
         bytes_.seek(offset)
         self.size = int.from_bytes(bytes_.read(4), 'little')
-        self.offset = offset + 4
+        array_offset = bytes_.tell()
+        self._array_view = memoryview(bytes_)[array_offset: array_offset + self.size * self.ELEMENT_SIZE]
+        self._array_view = self._array_view.cast('h')
         # self.is_copied = False
+        bytes_.seek(original_offset)
+
+    def __del__(self):
+        self._array_view.release()
 
     def storage_size(self):
         return 4 + self.ELEMENT_SIZE * self.size
@@ -30,18 +38,14 @@ class WordParameterList(object):
         return self.size
 
     def get_left_id(self, word_id):
-        self.bytes.seek(self.offset + self.ELEMENT_SIZE * word_id)
-        return int.from_bytes(self.bytes.read(2), 'little', signed=True)
+        return self._array_view[self.ELEMENT_SIZE_AS_SHORT * word_id]
 
     def get_right_id(self, word_id):
-        self.bytes.seek(self.offset + self.ELEMENT_SIZE * word_id + 2)
-        return int.from_bytes(self.bytes.read(2), 'little')
+        return self._array_view[self.ELEMENT_SIZE_AS_SHORT * word_id + 1]
 
     def get_cost(self, word_id):
-        self.bytes.seek(self.offset + self.ELEMENT_SIZE * word_id + 4)
-        return int.from_bytes(self.bytes.read(2), 'little', signed=True)
+        return self._array_view[self.ELEMENT_SIZE_AS_SHORT * word_id + 2]
 
     def set_cost(self, word_id, cost):
         # bytes_ must be ACCESS_COPY mode
-        self.bytes.seek(self.offset + self.ELEMENT_SIZE * word_id + 4)
-        self.bytes.write(cost.to_bytes(2, 'little', signed=True))
+        self._array_view[self.ELEMENT_SIZE_AS_SHORT * word_id + 2] = cost
