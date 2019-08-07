@@ -75,18 +75,21 @@ class UTF8InputTextBuilder:
         offsets[length] = self.text_offsets[-1]
 
         char_categories = self.get_char_category_types(modified_string_text)
+
         char_category_continuities = self.get_char_category_continuities(modified_string_text, length, char_categories)
+
         return utf8inputtext.UTF8InputText(self.grammar, self.original_text, modified_string_text, byte_text, offsets, byte_indexes, char_categories, char_category_continuities)
 
     def get_char_category_types(self, text):
-        if len(text) == 0:
-            return []
-
-        char_category_types = [None for i in range(len(text))]
-        for i in range(len(text)):
-            types = self.grammar.get_character_category().get_category_types(ord(text[i]))
-            char_category_types[i] = types
-        return char_category_types
+        # if len(text) == 0:
+        #     return []
+        #
+        return [self.grammar.get_character_category().get_category_types(ord(c)) for c in text]
+        # char_category_types = [None for i in range(len(text))]
+        # for i in range(len(text)):
+        #     types = self.grammar.get_character_category().get_category_types(ord(text[i]))
+        #     char_category_types[i] = types
+        # return char_category_types
 
     def get_char_category_continuities(self, text, byte_length, char_categories):
         if len(text) == 0:
