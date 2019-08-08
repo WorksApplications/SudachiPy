@@ -18,12 +18,16 @@ from .wordinfo import WordInfo
 
 
 class WordInfoList(object):
+
     def __init__(self, bytes_, offset, word_size):
         self.bytes = bytes_
         self.offset = offset
         self._word_size = word_size
+        self._cache = {}
 
     def get_word_info(self, word_id):
+        if word_id in self._cache:
+            return self._cache[word_id]
         orig_pos = self.bytes.tell()
         index = self.word_id_to_offset(word_id)
         self.bytes.seek(index)
@@ -46,8 +50,10 @@ class WordInfoList(object):
 
         self.bytes.seek(orig_pos)
 
-        return WordInfo(surface, head_word_length, pos_id, normalized_form, dictionary_form_word_id,
-                        dictionary_form, reading_form, a_unit_split, b_unit_split, word_structure)
+        wi = WordInfo(surface, head_word_length, pos_id, normalized_form, dictionary_form_word_id,
+                      dictionary_form, reading_form, a_unit_split, b_unit_split, word_structure)
+        self._cache[word_id] = wi
+        return wi
 
     def word_id_to_offset(self, word_id):
         i = self.offset + 4 * word_id
@@ -71,3 +77,6 @@ class WordInfoList(object):
 
     def size(self):
         return self._word_size
+
+    def clear(self):
+        self._cache.clear()
