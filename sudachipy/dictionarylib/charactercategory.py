@@ -12,22 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
 import re
+from queue import PriorityQueue
 
 from . import categorytype
 
 
 class CharacterCategory(object):
+
     class Range(object):
-        def __init__(self):
-            self.low = 0
-            self.high = 0
-            self.categories = set()
+
+        def __lt__(self, other):
+            return self.high < other.high
+
+        def __init__(self, low=0, high=0, categories=None):
+            self.low = low
+            self.high = high
+            self.categories = categories or []
 
         def contains(self, cp):
-            if cp >= self.low and cp <= self.high:
-                return True
-            return False
+            return self.low <= cp < self.high
 
         def containing_length(self, text):
             for i in range(len(text)):
@@ -36,16 +41,81 @@ class CharacterCategory(object):
                     return i
             return len(text)
 
+        def lower(self, cp):
+            return self.high <= cp
+
+        def higher(self, cp):
+            return self.low > cp
+
+        def match(self, other):
+            return self.low == other.low and self.high == other.high
+
     def __init__(self):
         self.range_list = []
 
+    def _compile(self):
+        """
+        _compile transforms self.range_list to non overlapped range list
+        to apply binary search in get_category_types
+        :return:
+        """
+        new_range_list = []
+        chain = PriorityQueue()
+        states = []
+        top = self.range_list.pop(0)
+        tail = self.range_list.pop(0)
+        states.extend(top.categories)
+        pivot = top.low
+        while (top is not None) or (tail is not None):
+            end = top.high if top else math.inf
+            begin = tail.low if tail else math.inf
+            if end <= begin:
+                if pivot < end:
+                    new_range_list.append(self.Range(pivot, end, set(states)))
+                pivot = end
+                for cat in top.categories:
+                    states.remove(cat)
+                if not chain.empty():
+                    top = chain.get()
+                elif tail:
+                    top = tail
+                    states.extend(top.categories)
+                    pivot = top.low
+                    tail = self.range_list.pop(0) if self.range_list else None
+                else:
+                    break
+                continue
+            if end > begin:
+                if pivot < begin:
+                    new_range_list.append(self.Range(pivot, begin, set(states)))
+                pivot = begin
+                states.extend(tail.categories)
+                if tail.high < top.high:
+                    chain.put(top)
+                    top = tail
+                else:
+                    chain.put(tail)
+                tail = self.range_list.pop(0) if self.range_list else None
+                continue
+        self.range_list = new_range_list
+
     def get_category_types(self, code_point):
-        bucket = set()
-        for range_ in self.range_list:
+        begin = 0
+        n = len(self.range_list)
+        end = n
+        pivot = (begin + end) // 2
+        while 0 <= pivot < n:
+            range_ = self.range_list[pivot]
             if range_.contains(code_point):
-                bucket = bucket.union(range_.categories)
-        if bucket:
-            return bucket
+                return range_.categories
+            if range_.lower(code_point):
+                begin = pivot
+            else:  # range_.higher(code_point)
+                end = pivot
+            new_pivot = (begin + end) // 2
+            if new_pivot == pivot:
+                break
+            pivot = new_pivot
         return {categorytype.CategoryType.DEFAULT}
 
     def read_character_definition(self, char_def=None):
@@ -70,10 +140,11 @@ class CharacterCategory(object):
                 continue
             range_ = self.Range()
             r = re.split("\\.\\.", cols[0])
-            range_.low = range_.high = int(r[0], 16)
+            range_.low = int(r[0], 16)
+            range_.high = range_.low + 1
             if len(r) > 1:
-                range_.high = int(r[1], 16)
-            if range_.low > range_.high:
+                range_.high = int(r[1], 16) + 1
+            if range_.low >= range_.high:
                 f.close()
                 raise AttributeError("invalid range at line {}".format(i))
             for j in range(1, len(cols)):
@@ -83,8 +154,9 @@ class CharacterCategory(object):
                 if type_ is None:
                     f.close()
                     raise AttributeError("{} is invalid type at line {}".format(cols[j], i))
-                range_.categories.add(type_)
+                range_.categories.append(type_)
             self.range_list.append(range_)
-        self.range_list.reverse()
-
+        self.range_list.sort(key=lambda x: x.high)
+        self.range_list.sort(key=lambda x: x.low)
         f.close()
+        self._compile()
