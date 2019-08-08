@@ -226,7 +226,7 @@ class DictionaryBuilder(object):
 
         def progress_func(n, s):
             if (n % (s / 10 + 1)) == 0:
-                self.logger('.')
+                self.logger.info('.')
         trie.build(keys, vals, progress_func)
         self.logger.info('done\n')
 
