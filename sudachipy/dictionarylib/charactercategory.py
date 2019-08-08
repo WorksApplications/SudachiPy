@@ -55,7 +55,7 @@ class CharacterCategory(object):
 
     def _compile(self):
         """
-        _compile transforms self.range_list to non overlapped range's list
+        _compile transforms self.range_list to non overlapped range list
         to apply binary search in get_category_types
         :return:
         """

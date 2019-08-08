@@ -215,8 +215,6 @@ class TestUTF8InputText(unittest.TestCase):
             return None
 
         def get_character_category(self):
-            # char_category = dictionarylib.charactercategory.CharacterCategory()
-            # char_category.read_character_definition(os.path.join(sudachipy.config.DEFAULT_RESOURCEDIR, "char.def"))
             return self.char_category
 
         def set_character_category(self, char_category):
