@@ -86,11 +86,15 @@ class CharacterCategory(object):
                     break
                 continue
             if end > begin:
-                if pivot < begin - 1:
-                    new_range_list.append(self.Range(pivot, begin - 1, set(states)))
+                if pivot < begin:
+                    new_range_list.append(self.Range(pivot, begin, set(states)))
                 pivot = begin
-                chain.put(tail)
                 states.extend(tail.categories)
+                if tail.high < top.high:
+                    chain.put(top)
+                    top = tail
+                else:
+                    chain.put(tail)
                 tail = self.range_list.pop(0) if self.range_list else None
                 continue
         self.range_list = new_range_list
