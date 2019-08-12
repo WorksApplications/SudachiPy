@@ -53,51 +53,54 @@ class CharacterCategory(object):
     def __init__(self):
         self.range_list = []
 
-    def _compile(self):
+    def _compile(self) -> None:
         """
         _compile transforms self.range_list to non overlapped range list
         to apply binary search in get_category_types
         :return:
         """
+        self.range_list.sort(key=lambda x: x.high)
+        self.range_list.sort(key=lambda x: x.low)
         new_range_list = []
-        chain = PriorityQueue()
+        left_chain = PriorityQueue()
+        right_chain = self.range_list
         states = []
-        top = self.range_list.pop(0)
-        tail = self.range_list.pop(0)
-        states.extend(top.categories)
-        pivot = top.low
-        while (top is not None) or (tail is not None):
-            end = top.high if top else math.inf
-            begin = tail.low if tail else math.inf
-            if end <= begin:
-                if pivot < end:
-                    new_range_list.append(self.Range(pivot, end, set(states)))
-                pivot = end
-                for cat in top.categories:
-                    states.remove(cat)
-                if not chain.empty():
-                    top = chain.get()
-                elif tail:
-                    top = tail
-                    states.extend(top.categories)
-                    pivot = top.low
-                    tail = self.range_list.pop(0) if self.range_list else None
-                else:
+        pivot = 0
+        while True:
+            if left_chain.empty():
+                if not right_chain:
                     break
+                right = right_chain.pop(0)
+                left_chain.put(right)
+                pivot = right.low
+                states.extend(right.categories)
                 continue
-            if end > begin:
-                if pivot < begin:
-                    new_range_list.append(self.Range(pivot, begin, set(states)))
-                pivot = begin
-                states.extend(tail.categories)
-                if tail.high < top.high:
-                    chain.put(top)
-                    top = tail
-                else:
-                    chain.put(tail)
-                tail = self.range_list.pop(0) if self.range_list else None
+            left = left_chain.get()
+            right = right_chain[0] if right_chain else None
+            left_end = left.high
+            right_begin = right.low if right else math.inf
+            if left_end <= right_begin:
+                new_range_list.append(self.Range(pivot, left_end, set(states)))
+                pivot = left_end
+                for cat in left.categories:
+                    states.remove(cat)
                 continue
-        self.range_list = new_range_list
+            else:
+                new_range_list.append(self.Range(pivot, right_begin, set(states)))
+                pivot = right_begin
+                states.extend(right.categories)
+                left_chain.put(right)
+                left_chain.put(left)
+                right_chain.pop(0)
+        self.range_list = []
+        _range = new_range_list[0]
+        for irange in new_range_list[1:]:
+            if irange.low == _range.high and irange.categories == _range.categories:
+                _range = self.Range(_range.low, irange.high, _range.categories)
+            else:
+                self.range_list.append(_range)
+                _range = irange
+        self.range_list.append(_range)
 
     def get_category_types(self, code_point):
         begin = 0
@@ -156,7 +159,6 @@ class CharacterCategory(object):
                     raise AttributeError("{} is invalid type at line {}".format(cols[j], i))
                 range_.categories.append(type_)
             self.range_list.append(range_)
-        self.range_list.sort(key=lambda x: x.high)
-        self.range_list.sort(key=lambda x: x.low)
+
         f.close()
         self._compile()
