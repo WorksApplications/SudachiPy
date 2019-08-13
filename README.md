@@ -222,7 +222,7 @@ and add `userDict` value with the relative path from `sudachi.json` to your `use
 
 ```
 {
-    "userDict" : "relative/path/to/user.dic",
+    "userDict" : ["relative/path/to/user.dic"],
     ...
 }
 ```
