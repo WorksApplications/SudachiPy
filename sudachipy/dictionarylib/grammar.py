@@ -60,12 +60,31 @@ class Grammar:
     def get_part_of_speech_id(self, pos):
         return self.pos_list.index(pos) if pos in self.pos_list else -1
 
-    def get_connect_cost(self, left_id: int, right_id: int) -> int:
-        return self._matrix_view[right_id, left_id]
+    def get_connect_cost(self, left: int, right: int) -> int:
+        """ Returns the connection cost of nodes.
 
-    def set_connect_cost(self, left_id, right_id, cost):
-        # bytes_ must be ACCESS_COPY mode
-        self._matrix_view[right_id, left_id] = cost
+        Arguments:
+            left: right-ID of left node
+            right: left-ID of right node
+
+        Returns:
+            cost of connection
+
+        """
+        return self._matrix_view[right, left]
+
+    def set_connect_cost(self, left: int, right: int, cost: int) -> None:
+        """ Returns the connection cost of nodes.
+
+        Note: bytes_ must be ACCESS_COPY mode
+
+        Arguments:
+            left: right-ID of left node
+            right: left-ID of right node
+            cost: cost of connection
+
+        """
+        self._matrix_view[right, left] = cost
 
     def get_bos_parameter(self):
         return self._BOS_PARAMETER
