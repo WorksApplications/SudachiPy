@@ -18,15 +18,48 @@ from sudachipy.dictionarylib.grammar import Grammar
 
 
 class EditConnectionCostPlugin(ABC):
+    """ Interface of plugins for editing the connection costs.
+
+    The following is an example of settings.
+    ``
+    {
+        {
+            "class" : "sudachipy.plugin.connect_cost.SampleEditConnectionPlugin",
+            "example" : "example setting"
+        }
+    }
+    ``
+
+    """
 
     @abstractmethod
     def set_up(self, grammar: Grammar) -> None:
+        """ Set up plugin.
+
+        Args:
+            grammar: grammar of system dictionary
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def edit(self, grammar: Grammar) -> None:
+        """ Edit a connection costs.
+
+        Args:
+            grammar: grammar of system dictionary
+
+        """
         raise NotImplementedError
 
     @staticmethod
-    def inhibit_connection(grammar: Grammar, left_id: int, right_id: int) -> None:
-        grammar.set_connect_cost(left_id, right_id, Grammar.INHIBITED_CONNECTION)
+    def inhibit_connection(grammar: Grammar, left: int, right: int) -> None:
+        """ Inhibit a connection.
+
+        Args:
+            grammar: grammar of system dictionary
+            left: right-ID of left node
+            right: left-ID of right node
+
+        """
+        grammar.set_connect_cost(left, right, Grammar.INHIBITED_CONNECTION)
