@@ -140,11 +140,11 @@ class TestJoinNumericOOVPlugin(unittest.TestCase):
         self.assertEqual('3', path[1].get_word_info().normalized_form)
 
     def get_path(self, text: str):
-        input_ = UTF8InputTextBuilder(text, self.tokenizer.grammar).build()
-        self.tokenizer.build_lattice(input_)
-        path = self.tokenizer.lattice.get_best_path()
-        self.plugin.rewrite(input_, path, self.tokenizer.lattice)
-        self.tokenizer.lattice.clear()
+        input_ = UTF8InputTextBuilder(text, self.tokenizer._grammar).build()
+        self.tokenizer._build_lattice(input_)
+        path = self.tokenizer._lattice.get_best_path()
+        self.plugin.rewrite(input_, path, self.tokenizer._lattice)
+        self.tokenizer._lattice.clear()
         return path
 
 

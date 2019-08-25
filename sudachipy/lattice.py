@@ -122,7 +122,7 @@ class Lattice:
         for i in range(self.size + 1, -1, -1):
             r_nodes = self.end_lists[i] if i <= self.size else [self.eos_node]
             for r_node in r_nodes:
-                print("{}: {}: ".format(index, r_node), end="")
+                print("{}: {}: ".format(index, r_node), file=output, end="")
                 index += 1
                 for l_node in self.end_lists[r_node.begin]:
                     cost = l_node.total_cost + \

@@ -27,6 +27,10 @@ class LatticeNode:
     best_previous_node = None
     is_connected_to_bos = None
     extra_word_info = None
+    lexicon = None
+    left_id = None
+    right_id = None
+    cost = None
 
     def __init__(self, lexicon=None, left_id=None, right_id=None, cost=None, word_id=None):
 
@@ -87,10 +91,8 @@ class LatticeNode:
         return self.lexicon.get_dictionary_id(self.word_id)  # self.word_id >> 28
 
     def __str__(self):
-        surface = ""
-        if self.word_id < 0 and self.extra_word_info is None:
-            surface = "(None)"
-        else:
+        surface = "(None)"
+        if self.word_id >= 0 or self.extra_word_info:
             surface = self.get_word_info().surface
 
         return "{} {} {}({}) {} {} {}".format(
