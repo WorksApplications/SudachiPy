@@ -37,6 +37,21 @@ class Tokenizer:
             A == short mode
             B == middle mode
             C == long mode
+        _dump_output:
+            file object to dump lattice structure
+        _grammar:
+
+        _input_text_plugins:
+
+        _lattice:
+
+        _lexicon:
+
+        _mode:
+
+        _oov_provider_plugins:
+
+        _path_rewrite_plugins:
 
     """
 
@@ -133,7 +148,7 @@ class Tokenizer:
                     self._lattice.insert(node.get_begin(), node.get_end(), node)
 
             if not has_words:
-                raise AttributeError("there is no morpheme at " + str(i))
+                raise RuntimeError("there is no morpheme at " + str(i))
         self._lattice.connect_eos_node()
 
     def _split_path(self, path: List[LatticeNode], mode: SplitMode) -> List[LatticeNode]:
@@ -167,4 +182,4 @@ class Tokenizer:
 
     def _dump_path(self, path: List[LatticeNode]) -> None:
         for i, node in enumerate(path):
-            print('{}: {}'.format(i, node.__str__()), file=self._dump_output)
+            print('{}: {}'.format(i, node), file=self._dump_output)

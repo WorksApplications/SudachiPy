@@ -63,7 +63,7 @@ class Grammar:
     def get_connect_cost(self, left: int, right: int) -> int:
         """ Returns the connection cost of nodes.
 
-        Arguments:
+        Args:
             left: right-ID of left node
             right: left-ID of right node
 
@@ -78,7 +78,7 @@ class Grammar:
 
         Note: bytes_ must be ACCESS_COPY mode
 
-        Arguments:
+        Args:
             left: right-ID of left node
             right: left-ID of right node
             cost: cost of connection
