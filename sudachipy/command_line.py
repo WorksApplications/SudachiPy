@@ -21,7 +21,7 @@ import time
 from . import __version__
 from . import dictionary
 from . import tokenizer
-from .config import set_default_dict_package, unlink_default_dict_package
+from .config import set_default_dict_package, settings, unlink_default_dict_package
 from .dictionarylib import BinaryDictionary
 from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
@@ -77,27 +77,27 @@ def run(tokenizer, mode, input_, output, print_all):
 
 def _system_dic_checker(args, print_usage):
     if not args.system_dic:
-        args.system_dic = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), os.pardir, 'resources/system.dic')
+        settings.set_up()
+        args.system_dic = settings.system_dict_path()
     if not os.path.exists(args.system_dic):
         print_usage()
-        print('{}: error: {} doesn\'t exist'.format(__name__, args.system_dic))
-        exit()
+        print('{}: error: {} doesn\'t exist'.format(__name__, args.system_dic), file=sys.stderr)
+        exit(1)
 
 
 def _input_files_checker(args, print_usage):
     for file in args.in_files:
         if not os.path.exists(file):
             print_usage()
-            print('{}: error: {} doesn\'t exist'.format(__name__, file))
-            exit()
+            print('{}: error: {} doesn\'t exist'.format(__name__, file), file=sys.stderr)
+            exit(1)
 
 
 def _matrix_file_checker(args, print_usage):
     if not os.path.exists(args.matrix_file):
         print_usage()
-        print('{}: error: {} doesn\'t exist'.format(__name__, args.matrix_file))
-        exit()
+        print('{}: error: {} doesn\'t exist'.format(__name__, args.matrix_file), file=sys.stderr)
+        exit(1)
 
 
 def _command_user_build(args, print_usage):
@@ -134,8 +134,8 @@ def _command_link(args, print_usage):
         return set_default_dict_package(dict_package, output=output)
     except ImportError:
         print_usage()
-        print('{} not installed'.format(dict_package))
-        exit()
+        print('{} not installed'.format(dict_package), file=sys.stderr)
+        exit(1)
 
 
 def _command_tokenize(args, print_usage):
@@ -217,7 +217,7 @@ def main():
     parser_ubd.add_argument('-o', dest='out_file', metavar='file', default='user.dic',
                             help='output file (default: user.dic)')
     parser_ubd.add_argument('-s', dest='system_dic', metavar='file', required=False,
-                            help='system dictionary (default: ${SUDACHIPY}/resouces/system.dic)')
+                            help='system dictionary (default: linked system_dic, see link -h)')
     parser_ubd.add_argument("in_files", metavar="file", nargs=argparse.ONE_OR_MORE,
                             help='source files with CSV format (one or more)')
     parser_ubd.set_defaults(handler=_command_user_build, print_usage=parser_ubd.print_usage)
