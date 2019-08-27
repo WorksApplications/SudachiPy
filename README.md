@@ -10,24 +10,19 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 
 **Warning: some functions are still incompatible with Java Sudachi.**
 
-## Breaking changes
-### v0.3.0
 
-- `resources/` directory was moved to `sudachipy/`.
+## News
 
-### V0.2.2
+**`ubuild` command can't work properly in released version of SudachiPy.**
 
-- Distribute SudachiPy package via PyPI
-  - `pip install SudachiPy`
 
-### v0.2.0
-
-- User dictionary feature added 
-
+Use `experiment` branch, we checked `ubuild` works fine.
+```bash
+# example command to install experiment branch of sudachipy
+$ pip install -e git+git://github.com/WorksApplications/SudachiPy@experiment#egg=SudachiPy
+```
 
 ## Easy Setup
-
-SudachiPy requires Python3.5+.
 
 ### Step 1: Install SudachiPy
 
@@ -60,7 +55,7 @@ You can excute `sudachipy` with standard input by this way:
 $ sudachipy
 ```
 
-`sudachipy` has 4 subcommands (in default `tokenize`)
+`sudachipy` has 4 subcommands (default: `tokenize`)
 
 ```bash
 $ sudachipy tokenize -h
@@ -109,6 +104,7 @@ optional arguments:
 required named arguments:
   -m file     connection matrix file with MeCab's matrix.def format
 ```
+**WARNING: at released version of SudachiPy, `ubuild` command contains bug, see [News](#News)**
 ```bash
 $ sudachipy ubuild -h
 usage: sudachipy ubuild [-h] [-d string] [-o file] [-s file] file [file ...]
@@ -122,7 +118,7 @@ optional arguments:
   -h, --help  show this help message and exit
   -d string   description comment to be embedded on dictionary
   -o file     output file (default: user.dic)
-  -s file     system dictionary (default: ${SUDACHIPY}/resouces/system.dic)
+  -s file     system dictionary (default: linked system_dic, see link -h)
 ```
 
 ### As a Python package
@@ -138,7 +134,7 @@ tokenizer_obj = dictionary.Dictionary().create()
 
 
 # Multi-granular tokenization
-# using `system_full.dic` or `system_full.dic` version 20190781
+# using `system_core.dic` or `system_full.dic` version 20190781
 # you may not be able to replicate this particular example due to dictionary you use
 
 mode = tokenizer.Tokenizer.SplitMode.C
@@ -241,3 +237,8 @@ You can use `./scripts/format.sh` and check if your code is in rule. `flake8` `f
 ### Test
 
 You can use `./script/test.sh` and check if not your change cause regression.
+
+## Contact
+
+We have a Slack workspace for developers and users to ask questions and discuss a variety of topics.
+- https://sudachi-dev.slack.com/ (Please take invitation from [here](https://join.slack.com/t/sudachi-dev/shared_invite/enQtMzg2NTI2NjYxNTUyLTg4YTkxMzAyNjE3MWY2YTRkMzZjODNmNjEwNzBmZWRhNGNlNDA3NDVjZjljN2M2Y2YyMjBmYjMwOGQ2OWYxNTI))
