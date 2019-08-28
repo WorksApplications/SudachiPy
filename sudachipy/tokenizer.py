@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import os
 from enum import Enum
 from typing import List
@@ -55,11 +56,22 @@ class Tokenizer:
 
     """
 
+    @staticmethod
+    def __default_logger():
+        handler = logging.StreamHandler()
+        handler.terminator = ""
+        handler.setLevel(logging.DEBUG)
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        logger.propagate = False
+        return logger
+
     SplitMode = Enum("SplitMode", "A B C")
 
     def __init__(self, grammar: Grammar, lexicon: Lexicon, input_text_plugins: List[InputTextPlugin],
                  oov_provider_plugins: List, path_rewrite_plugins: List[PathRewritePlugin],
-                 mode: SplitMode = None):
+                 mode: SplitMode = None, verbose=False):
         self._grammar = grammar
         self._lexicon = lexicon
         self._input_text_plugins = input_text_plugins
@@ -68,7 +80,9 @@ class Tokenizer:
         self._dump_output = open(os.devnull, 'w')
         self._lattice = Lattice(grammar)
         self._mode = mode or self.SplitMode.C
-
+        self._logger = self.__default_logger()
+        if not verbose:
+            self._logger.disabled = True
         if self._oov_provider_plugins:
             self.default_oov_provider = self._oov_provider_plugins[-1]
 
@@ -80,31 +94,32 @@ class Tokenizer:
         Args:
             text: input text
             mode: split mode
-
+            verbose: if True output lattice structure
         Returns:
             list of morpheme (MorphemeList)
 
         """
         if not text:
             return MorphemeList.empty()
+
         mode = mode or self._mode
 
         builder = UTF8InputTextBuilder(text, self._grammar)
         for plugin in self._input_text_plugins:
             plugin.rewrite(builder)
         input_ = builder.build()
-        print('=== Inupt dump:', file=self._dump_output)
-        print(input_.get_text(), file=self._dump_output)
+        self._logger.info('=== Inupt dump:\n')
+        self._logger.info(input_.get_text() + '￿\n')
 
         self._build_lattice(input_)
 
-        print('=== Lattice dump:', file=self._dump_output)
-        self._lattice.dump(self._dump_output)
+        self._logger.info('=== Lattice dump:\n')
+        self._lattice.dump(self._logger)
 
         path = self._lattice.get_best_path()
 
-        print('=== Before Rewriting:', file=self._dump_output)
-        self._dump_path(path)
+        self._logger.info('=== Before Rewriting:\n')
+        self._dump_path(path, self._logger)
 
         for plugin in self._path_rewrite_plugins:
             plugin.rewrite(input_, path, self._lattice)
@@ -112,9 +127,9 @@ class Tokenizer:
 
         path = self._split_path(path, mode)
 
-        print('=== After Rewriting:', file=self._dump_output)
-        self._dump_path(path)
-        print('===', file=self._dump_output)
+        self._logger.info('=== After Rewriting:\n')
+        self._dump_path(path, self._logger)
+        self._logger.info('===\n')
 
         ml = MorphemeList(input_, self._grammar, self._lexicon, path)
         return ml
@@ -172,14 +187,8 @@ class Tokenizer:
                     new_path.append(n)
         return new_path
 
-    def set_dump_output(self, output):
-        """ set writable file object to write lattice structure of analysing
-
-        Args:
-            output: writable file object
-        """
-        self._dump_output = output
-
-    def _dump_path(self, path: List[LatticeNode]) -> None:
+    def _dump_path(self, path: List[LatticeNode], logger) -> None:
+        if logger.disabled:
+            return
         for i, node in enumerate(path):
-            print('{}: {}'.format(i, node), file=self._dump_output)
+            logger.info('{}: {}￿\n'.format(i, node))
