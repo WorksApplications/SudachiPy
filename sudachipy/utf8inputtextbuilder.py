@@ -15,6 +15,7 @@
 import copy
 
 from . import utf8inputtext
+from .dictionarylib.categorytype import CategoryType
 
 
 class UTF8InputTextBuilder:
@@ -76,7 +77,10 @@ class UTF8InputTextBuilder:
 
         char_categories = self.get_char_category_types(modified_string_text)
         char_category_continuities = self.get_char_category_continuities(modified_string_text, length, char_categories)
-        return utf8inputtext.UTF8InputText(self.grammar, self.original_text, modified_string_text, byte_text, offsets, byte_indexes, char_categories, char_category_continuities)
+        can_bow_list = self._build_can_bow_list(modified_string_text, char_categories)
+        return utf8inputtext.UTF8InputText(
+            self.grammar, self.original_text, modified_string_text, byte_text,
+            offsets, byte_indexes, char_categories, char_category_continuities, can_bow_list)
 
     def get_char_category_types(self, text):
         return [self.grammar.get_character_category().get_category_types(ord(c)) for c in text]
@@ -117,3 +121,21 @@ class UTF8InputTextBuilder:
             return 4
         else:
             return 0
+
+    def _build_can_bow_list(self, text, char_categories):
+        if not text:
+            return []
+        can_bow_list = []
+        for i, cat in enumerate(char_categories):
+            if i == 0:
+                can_bow_list.append(True)
+                continue
+
+            if CategoryType.ALPHA in cat or CategoryType.GREEK in cat or CategoryType.CYRILLIC in cat:
+                types = cat & char_categories[i - 1]
+                can_bow_list.append(not bool(types))
+                continue
+
+            can_bow_list.append(True)
+
+        return can_bow_list

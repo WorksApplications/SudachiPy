@@ -14,6 +14,7 @@
 
 import argparse
 import fileinput
+import logging
 import os
 import sys
 import time
@@ -56,10 +57,10 @@ def _set_default_subparser(self, name, args=None):
 argparse.ArgumentParser.set_default_subparser = _set_default_subparser
 
 
-def run(tokenizer, mode, input_, output, print_all):
+def run(tokenizer, mode, input_, print_all, stdot_logger, enable_dump):
     for line in input_:
         line = line.rstrip('\n')
-        for m in tokenizer.tokenize(line, mode):
+        for m in tokenizer.tokenize(line, mode, stdot_logger if enable_dump else None):
             list_info = [
                 m.surface(),
                 ",".join(m.part_of_speech()),
@@ -71,8 +72,8 @@ def run(tokenizer, mode, input_, output, print_all):
                     str(m.dictionary_id())]
                 if m.is_oov():
                     list_info.append("(OOV)")
-            print("\t".join(list_info), file=output)
-        print("EOS", file=output)
+            stdot_logger.info("\t".join(list_info))
+        stdot_logger.info("EOS")
 
 
 def _system_dic_checker(args, print_usage):
@@ -152,23 +153,27 @@ def _command_tokenize(args, print_usage):
     else:
         mode = tokenizer.Tokenizer.SplitMode.C
 
+    stdout_logger = logging.getLogger(__name__)
     output = sys.stdout
     if args.fpath_out:
         output = open(args.fpath_out, "w", encoding="utf-8")
+    handler = logging.StreamHandler(output)
+    handler.setLevel(logging.DEBUG)
+    stdout_logger.addHandler(handler)
+    stdout_logger.setLevel(logging.DEBUG)
+    stdout_logger.propagate = False
 
     print_all = args.a
+    enable_dump = args.d
 
-    is_enable_dump = args.d
-
-    dict_ = dictionary.Dictionary(config_path=args.fpath_setting)
-    tokenizer_obj = dict_.create()
-    if is_enable_dump:
-        tokenizer_obj.set_dump_output(output)
-
-    input_ = fileinput.input(args.in_files, openhook=fileinput.hook_encoded("utf-8"))
-    run(tokenizer_obj, mode, input_, output, print_all)
-
-    output.close()
+    try:
+        dict_ = dictionary.Dictionary(config_path=args.fpath_setting)
+        tokenizer_obj = dict_.create()
+        input_ = fileinput.input(args.in_files, openhook=fileinput.hook_encoded("utf-8"))
+        run(tokenizer_obj, mode, input_, print_all, stdout_logger, enable_dump)
+    finally:
+        if args.fpath_out:
+            output.close()
 
 
 def print_version():
@@ -230,36 +235,6 @@ def main():
         args.handler(args, args.print_usage)
     else:
         parser.print_help()
-
-
-# Todo: delete this function in the future
-def _read_system_dictionary(filename):
-    from .dictionarylib.dictionaryheader import DictionaryHeader
-    from . import dictionarylib
-    """
-    Copy of sudachipy.dictionary.Dictionary.read_system_dictionary
-    :param filename:
-    :return:
-    """
-    import mmap
-    buffers = []
-    if filename is None:
-        raise AttributeError("system dictionary is not specified")
-    with open(filename, 'r+b') as system_dic:
-        bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
-    buffers.append(bytes_)
-
-    offset = 0
-    header = DictionaryHeader.from_bytes(bytes_, offset)
-    if header.version != SYSTEM_DICT_VERSION:
-        raise Exception("invalid system dictionary")
-    offset += header.storage_size()
-
-    grammar = dictionarylib.grammar.Grammar(bytes_, offset)
-    offset += grammar.get_storage_size()
-
-    lexicon = dictionarylib.lexiconset.LexiconSet(dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, offset))
-    return buffers, header, grammar, lexicon
 
 
 if __name__ == '__main__':

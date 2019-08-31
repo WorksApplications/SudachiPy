@@ -83,7 +83,7 @@ class Lattice:
         return LatticeNode()
 
     def has_previous_node(self, index: int) -> bool:
-        return len(self.end_lists[index]) != 0
+        return bool(self.end_lists[index])
 
     def connect_node(self, r_node: LatticeNode) -> None:
         begin = r_node.begin
@@ -117,15 +117,30 @@ class Lattice:
             node = node.best_previous_node
         return list(reversed(result))
 
-    def dump(self, output):
+    def dump(self, logger):
+        if logger.disabled:
+            return
         index = 0
         for i in range(self.size + 1, -1, -1):
             r_nodes = self.end_lists[i] if i <= self.size else [self.eos_node]
             for r_node in r_nodes:
-                print("{}: {}: ".format(index, r_node), end="")
-                index += 1
+                surface = '(null)'
+                pos = 'BOS/EOS'
+                if r_node.is_defined:
+                    wi = r_node.get_word_info()
+                    surface = wi.surface
+                    pos_id = wi.pos_id
+                    pos = '(null)'
+                    if pos_id >= 0:
+                        pos = ','.join(self.grammar.get_part_of_speech_string(pos_id))
+
+                costs = []
                 for l_node in self.end_lists[r_node.begin]:
-                    cost = l_node.total_cost + \
-                        self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
-                    print("{} ".format(cost), file=output, end="")
-                print(file=output)
+                    cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
+                    costs.append(str(cost))
+                index += 1
+
+                logger.info('%d: %d %d %s(%d) %s %d %d %d: %s' %
+                            (index, r_node.get_begin(), r_node.get_end(),
+                             surface, r_node.word_id, pos, r_node.left_id,
+                             r_node.right_id, r_node.cost, ' '.join(costs)))
