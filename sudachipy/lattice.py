@@ -124,10 +124,10 @@ class Lattice:
         for i in range(self.size + 1, -1, -1):
             r_nodes = self.end_lists[i] if i <= self.size else [self.eos_node]
             for r_node in r_nodes:
-                logger.info("{}: {}: ".format(index, r_node))
-                index += 1
+                costs = []
                 for l_node in self.end_lists[r_node.begin]:
                     cost = l_node.total_cost + \
                         self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
-                    logger.info("{} ".format(cost))
-                logger.info('\n')
+                    costs.append(str(cost))
+                logger.info("{}: {}: {}".format(index, r_node, ' '.join(costs)))
+                index += 1

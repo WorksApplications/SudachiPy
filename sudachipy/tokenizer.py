@@ -56,22 +56,11 @@ class Tokenizer:
 
     """
 
-    @staticmethod
-    def __default_logger():
-        handler = logging.StreamHandler()
-        handler.terminator = ""
-        handler.setLevel(logging.DEBUG)
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.DEBUG)
-        logger.addHandler(handler)
-        logger.propagate = False
-        return logger
-
     SplitMode = Enum("SplitMode", "A B C")
 
     def __init__(self, grammar: Grammar, lexicon: Lexicon, input_text_plugins: List[InputTextPlugin],
                  oov_provider_plugins: List, path_rewrite_plugins: List[PathRewritePlugin],
-                 mode: SplitMode = None, verbose=False):
+                 mode: SplitMode = None):
         self._grammar = grammar
         self._lexicon = lexicon
         self._input_text_plugins = input_text_plugins
@@ -80,13 +69,12 @@ class Tokenizer:
         self._dump_output = open(os.devnull, 'w')
         self._lattice = Lattice(grammar)
         self._mode = mode or self.SplitMode.C
-        self._logger = self.__default_logger()
-        if not verbose:
-            self._logger.disabled = True
+        self._logger = logging.getLogger(__name__)
+        self._logger.disabled = True
         if self._oov_provider_plugins:
             self.default_oov_provider = self._oov_provider_plugins[-1]
 
-    def tokenize(self, text: str, mode=None) -> MorphemeList:
+    def tokenize(self, text: str, mode=None, logger=None) -> MorphemeList:
         """ tokenize a text.
 
         In default tokenize text with SplitMode.C
@@ -94,7 +82,7 @@ class Tokenizer:
         Args:
             text: input text
             mode: split mode
-            verbose: if True output lattice structure
+            logger: if True output lattice structure
         Returns:
             list of morpheme (MorphemeList)
 
@@ -103,23 +91,24 @@ class Tokenizer:
             return MorphemeList.empty()
 
         mode = mode or self._mode
+        logger = logger or self._logger
 
         builder = UTF8InputTextBuilder(text, self._grammar)
         for plugin in self._input_text_plugins:
             plugin.rewrite(builder)
         input_ = builder.build()
-        self._logger.info('=== Inupt dump:\n')
-        self._logger.info(input_.get_text() + '￿\n')
+        logger.info('=== Inupt dump:')
+        logger.info(input_.get_text())
 
         self._build_lattice(input_)
 
-        self._logger.info('=== Lattice dump:\n')
-        self._lattice.dump(self._logger)
+        logger.info('=== Lattice dump:')
+        self._lattice.dump(logger)
 
         path = self._lattice.get_best_path()
 
-        self._logger.info('=== Before Rewriting:\n')
-        self._dump_path(path, self._logger)
+        logger.info('=== Before Rewriting:')
+        self._dump_path(path, logger)
 
         for plugin in self._path_rewrite_plugins:
             plugin.rewrite(input_, path, self._lattice)
@@ -127,9 +116,9 @@ class Tokenizer:
 
         path = self._split_path(path, mode)
 
-        self._logger.info('=== After Rewriting:\n')
-        self._dump_path(path, self._logger)
-        self._logger.info('===\n')
+        logger.info('=== After Rewriting:')
+        self._dump_path(path, logger)
+        logger.info('===')
 
         ml = MorphemeList(input_, self._grammar, self._lexicon, path)
         return ml
@@ -191,4 +180,4 @@ class Tokenizer:
         if logger.disabled:
             return
         for i, node in enumerate(path):
-            logger.info('{}: {}￿\n'.format(i, node))
+            logger.info('{}: {}￿'.format(i, node))
