@@ -127,7 +127,7 @@ class Tokenizer:
         bytes_ = input_.get_byte_text()
         self._lattice.resize(len(bytes_))
         for i in range(len(bytes_)):
-            if not input_.is_char_alignment(i) or not self._lattice.has_previous_node(i):
+            if not input_.can_bow(i) or not self._lattice.has_previous_node(i):
                 continue
             iterator = self._lexicon.lookup(bytes_, i)
             has_words = False

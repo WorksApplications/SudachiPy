@@ -124,20 +124,19 @@ class Lattice:
         for i in range(self.size + 1, -1, -1):
             r_nodes = self.end_lists[i] if i <= self.size else [self.eos_node]
             for r_node in r_nodes:
-                surface = "(null)"
-                pos = "BOS/EOS"
+                surface = '(null)'
+                pos = 'BOS/EOS'
                 if r_node.is_defined:
                     wi = r_node.get_word_info()
                     surface = wi.surface
                     pos_id = wi.pos_id
-                    pos = "(null)"
+                    pos = '(null)'
                     if pos_id >= 0:
                         pos = ','.join(self.grammar.get_part_of_speech_string(pos_id))
 
                 costs = []
                 for l_node in self.end_lists[r_node.begin]:
-                    cost = l_node.total_cost + \
-                        self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
+                    cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
                     costs.append(str(cost))
                 index += 1
 
