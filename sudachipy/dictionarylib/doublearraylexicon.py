@@ -38,9 +38,7 @@ class DoubleArrayLexicon(Lexicon):
         size = int.from_bytes(bytes_.read(4), 'little')
         offset += 4
         array = memoryview(bytes_)[offset:offset + size * 4]
-        array = array.cast('i')
         self.trie.set_array(array, size)
-
         offset += self.trie.total_size()
 
         self.word_id_table = wordidtable.WordIdTable(bytes_, offset)

@@ -31,6 +31,6 @@ setup(name="SudachiPy",
       },
       install_requires=[
             "sortedcontainers>=2.1.0,<2.2.0",
-            'dartsclone @ git+ssh://git@github.com/izziiyt/darts-clone-python@experiment#egg=dartsclone'
+            'dartsclone @ git+ssh://git@github.com/izziiyt/darts-clone-python@experiment3#egg=dartsclone'
       ],
       )
