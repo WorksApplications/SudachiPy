@@ -37,9 +37,8 @@ class DoubleArrayLexicon(Lexicon):
         bytes_.seek(offset)
         size = int.from_bytes(bytes_.read(4), 'little')
         offset += 4
-        array = memoryview(bytes_)[offset:offset + size * 4]
-        array = array.cast('i')
-        self.trie.set_array(array, size)
+        self.array = bytes_.read(size * 4)
+        self.trie.set_array(self.array, size)
 
         offset += self.trie.total_size()
 
