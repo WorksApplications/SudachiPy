@@ -1,6 +1,7 @@
-sortedcontainers >= 2.1.0, < 2.2.0
-setuptools_scm
-# flake8 >= 3.7.7, < 3.8.0
-# flake8-import-order >= 0.18.1, < 0.19.0
-# flake8-buitins >= 1.4.1, < 1.5.0
+sortedcontainers~=2.1.0
+dartsclone~=0.6.0
+# flake8
+# flake8-import-order
+# flake8-buitins
 https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20190718.tar.gz
+
