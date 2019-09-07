@@ -10,18 +10,6 @@ Sudachi & SudachiPy are developed in [WAP Tokushima Laboratory of AI and NLP](ht
 
 **Warning: some functions are still incompatible with Java Sudachi.**
 
-
-## News
-
-**`ubuild` command can't work properly in released version of SudachiPy.**
-
-
-Use `experiment` branch, we checked `ubuild` works fine.
-```bash
-# example command to install experiment branch of sudachipy
-$ pip install -e git+git://github.com/WorksApplications/SudachiPy@experiment#egg=SudachiPy
-```
-
 ## Easy Setup
 
 ### Step 1: Install SudachiPy
@@ -104,7 +92,7 @@ optional arguments:
 required named arguments:
   -m file     connection matrix file with MeCab's matrix.def format
 ```
-**WARNING: at released version of SudachiPy, `ubuild` command contains bug, see [News](#News)**
+**WARNING: v0.3.\* ubuild contains bug.**
 ```bash
 $ sudachipy ubuild -h
 usage: sudachipy ubuild [-h] [-d string] [-o file] [-s file] file [file ...]
