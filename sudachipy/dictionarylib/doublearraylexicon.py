@@ -56,9 +56,9 @@ class DoubleArrayLexicon(Lexicon):
     def lookup(self, text: bytes, offset: int) -> Lexicon.Itr:
         key = text[offset:]
         result = self.trie.common_prefix_search(key, length=len(key))
-        for item in result:
-            word_ids = self.word_id_table.get(item[0])
-            length = item[1] + offset
+        for index, length in result:
+            word_ids = self.word_id_table.get(index)
+            length += offset
             for word_id in word_ids:
                 yield (word_id, length)
 

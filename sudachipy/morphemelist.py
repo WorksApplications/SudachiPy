@@ -18,6 +18,11 @@ from . import tokenizer
 
 
 class MorphemeList:
+
+    @classmethod
+    def empty(cls):
+        return MorphemeList(None, None, None, [])
+
     def __init__(self, input_, grammar, lexicon, path):
         self.input_text = input_
         self.grammar = grammar
