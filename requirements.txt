@@ -12,4 +12,7 @@ dartsclone~=0.6.0
 # flake8-import-order
 # flake8-buitins
 https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20190927.tar.gz
+<<<<<<< HEAD
+>>>>>>> d2b91fb... doc: update README
+=======
 >>>>>>> d2b91fb... doc: update README
