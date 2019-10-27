@@ -241,8 +241,4 @@ You can use `./script/test.sh` and check if not your change cause regression.
 ## Contact
 
 We have a Slack workspace for developers and users to ask questions and discuss a variety of topics.
-<<<<<<< HEAD
-- https://sudachi-dev.slack.com/ (Please take invitation from [here](https://join.slack.com/t/sudachi-dev/shared_invite/enQtMzg2NTI2NjYxNTUyLTg4YTkxMzAyNjE3MWY2YTRkMzZjODNmNjEwNzBmZWRhNGNlNDA3NDVjZjljN2M2Y2YyMjBmYjMwOGQ2OWYxNTI))
-=======
 - https://sudachi-dev.slack.com/ (Please take invitation from [here](https://join.slack.com/t/sudachi-dev/shared_invite/enQtMzg2NTI2NjYxNTUyLTMyYmNkZWQ0Y2E5NmQxMTI3ZGM3NDU0NzU4NGE1Y2UwYTVmNTViYjJmNDI0MWZiYTg4ODNmMzgxYTQ3ZmI2OWU))
->>>>>>> e9f24e0... Update the invitation link of Slack
