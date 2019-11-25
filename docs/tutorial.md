@@ -1,3 +1,5 @@
+**（このドキュメントは古いです。いまはREADME.mdを参照ください。近日アップデート予定）**
+
 # 日本語形態素解析器 SudachiPy（[Sudachi](https://github.com/WorksApplications/Sudachi/) Pythonクローン） チュートリアル
 
 pip をつかってインストールします。Python 3.5以上が必要です。 
