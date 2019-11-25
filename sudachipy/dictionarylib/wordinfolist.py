@@ -35,6 +35,8 @@ class WordInfoList(object):
             normalized_form = surface
         dictionary_form_word_id = int.from_bytes(self.bytes.read(4), 'little', signed=True)
         reading_form = self.buffer_to_string()
+        if not reading_form:
+            reading_form = surface
         a_unit_split = self.buffer_to_int_array()
         b_unit_split = self.buffer_to_int_array()
         word_structure = self.buffer_to_int_array()
