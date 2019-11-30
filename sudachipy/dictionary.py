@@ -22,6 +22,12 @@ from .plugin.path_rewrite import get_path_rewrite_plugins
 from .tokenizer import Tokenizer
 
 
+class UndefinedDict(Exception):
+    def __init__(self, msg=None, code=None):
+        self.msg = msg
+        self.code = code
+
+
 class Dictionary:
 
     def __init__(self, config_path=None, resource_dir=None):
@@ -34,8 +40,10 @@ class Dictionary:
         self.path_rewrite_plugins = []
         self.dictionaries = []
         self.header = None
-        self._read_system_dictionary(config.settings.system_dict_path())
-
+        try:
+            self._read_system_dictionary(config.settings.system_dict_path())
+        except (FileNotFoundError, IsADirectoryError, KeyError) as e:
+            raise UndefinedDict(e)
         # self.edit_connection_plugin = [InhibitConnectionPlugin()]
         # for p in self.edit_connection_plugin:
         #     p.set_up(self.grammar)
@@ -62,7 +70,7 @@ class Dictionary:
 
     def _read_system_dictionary(self, filename):
         if filename is None:
-            raise AttributeError("system dictionary is not specified")
+            raise ValueError("system dictionary is not specified")
         dict_ = BinaryDictionary.from_system_dictionary(filename)
         self.dictionaries.append(dict_)
         self.grammar = dict_.grammar

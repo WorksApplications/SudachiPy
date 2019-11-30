@@ -22,12 +22,14 @@ import time
 from . import __version__
 from . import dictionary
 from . import tokenizer
-from .config import set_default_dict_package, settings, unlink_default_dict_package
+from .config import set_dict_package, settings
 from .dictionarylib import BinaryDictionary
 from .dictionarylib import SYSTEM_DICT_VERSION, USER_DICT_VERSION_2
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
 from .dictionarylib.dictionaryheader import DictionaryHeader
 from .dictionarylib.userdictionarybuilder import UserDictionaryBuilder
+
+REPOSITORY_LINK = 'https://github.com/WorksApplications/SudachiPy'
 
 
 def _set_default_subparser(self, name, args=None):
@@ -126,17 +128,16 @@ def _command_build(args, print_usage):
 
 def _command_link(args, print_usage):
     output = sys.stdout
-    if args.unlink:
-        unlink_default_dict_package(output=output)
-        return
 
-    dict_package = 'sudachidict_' + args.dict_type
     try:
-        return set_default_dict_package(dict_package, output=output)
+        return set_dict_package(args.dict_type, output=output)
     except ImportError:
-        print_usage()
-        print('{} not installed'.format(dict_package), file=sys.stderr)
+        print('sudachidict_{} not installed. Check out how to install dictionary package at {}'
+              .format(args.dict_type, REPOSITORY_LINK), file=sys.stderr)
         exit(1)
+    except Exception as e:
+        print_usage()
+        print(e, file=sys.stderr)
 
 
 def _command_tokenize(args, print_usage):
@@ -146,12 +147,11 @@ def _command_tokenize(args, print_usage):
 
     _input_files_checker(args, print_usage)
 
+    mode = tokenizer.Tokenizer.SplitMode.C
     if args.mode == "A":
         mode = tokenizer.Tokenizer.SplitMode.A
     elif args.mode == "B":
         mode = tokenizer.Tokenizer.SplitMode.B
-    else:
-        mode = tokenizer.Tokenizer.SplitMode.C
 
     stdout_logger = logging.getLogger(__name__)
     output = sys.stdout
@@ -171,6 +171,13 @@ def _command_tokenize(args, print_usage):
         tokenizer_obj = dict_.create()
         input_ = fileinput.input(args.in_files, openhook=fileinput.hook_encoded("utf-8"))
         run(tokenizer_obj, mode, input_, print_all, stdout_logger, enable_dump)
+    except dictionary.UndefinedDict:
+        err_msg = '\n'.join([
+            'Dictionary not linked properly.',
+            '1. download dictionary -> see {}'.format(REPOSITORY_LINK),
+            '2. run link command -> e.g "sudachipy link core"',
+            'or you can use self-defined configuration file (but now undocumented).'])
+        print(err_msg, file=sys.stderr)
     finally:
         if args.fpath_out:
             output.close()
@@ -193,13 +200,13 @@ def main():
     parser_tk.add_argument("-a", action="store_true", help="print all of the fields")
     parser_tk.add_argument("-d", action="store_true", help="print the debug information")
     parser_tk.add_argument("-v", "--version", action="store_true", dest="version", help="print sudachipy version")
-    parser_tk.add_argument("in_files", metavar="file", nargs=argparse.ZERO_OR_MORE, help='text written in utf-8')
+    parser_tk.add_argument("in_files", metavar="file", nargs=argparse.ONE_OR_MORE, help='text written in utf-8')
     parser_tk.set_defaults(handler=_command_tokenize, print_usage=parser_tk.print_usage)
 
     # link default dict package
-    parser_ln = subparsers.add_parser('link', help='see `link -h`', description='Link Default Dict Package')
-    parser_ln.add_argument("-t", dest="dict_type", choices=["small", "core", "full"], default="core", help="dict dict")
-    parser_ln.add_argument("-u", dest="unlink", action="store_true", help="unlink sudachidict")
+    parser_ln = subparsers.add_parser('link', help='see `link -h`', description='Link Dictionary Package')
+    parser_ln.add_argument(
+        'dict_type', metavar='keyword', choices=['small', 'core', 'full'], help='{small, core, full}')
     parser_ln.set_defaults(handler=_command_link, print_usage=parser_ln.print_usage)
 
     # build dictionary parser

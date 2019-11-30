@@ -24,68 +24,56 @@ DEFAULT_RESOURCEDIR = DEFAULT_RESOURCEDIR.as_posix()
 DEFAULT_SETTINGFILE = DEFAULT_SETTINGFILE.as_posix()
 
 
-def unlink_default_dict_package(output):
-    try:
-        dst_path = Path(import_module('sudachidict').__file__).parent
-    except ImportError:
-        print('sudachidict not exists', file=output)
-        return
-
-    if dst_path.is_symlink():
-        print('unlinking sudachidict', file=output)
-        dst_path.unlink()
-        print('sudachidict unlinked', file=output)
-    if dst_path.exists():
-        raise IOError('unlink failed (directory exists)')
-
-
-def set_default_dict_package(dict_package, output):
-    unlink_default_dict_package(output)
-
-    src_path = Path(import_module(dict_package).__file__).parent
-    dst_path = src_path.parent / 'sudachidict'
-    dst_path.symlink_to(src_path)
-    print('default dict package = {}'.format(dict_package), file=output)
-
-    return dst_path
-
-
-def create_default_link_for_sudachidict_core(output):
-    try:
-        dict_path = Path(import_module('sudachidict').__file__).parent
-    except ImportError:
-        try:
-            import_module('sudachidict_core')
-        except ImportError:
-            raise KeyError('`systemDict` must be specified if `SudachiDict_core` not installed')
-        try:
-            import_module('sudachidict_full')
-            raise KeyError('Multiple packages of `SudachiDict_*` installed. Set default dict with link command.')
-        except ImportError:
-            pass
-        try:
-            import_module('sudachidict_small')
-            raise KeyError('Multiple packages of `SudachiDict_*` installed. Set default dict with link command.')
-        except ImportError:
-            pass
-        dict_path = set_default_dict_package('sudachidict_core', output=output)
-    return str(dict_path / 'resources' / 'system.dic')
+def set_dict_package(dict_type: str, output) -> None:
+    """Rewrite config file to change dictionary
+    Args:
+        dict_type (str): full, core, small
+        output: like sys.stdout
+    Returns:
+        None
+    Throws:
+        ImportError if dictionary not installed as python package
+    """
+    pkg_path = Path(import_module('sudachidict_' + dict_type).__file__).parent
+    dic_path = pkg_path / 'resources' / 'system.dic'
+    settings[settings.DICT_PATH_KEY] = dic_path.absolute().as_posix()
+    settings.rewrite_config()
+    return
 
 
 class _Settings(object):
+    """ Map like interface to manage configuration arguments between json and python
+    """
+
+    DICT_PATH_KEY = 'systemDict'
+    CHAR_DEF_KEY = 'characterDefinitionFile'
+    USER_DICT_PATH_KEY = 'userDict'
+
+    __path = None
+    __is_active = False
+    __dict_ = None
+    resource_dir = None
 
     def __init__(self):
-        self.__is_active = False
-        self.__dict_ = None
-        self.resource_dir = None
+        return
 
     def set_up(self, path=None, resource_dir=None) -> None:
+        """
+        Args:
+            path(str): path to config file, PACKAGE/sudachipy/resources/sudachi.json used in default
+        """
         path = path or DEFAULT_SETTINGFILE
+        self.__path = path
         resource_dir = resource_dir or os.path.dirname(path)
         with open(path, 'r', encoding='utf-8') as f:
             self.__dict_ = json.load(f)
         self.__is_active = True
         self.resource_dir = resource_dir
+
+    def __setitem__(self, key, value):
+        if not self.__is_active:
+            self.set_up()
+        self.__dict_[key] = value
 
     def __getitem__(self, key):
         if not self.__is_active:
@@ -98,23 +86,29 @@ class _Settings(object):
     def __contains__(self, item):
         return item in self.__dict_.keys()
 
+    def rewrite_config(self):
+        """ Rewrites config file with current setting
+        """
+        with open(self.__path, 'w') as f:
+            json.dump(self.__dict_, f)
+
     def system_dict_path(self) -> str:
-        key = 'systemDict'
+        key = self.DICT_PATH_KEY
         if key in self.__dict_:
-            return os.path.join(self.resource_dir, self.__dict_[key])
-        with open(os.devnull, 'w') as f:
-            dict_path = create_default_link_for_sudachidict_core(output=f)
-        self.__dict_[key] = dict_path
-        return dict_path
+            value = self.__dict_[key]
+            if value.startswith('/'):
+                return value
+            return os.path.join(self.resource_dir, value)
+        raise KeyError('{} not defined in setting file'.format(key))
 
     def char_def_path(self) -> str:
-        key = 'characterDefinitionFile'
+        key = self.CHAR_DEF_KEY
         if key in self.__dict_:
             return os.path.join(self.resource_dir, self.__dict_[key])
         raise KeyError('`{}` not defined in setting file'.format(key))
 
     def user_dict_paths(self) -> List[str]:
-        key = 'userDict'
+        key = self.USER_DICT_PATH_KEY
         if key in self.__dict_:
             return [os.path.join(self.resource_dir, path) for path in self.__dict_[key]]
         return []
