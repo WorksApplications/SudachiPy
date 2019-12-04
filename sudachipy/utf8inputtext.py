@@ -83,3 +83,9 @@ class UTF8InputText:
 
     def code_point_count(self, begin: int, end: int):
         return self.byte_indexes[end] - self.byte_indexes[begin]
+
+    def get_word_candidate_length(self, index):
+        for i in range(index+1, len(self.bytes)):
+            if self.can_bow(i):
+                return i - index
+        return len(self.bytes) - index
