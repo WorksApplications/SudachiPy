@@ -115,7 +115,7 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         self.assertEqual(570, len(wi.reading_form))
 
     def test_size(self):
-        self.assertEqual(37, self.lexicon.size())
+        self.assertEqual(38, self.lexicon.size())
 
 
 if __name__ == '__main__':

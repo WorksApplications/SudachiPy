@@ -33,7 +33,7 @@ class SimpleOovPlugin(OovProviderPlugin):
         if not has_other_words:
             node = self.create_node()
             node.set_parameter(self.left_id, self.right_id, self.cost)
-            length = input_text.get_code_points_offset_length(offset, 1)
+            length = input_text.get_word_candidate_length(offset)
             s = input_text.get_substring(offset, offset + length)
             info = wordinfo.WordInfo(surface=s, head_word_length=length, pos_id=self.oov_pos_id, normalized_form=s,
                                      dictionary_form_word_id=-1, dictionary_form=s, reading_form="",

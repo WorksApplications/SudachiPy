@@ -132,6 +132,8 @@ class Tokenizer:
             iterator = self._lexicon.lookup(bytes_, i)
             has_words = False
             for word_id, end in iterator:
+                if (end < len(bytes_)) and (not input_.can_bow(end)):
+                    continue
                 has_words = True
                 n = LatticeNode(self._lexicon,
                                 self._lexicon.get_left_id(word_id),

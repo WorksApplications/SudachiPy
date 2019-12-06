@@ -65,6 +65,11 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(1, ms.size())
         self.assertTrue(ms[0].dictionary_id() < 0)
 
+    def test_tokenize_kanji_alphabet_word(self):
+        self.assertEqual(len(self.tokenizer_obj.tokenize('特a')), 1)
+        self.assertEqual(len(self.tokenizer_obj.tokenize('ab')), 1)
+        self.assertEqual(len(self.tokenizer_obj.tokenize('特ab')), 2)
+
 
 if __name__ == '__main__':
     unittest.main()

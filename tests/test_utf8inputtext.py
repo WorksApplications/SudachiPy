@@ -190,6 +190,36 @@ class TestUTF8InputText(unittest.TestCase):
         self.assertEqual(input_.get_code_points_offset_length(19, 1), 4)
         self.assertEqual(input_.get_code_points_offset_length(23, 3), 9)
 
+    def test_codePointCount(self):
+        input_ = self.builder.build()
+        self.assertEqual(input_.code_point_count(0, 2), 1)
+        self.assertEqual(input_.code_point_count(0, 7), 4)
+        self.assertEqual(input_.code_point_count(13, 19), 2)
+
+    def test_canBow(self):
+        input_ = self.builder.build()
+        self.assertTrue(input_.can_bow(0))  # â 
+        self.assertFalse(input_.can_bow(1))
+        self.assertFalse(input_.can_bow(2)) # ｂ
+        self.assertFalse(input_.can_bow(3))
+        self.assertFalse(input_.can_bow(4))
+        self.assertFalse(input_.can_bow(5)) # C
+        self.assertTrue(input_.can_bow(6)) # 1
+        self.assertTrue(input_.can_bow(7)) # あ
+
+        self.assertTrue(input_.can_bow(19)) # 𡈽
+        self.assertFalse(input_.can_bow(20))
+        self.assertFalse(input_.can_bow(21))
+        self.assertFalse(input_.can_bow(22))
+        self.assertTrue(input_.can_bow(23)) # ア
+
+    def test_getWordCandidateLength(self):
+        input_ = self.builder.build()
+        self.assertEqual(input_.get_word_candidate_length(0), 6)
+        self.assertEqual(input_.get_word_candidate_length(6), 1)
+        self.assertEqual(input_.get_word_candidate_length(19), 4)
+        self.assertEqual(input_.get_word_candidate_length(29), 3)
+
     class MockGrammar:
         char_category = None
 
