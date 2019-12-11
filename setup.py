@@ -31,7 +31,7 @@ setup(name="SudachiPy",
       },
       install_requires=[
             "sortedcontainers~=2.1.0",
-            'dartsclone~=0.6.0',
+            'dartsclone~=0.7.0',
 
       ],
       )
