@@ -198,20 +198,20 @@ class TestUTF8InputText(unittest.TestCase):
 
     def test_canBow(self):
         input_ = self.builder.build()
-        self.assertTrue(input_.can_bow(0))  # â 
+        self.assertTrue(input_.can_bow(0))  # â
         self.assertFalse(input_.can_bow(1))
-        self.assertFalse(input_.can_bow(2)) # ｂ
+        self.assertFalse(input_.can_bow(2))  # ｂ
         self.assertFalse(input_.can_bow(3))
         self.assertFalse(input_.can_bow(4))
-        self.assertFalse(input_.can_bow(5)) # C
-        self.assertTrue(input_.can_bow(6)) # 1
-        self.assertTrue(input_.can_bow(7)) # あ
+        self.assertFalse(input_.can_bow(5))  # C
+        self.assertTrue(input_.can_bow(6))  # 1
+        self.assertTrue(input_.can_bow(7))  # あ
 
-        self.assertTrue(input_.can_bow(19)) # 𡈽
+        self.assertTrue(input_.can_bow(19))  # 𡈽
         self.assertFalse(input_.can_bow(20))
         self.assertFalse(input_.can_bow(21))
         self.assertFalse(input_.can_bow(22))
-        self.assertTrue(input_.can_bow(23)) # ア
+        self.assertTrue(input_.can_bow(23))  # ア
 
     def test_getWordCandidateLength(self):
         input_ = self.builder.build()
