@@ -29,7 +29,7 @@ The default dict package `SudachiDict_core` is distributed from our download sit
 Run `pip install` like below:
 
 ```bash
-$ pip install https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20191030.tar.gz
+$ pip install https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20191224.tar.gz
 ```
 
 ## Usage
