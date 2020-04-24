@@ -14,10 +14,11 @@
 
 from .dictionarylib.wordinfo import WordInfo
 
+__NULL_SURFACE = '(null)'
+UNK = WordInfo(__NULL_SURFACE, 0, -1, __NULL_SURFACE, -1,
+        __NULL_SURFACE, __NULL_SURFACE, [], [], [])
 
 class LatticeNode:
-
-    __NULL_SURFACE = '(null)'
 
     begin = 0
     end = 0
@@ -34,9 +35,6 @@ class LatticeNode:
 
     def __init__(self, lexicon=None, left_id=None, right_id=None, cost=None, word_id=None):
 
-        self.undefined_word_info =\
-            WordInfo(self.__NULL_SURFACE, 0, -1, self.__NULL_SURFACE, -1,
-                     self.__NULL_SURFACE, self.__NULL_SURFACE, [], [], [])
         self.is_defined = True
         if lexicon is left_id is right_id is cost is word_id is None:
             self.is_defined = False
@@ -70,7 +68,7 @@ class LatticeNode:
 
     def get_word_info(self) -> WordInfo:
         if not self.is_defined:
-            return self.undefined_word_info
+            return UNK
         if self.extra_word_info:
             return self.extra_word_info
         return self.lexicon.get_word_info(self.word_id)
