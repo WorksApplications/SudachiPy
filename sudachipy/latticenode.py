@@ -16,7 +16,8 @@ from .dictionarylib.wordinfo import WordInfo
 
 __NULL_SURFACE = '(null)'
 UNK = WordInfo(__NULL_SURFACE, 0, -1, __NULL_SURFACE, -1,
-        __NULL_SURFACE, __NULL_SURFACE, [], [], [])
+               __NULL_SURFACE, __NULL_SURFACE, [], [], [])
+
 
 class LatticeNode:
 
