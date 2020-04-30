@@ -224,7 +224,7 @@ You can use `./scripts/format.sh` and check if your code is in rule. `flake8` `f
 
 ### Test
 
-You can use `./script/test.sh` and check if not your change cause regression.
+You can use `./scripts/test.sh` and check if your changes do not cause regression.
 
 ## Contact
 
