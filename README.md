@@ -23,13 +23,26 @@ $ pip install SudachiPy
 SudachiPy(>=v0.3.0) refers to system.dic of SudachiDict_core (not included in SudachiPy) package by default.
 Please proceed to Step 2 to install the dict package.
 
-### Step 2: Install SudachiDict_core
+### Step 2: Get The Dictionary
 
-The default dict package `SudachiDict_core` is distributed from our download site.
-Run `pip install` like below:
+You can install a dictionary as a Python package. It make take a while to download the dictionary file (around 70MB for the `core` edition).
 
 ```bash
-$ pip install https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/SudachiDict_core-20200330.tar.gz
+$ pip install sudachidict_core
+```
+
+Alternatively, you can choose other editions of the dictionary. There are three editions, namely, `small`, `core`, and `full`. See [WorksApplications/SudachiDict](https://github.com/WorksApplications/SudachiDict) for the detail.
+
+You need to specify the dictionary with the `link -t` command.
+
+```bash
+$ pip install sudachidict_small
+$ sudachipy link -t small
+```
+
+```bash
+$ pip install sudachidict_full
+$ sudachipy link -t full
 ```
 
 ## Usage
