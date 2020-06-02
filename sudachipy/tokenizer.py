@@ -172,9 +172,9 @@ class Tokenizer:
                 offset = node.get_begin()
                 for wid in wids:
                     n = LatticeNode(self._lexicon, 0, 0, 0, wid)
-                    n.begin = offset
+                    n.set_begin(offset)
                     offset += n.get_word_info().head_word_length
-                    n.end = offset
+                    n.set_end(offset)
                     new_path.append(n)
         return new_path
 

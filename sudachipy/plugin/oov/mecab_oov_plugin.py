@@ -32,9 +32,10 @@ class MeCabOovPlugin(OovProviderPlugin):
 
     class OOV:
         def __init__(self):
-            self.left_id = None
-            self.right_id = None
-            self.cost = None
+            #XXX Is this safe?
+            self.left_id = -1
+            self.right_id = -1
+            self.cost = -1
             self.pos_id = None
 
     def __init__(self, json_obj=None):

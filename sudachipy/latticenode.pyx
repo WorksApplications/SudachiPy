@@ -1,3 +1,5 @@
+# cython: profile=True
+
 # Copyright (c) 2019 Works Applications Co., Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,26 +17,21 @@
 from .dictionarylib.wordinfo import WordInfo
 
 __NULL_SURFACE = '(null)'
-UNK = WordInfo(__NULL_SURFACE, 0, -1, __NULL_SURFACE, -1,
-               __NULL_SURFACE, __NULL_SURFACE, [], [], [])
+UNK =\
+    WordInfo(__NULL_SURFACE, 0, -1, __NULL_SURFACE, -1,
+             __NULL_SURFACE, __NULL_SURFACE, [], [], [])
 
-
-class LatticeNode:
-
-    begin = 0
-    end = 0
-    total_cost = 0
-    word_id = 0
-    _is_oov = False
-    best_previous_node = None
-    is_connected_to_bos = None
-    extra_word_info = None
-    lexicon = None
-    left_id = None
-    right_id = None
-    cost = None
+cdef class LatticeNode:
 
     def __init__(self, lexicon=None, left_id=None, right_id=None, cost=None, word_id=None):
+
+        self.begin = 0
+        self.end = 0
+        self.word_id = 0
+        self._is_oov = False
+        self.best_previous_node = None
+        self.is_connected_to_bos = False
+        self.extra_word_info = None
 
         self.is_defined = True
         if lexicon is left_id is right_id is cost is word_id is None:
@@ -54,8 +51,14 @@ class LatticeNode:
     def get_begin(self) -> int:
         return self.begin
 
+    def set_begin(self, begin) -> None:
+        self.begin = begin
+
     def get_end(self) -> int:
         return self.end
+
+    def set_end(self, end) -> None:
+        self.end = end
 
     def set_range(self, begin: int, end: int) -> None:
         self.begin = begin

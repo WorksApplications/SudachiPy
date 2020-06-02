@@ -15,26 +15,29 @@
 from typing import List, Optional
 
 from .dictionarylib.grammar import Grammar
-from .latticenode import LatticeNode
+from .latticenode cimport LatticeNode
 
 
-class Lattice:
-
-    size = 0
-    capacity = 0
-    eos_node = None
+cdef class Lattice:
 
     def __init__(self, grammar: Grammar):
+        self.size = 0
+        self.capacity = 0
+
+
         self.end_lists = []
         self.grammar = grammar
         self.eos_params = grammar.get_eos_parameter()
-        bos_node = LatticeNode()
+        cdef LatticeNode bos_node = LatticeNode()
         bos_params = grammar.get_bos_parameter()
         bos_node.set_parameter(bos_params[0], bos_params[1], bos_params[2])
         bos_node.is_connected_to_bos = True
         self.end_lists.append([bos_node])
 
     def resize(self, size: int) -> None:
+        self.resize_c(size)
+
+    cdef void resize_c(self, int size):
         if size > self.capacity:
             self.expand(size)
         self.size = size
@@ -69,7 +72,10 @@ class Lattice:
                 min_arg = node
         return min_arg
 
-    def insert(self, begin: int, end: int, node: LatticeNode) -> None:
+    def insert(self, int begin, int end, LatticeNode node):
+        self.insert_c(begin, end, node)
+
+    cdef void insert_c(self, int begin, int end, LatticeNode node):
         self.end_lists[end].append(node)
         node.begin = begin
         node.end = end
@@ -85,9 +91,10 @@ class Lattice:
     def has_previous_node(self, index: int) -> bool:
         return bool(self.end_lists[index])
 
-    def connect_node(self, r_node: LatticeNode) -> None:
+    cdef void connect_node(self, LatticeNode r_node):
         begin = r_node.begin
-        r_node.total_cost = float('inf')
+        r_node.total_cost = 2 ** 30
+        cdef LatticeNode l_node
         for l_node in self.end_lists[begin]:
             if not l_node.is_connected_to_bos:
                 continue
