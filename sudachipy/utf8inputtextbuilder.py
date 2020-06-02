@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
-
 from . import utf8inputtext
 from .dictionarylib.categorytype import CategoryType
 
@@ -103,7 +101,7 @@ class UTF8InputTextBuilder:
         return char_category_continuities
 
     def get_char_category_continuous_length(self, char_categories, offset):
-        continuous_category = copy.deepcopy(char_categories[offset])
+        continuous_category = set(char_categories[offset])
         for length in range(1, len(char_categories) - offset):
             continuous_category = continuous_category & char_categories[offset + length]
             if len(continuous_category) == 0:
