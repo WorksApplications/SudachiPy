@@ -42,15 +42,17 @@ class UTF8InputTextBuilder:
 
         self.modified_text = str_.join([self.modified_text[:begin], self.modified_text[end:]])
 
-        offset = self.modified_to_original[begin]
+        modified_begin = self.modified_to_original[begin]
+        modified_end = self.modified_to_original[end]
         length = len(str_)
         if end - begin > length:
             del self.modified_to_original[begin + length:end]
-        for i in range(length):
+        self.modified_to_original[begin] = modified_begin
+        for i in range(1, length):
             if begin + i < end:
-                self.modified_to_original[begin + i] = offset
+                self.modified_to_original[begin + i] = modified_end
             else:
-                self.modified_to_original.insert(begin + i, offset)
+                self.modified_to_original.insert(begin + i, modified_end)
 
     def get_original_text(self):
         return self.original_text
