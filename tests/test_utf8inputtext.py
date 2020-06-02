@@ -147,13 +147,13 @@ class TestUTF8InputText(unittest.TestCase):
         self.assertEqual(input_.get_original_text(), self.TEXT)
         self.assertEqual(input_.get_text(), "âｂC1あ234あああ𡈽アｺﾞ")
         self.assertEqual(len(input_.get_byte_text()), 35)
-        self.assertEqual(input_.get_original_index(0), 0) # â
-        self.assertEqual(input_.get_original_index(12), 7) # 4
-        self.assertEqual(input_.get_original_index(13), 8) # >あ< ああ
-        self.assertEqual(input_.get_original_index(21), 10) # ああ >あ<
-        self.assertEqual(input_.get_original_index(22), 10) # 𡈽
-        self.assertEqual(input_.get_original_index(25), 10) # 𡈽
-        self.assertEqual(input_.get_original_index(35), 14) #  ﾞ
+        self.assertEqual(input_.get_original_index(0), 0)  # â
+        self.assertEqual(input_.get_original_index(12), 7)  # 4
+        self.assertEqual(input_.get_original_index(13), 8)  # >あ< ああ
+        self.assertEqual(input_.get_original_index(21), 10)  # ああ >あ<
+        self.assertEqual(input_.get_original_index(22), 10)  # 𡈽
+        self.assertEqual(input_.get_original_index(25), 10)  # 𡈽
+        self.assertEqual(input_.get_original_index(35), 14)  #  ﾞ
 
     def test_replaceMultiTimes(self):
         self.builder.replace(0, 1, "a")
