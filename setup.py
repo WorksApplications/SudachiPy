@@ -19,7 +19,7 @@ from distutils.extension import Extension
 extensions = [
         Extension('sudachipy.latticenode', ['sudachipy/latticenode.pyx']),
         Extension('sudachipy.lattice', ['sudachipy/lattice.pyx']),
-        #Extension('sudachipy.tokenizer', ['sudachipy/tokenizer.pyx']),
+        Extension('sudachipy.tokenizer', ['sudachipy/tokenizer.pyx']),
         ]
 
 setup(name="SudachiPy",
