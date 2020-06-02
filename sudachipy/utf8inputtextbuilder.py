@@ -24,7 +24,7 @@ class UTF8InputTextBuilder:
         self.grammar = grammar
         self.original_text = text
         self.modified_text = text
-        self.text_offsets = list(range(len(self.original_text) + 1))
+        self.modified_to_original = list(range(len(self.original_text) + 1))
         # 注: サロゲートペア文字は考慮していない
 
     def replace(self, begin, end, str_):
@@ -42,15 +42,17 @@ class UTF8InputTextBuilder:
 
         self.modified_text = str_.join([self.modified_text[:begin], self.modified_text[end:]])
 
-        offset = self.text_offsets[begin]
+        modified_begin = self.modified_to_original[begin]
+        modified_end = self.modified_to_original[end]
         length = len(str_)
         if end - begin > length:
-            del self.text_offsets[begin + length:end]
-        for i in range(length):
+            del self.modified_to_original[begin + length:end]
+        self.modified_to_original[begin] = modified_begin
+        for i in range(1, length):
             if begin + i < end:
-                self.text_offsets[begin + i] = offset
+                self.modified_to_original[begin + i] = modified_end
             else:
-                self.text_offsets.insert(begin + i, offset)
+                self.modified_to_original.insert(begin + i, modified_end)
 
     def get_original_text(self):
         return self.original_text
@@ -70,10 +72,10 @@ class UTF8InputTextBuilder:
             # 注: サロゲートペア文字は考慮していない
             for _ in range(self.utf8_byte_length(ord(self.modified_text[i]))):
                 byte_indexes[j] = i
-                offsets[j] = self.text_offsets[i]
+                offsets[j] = self.modified_to_original[i]
                 j += 1
         byte_indexes[length] = len(modified_string_text)
-        offsets[length] = self.text_offsets[-1]
+        offsets[length] = self.modified_to_original[-1]
 
         char_categories = self.get_char_category_types(modified_string_text)
         char_category_continuities = self.get_char_category_continuities(modified_string_text, length, char_categories)
