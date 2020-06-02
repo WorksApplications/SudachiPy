@@ -134,8 +134,9 @@ def _command_link(args, print_usage):
     try:
         return set_default_dict_package(dict_package, output=output)
     except ImportError:
-        print_usage()
-        print('{} not installed'.format(dict_package), file=sys.stderr)
+        print('Package `{0}` does not exist.\n'
+              'You may install it with a command `$ pip install {0}`'
+              .format(dict_package), file=sys.stderr)
         exit(1)
 
 

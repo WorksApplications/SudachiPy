@@ -24,28 +24,29 @@ DEFAULT_RESOURCEDIR = DEFAULT_RESOURCEDIR.as_posix()
 DEFAULT_SETTINGFILE = DEFAULT_SETTINGFILE.as_posix()
 
 
-def unlink_default_dict_package(output):
+def unlink_default_dict_package(output, verbose=True):
     try:
         dst_path = Path(import_module('sudachidict').__file__).parent
     except ImportError:
-        print('sudachidict not exists', file=output)
+        if verbose:
+            print('Package `sudachidict` does not exist.', file=output)
         return
 
     if dst_path.is_symlink():
-        print('unlinking sudachidict', file=output)
         dst_path.unlink()
-        print('sudachidict unlinked', file=output)
+        if verbose:
+            print('Removed the package symbolic link `sudachidict`.', file=output)
     if dst_path.exists():
-        raise IOError('unlink failed (directory exists)')
+        raise IOError('Unlink failed (The `sudachidict` directory exists and it is not a symbolic link).')
 
 
 def set_default_dict_package(dict_package, output):
-    unlink_default_dict_package(output)
+    unlink_default_dict_package(output, verbose=False)
 
     src_path = Path(import_module(dict_package).__file__).parent
     dst_path = src_path.parent / 'sudachidict'
     dst_path.symlink_to(src_path)
-    print('default dict package = {}'.format(dict_package), file=output)
+    print('Set the default dictionary to `{}`.'.format(dict_package), file=output)
 
     return dst_path
 
@@ -57,15 +58,15 @@ def create_default_link_for_sudachidict_core(output):
         try:
             import_module('sudachidict_core')
         except ImportError:
-            raise KeyError('`systemDict` must be specified if `SudachiDict_core` not installed')
+            raise KeyError('You need to specify `systemDict` in the config when `sudachidict_core` is not installed.')
         try:
             import_module('sudachidict_full')
-            raise KeyError('Multiple packages of `SudachiDict_*` installed. Set default dict with link command.')
+            raise KeyError('Multiple dictionaries installed. Set the default with `link -t` command.')
         except ImportError:
             pass
         try:
             import_module('sudachidict_small')
-            raise KeyError('Multiple packages of `SudachiDict_*` installed. Set default dict with link command.')
+            raise KeyError('Multiple dictionaries installed. Set the default with `link -t` command.')
         except ImportError:
             pass
         dict_path = set_default_dict_package('sudachidict_core', output=output)
