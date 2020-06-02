@@ -60,7 +60,7 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
         self.assertEqual(9, text.get_original_index(24))
         self.assertEqual(9, text.get_original_index(26))
 
-    def test_after_write(self):
+    def test_after_rewrite(self):
         self.assertEqual(self.original_text, self.builder.get_original_text())
         self.assertEqual(self.original_text, self.builder.get_text())
         self.plugin.rewrite(self.builder)
@@ -76,7 +76,8 @@ class TestDefaultInputTextPlugin(unittest.TestCase):
         self.assertEqual(1, text.get_original_index(2))
         self.assertEqual(2, text.get_original_index(3))
         self.assertEqual(4, text.get_original_index(7))
-        self.assertEqual(4, text.get_original_index(11))
+        self.assertEqual(5, text.get_original_index(8))
+        self.assertEqual(5, text.get_original_index(11))
         self.assertEqual(7, text.get_original_index(15))
         self.assertEqual(7, text.get_original_index(17))
 

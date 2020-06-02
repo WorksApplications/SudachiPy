@@ -70,6 +70,16 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(len(self.tokenizer_obj.tokenize('ab')), 1)
         self.assertEqual(len(self.tokenizer_obj.tokenize('特ab')), 2)
 
+    def test_tokenizer_with_dots(self):
+        ms = self.tokenizer_obj.tokenize('京都…')
+        self.assertEqual(4, ms.size())
+        self.assertEqual(ms[1].surface(), '…')
+        self.assertEqual(ms[1].normalized_form(), '.')
+        self.assertEqual(ms[2].surface(), '')
+        self.assertEqual(ms[2].normalized_form(), '.')
+        self.assertEqual(ms[3].surface(), '')
+        self.assertEqual(ms[3].normalized_form(), '.')
+
 
 if __name__ == '__main__':
     unittest.main()
