@@ -42,4 +42,7 @@ setup(name="SudachiPy",
             'dartsclone~=0.9.0',
       ],
       ext_modules=extensions,
+      setup_requires=[
+          'cython',
+      ],
       )
