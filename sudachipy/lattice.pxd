@@ -11,6 +11,6 @@ cdef class Lattice:
     cdef object eos_params
     #cdef const short[:,:] connect_costs
 
-    cdef void resize_c(self, int size)
-    cdef void insert_c(self, int begin, int end, LatticeNode node)
+    cpdef void resize(self, int size)
+    cpdef void insert(self, int begin, int end, LatticeNode node)
     cdef void connect_node(self, LatticeNode r_node)

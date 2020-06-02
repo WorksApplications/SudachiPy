@@ -34,10 +34,7 @@ cdef class Lattice:
         bos_node.is_connected_to_bos = True
         self.end_lists.append([bos_node])
 
-    def resize(self, size: int) -> None:
-        self.resize_c(size)
-
-    cdef void resize_c(self, int size):
+    cpdef void resize(self, int size):
         if size > self.capacity:
             self.expand(size)
         self.size = size
@@ -72,10 +69,7 @@ cdef class Lattice:
                 min_arg = node
         return min_arg
 
-    def insert(self, int begin, int end, LatticeNode node):
-        self.insert_c(begin, end, node)
-
-    cdef void insert_c(self, int begin, int end, LatticeNode node):
+    cpdef void insert(self, int begin, int end, LatticeNode node):
         self.end_lists[end].append(node)
         node.begin = begin
         node.end = end
