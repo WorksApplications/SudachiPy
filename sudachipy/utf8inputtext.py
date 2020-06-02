@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
-
 
 class UTF8InputText:
     def __init__(self, grammar, original_text, modified_text, bytes_, offsets, byte_indexes, char_categories, char_category_continuities, can_bow_list=None):
@@ -61,7 +59,7 @@ class UTF8InputText:
             return []
         b = self.byte_indexes[begin]
         e = self.byte_indexes[end]
-        continuous_category = copy.deepcopy(self.char_categories[b])
+        continuous_category = set(self.char_categories[b])
         for i in range(b + 1, e):
             continuous_category = continuous_category & self.char_categories[i]
         return continuous_category
