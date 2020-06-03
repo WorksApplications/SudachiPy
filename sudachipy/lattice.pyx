@@ -87,13 +87,18 @@ cdef class Lattice:
 
     cdef void connect_node(self, LatticeNode r_node):
         begin = r_node.begin
+        # TODO use maxint
         r_node.total_cost = 2 ** 30
+        cdef const short[:,:] connect_costs = self.grammar._matrix_view
+
         cdef LatticeNode l_node
+        cdef int connect_cost
         for l_node in self.end_lists[begin]:
             if not l_node.is_connected_to_bos:
                 continue
             # right_id and left_id look reversed, but it works ...
-            connect_cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
+            connect_cost = connect_costs[l_node.right_id, r_node.left_id]
+
             # 0x7fff == Grammar.INHIBITED_CONNECTION:
             if connect_cost == 0x7fff:
                 continue
