@@ -94,7 +94,8 @@ cdef class Lattice:
                 continue
             # right_id and left_id look reversed, but it works ...
             connect_cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
-            if connect_cost == Grammar.INHIBITED_CONNECTION:
+            # 0x7fff == Grammar.INHIBITED_CONNECTION:
+            if connect_cost == 0x7fff:
                 continue
             cost = l_node.total_cost + connect_cost
             if cost < r_node.total_cost:
