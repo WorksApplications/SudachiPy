@@ -20,8 +20,8 @@ from typing import List
 from .dictionarylib.categorytype import CategoryType
 from .dictionarylib.grammar import Grammar
 from .dictionarylib.lexicon import Lexicon
-from .lattice import Lattice
-from .latticenode import LatticeNode
+from .lattice cimport Lattice
+from .latticenode cimport LatticeNode
 from .morphemelist import MorphemeList
 from .plugin.input_text import InputTextPlugin
 from .plugin.path_rewrite import PathRewritePlugin
@@ -31,40 +31,46 @@ from .utf8inputtextbuilder import UTF8InputTextBuilder
 
 cdef void build_lattice_c(object tokenizer, object input_):
     bytes_ = input_.get_byte_text()
-    tokenizer._lattice.resize(len(bytes_))
 
+    cdef Lattice lattice = tokenizer._lattice
+    lattice.resize(len(bytes_))
+
+    cdef unsigned int i, word_id, end, idx
+    cdef int left_id, right_id, cost
+    cdef object lexicon = tokenizer._lexicon
+    cdef list oov_provider_plugins = tokenizer._oov_provider_plugins
 
     for i in range(len(bytes_)):
-        if not input_.can_bow(i) or not tokenizer._lattice.has_previous_node(i):
+        if not input_.can_bow(i) or not lattice.has_previous_node(i):
             continue
-        iterator = tokenizer._lexicon.lookup(bytes_, i)
+        iterator = lexicon.lookup(bytes_, i)
         has_words = False
         for word_id, end in iterator:
             if (end < len(bytes_)) and (not input_.can_bow(end)):
                 continue
             has_words = True
 
-            lex = tokenizer._lexicon.lexicons[word_id >> 28]
+            lex = lexicon.lexicons[word_id >> 28]
             idx = (0x0FFFFFFF & word_id) * 3 # 3 is ELEMENT_SIZE_AS_SHORT
             left_id, right_id, cost = lex.word_params._array_view[idx:idx+3]
-            n = LatticeNode(tokenizer._lexicon, left_id, right_id, cost, word_id)
+            n = LatticeNode(lexicon, left_id, right_id, cost, word_id)
 
-            tokenizer._lattice.insert(i, end, n)
+            lattice.insert(i, end, n)
 
         # OOV
         if CategoryType.NOOOVBOW not in input_.get_char_category_types(i):
             for oov_plugin in tokenizer._oov_provider_plugins:
                 for node in oov_plugin.get_oov(input_, i, has_words):
                     has_words = True
-                    tokenizer._lattice.insert(node.get_begin(), node.get_end(), node)
+                    lattice.insert(node.get_begin(), node.get_end(), node)
         if not has_words and tokenizer.default_oov_provider:
             for node in tokenizer.default_oov_provider.get_oov(input_, i, has_words):
                 has_words = True
-                tokenizer._lattice.insert(node.get_begin(), node.get_end(), node)
+                lattice.insert(node.get_begin(), node.get_end(), node)
 
         if not has_words:
             raise RuntimeError("there is no morpheme at " + str(i))
-    tokenizer._lattice.connect_eos_node()
+    lattice.connect_node(lattice.eos_node)
 
 class Tokenizer:
     """ tokenizer of morphological analysis

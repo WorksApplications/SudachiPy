@@ -17,7 +17,6 @@ from typing import List, Optional
 from .dictionarylib.grammar import Grammar
 from .latticenode cimport LatticeNode
 
-
 cdef class Lattice:
 
     def __init__(self, grammar: Grammar):
@@ -33,6 +32,7 @@ cdef class Lattice:
         bos_node.set_parameter(bos_params[0], bos_params[1], bos_params[2])
         bos_node.is_connected_to_bos = True
         self.end_lists.append([bos_node])
+        self.connect_costs = self.grammar._matrix_view
 
     cpdef void resize(self, int size):
         if size > self.capacity:
@@ -89,7 +89,6 @@ cdef class Lattice:
         begin = r_node.begin
         # TODO use maxint
         r_node.total_cost = 2 ** 30
-        cdef const short[:,:] connect_costs = self.grammar._matrix_view
 
         cdef LatticeNode l_node
         cdef int connect_cost
@@ -97,7 +96,7 @@ cdef class Lattice:
             if not l_node.is_connected_to_bos:
                 continue
             # right_id and left_id look reversed, but it works ...
-            connect_cost = connect_costs[l_node.right_id, r_node.left_id]
+            connect_cost = self.connect_costs[l_node.right_id, r_node.left_id]
 
             # 0x7fff == Grammar.INHIBITED_CONNECTION:
             if connect_cost == 0x7fff:
@@ -110,7 +109,7 @@ cdef class Lattice:
         r_node.is_connected_to_bos = r_node.best_previous_node is not None
         r_node.total_cost += r_node.cost
 
-    def connect_eos_node(self) -> None:
+    cdef void connect_eos_node(self):
         self.connect_node(self.eos_node)
 
     def get_best_path(self) -> List[LatticeNode]:
