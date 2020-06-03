@@ -46,9 +46,6 @@ class UTF8InputText:
     def get_offset_text_length(self, index):
         return self.byte_indexes[index]
 
-    def is_char_alignment(self, index):
-        return (self.bytes[index] & 0xC0) != 0x80
-
     def get_original_index(self, index):
         return self.offsets[index]
 
@@ -77,7 +74,7 @@ class UTF8InputText:
         return length
 
     def can_bow(self, idx: int) -> bool:
-        return self.is_char_alignment(idx) and self.can_bow_list[self.byte_indexes[idx]]
+        return (self.bytes[idx] & 0xC0 != 0x80) and self.can_bow_list[self.byte_indexes[idx]]
 
     def code_point_count(self, begin: int, end: int):
         return self.byte_indexes[end] - self.byte_indexes[begin]
