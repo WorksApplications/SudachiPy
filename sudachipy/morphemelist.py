@@ -40,6 +40,9 @@ class MorphemeList:
             yield morpheme.Morpheme(self, index)
         return
 
+    def __str__(self):
+        return ''.join([mm.surface() for mm in self])
+
     def get_begin(self, index):
         return self.input_text.get_original_index(self.path[index].get_begin())
 
