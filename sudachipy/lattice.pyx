@@ -87,8 +87,7 @@ cdef class Lattice:
 
     cdef void connect_node(self, LatticeNode r_node):
         begin = r_node.begin
-        # TODO use maxint
-        r_node.total_cost = 2 ** 30
+        r_node.total_cost = INT_MAX
 
         cdef LatticeNode l_node
         cdef int connect_cost

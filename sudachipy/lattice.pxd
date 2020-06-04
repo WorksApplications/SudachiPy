@@ -1,5 +1,8 @@
 from .latticenode cimport LatticeNode
 
+cdef extern from "limits.h":
+    cdef int INT_MAX
+
 cdef class Lattice:
 
     cdef int size
