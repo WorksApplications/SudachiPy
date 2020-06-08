@@ -19,6 +19,9 @@ class Morpheme:
         self.list = list_
         self.index = index
 
+    def __str__(self):
+        return self.surface()
+
     def begin(self):
         return self.list.get_begin(self.index)
 
