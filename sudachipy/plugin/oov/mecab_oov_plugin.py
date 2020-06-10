@@ -32,7 +32,6 @@ class MeCabOovPlugin(OovProviderPlugin):
 
     class OOV:
         def __init__(self):
-            #XXX Is this safe?
             self.left_id = -1
             self.right_id = -1
             self.cost = -1
