@@ -15,26 +15,26 @@
 from typing import List, Optional
 
 from .dictionarylib.grammar import Grammar
-from .latticenode import LatticeNode
+from .latticenode cimport LatticeNode
 
-
-class Lattice:
-
-    size = 0
-    capacity = 0
-    eos_node = None
+cdef class Lattice:
 
     def __init__(self, grammar: Grammar):
+        self.size = 0
+        self.capacity = 0
+
+
         self.end_lists = []
         self.grammar = grammar
         self.eos_params = grammar.get_eos_parameter()
-        bos_node = LatticeNode()
+        cdef LatticeNode bos_node = LatticeNode()
         bos_params = grammar.get_bos_parameter()
         bos_node.set_parameter(bos_params[0], bos_params[1], bos_params[2])
         bos_node.is_connected_to_bos = True
         self.end_lists.append([bos_node])
+        self.connect_costs = self.grammar._matrix_view
 
-    def resize(self, size: int) -> None:
+    cpdef void resize(self, int size):
         if size > self.capacity:
             self.expand(size)
         self.size = size
@@ -69,7 +69,7 @@ class Lattice:
                 min_arg = node
         return min_arg
 
-    def insert(self, begin: int, end: int, node: LatticeNode) -> None:
+    cpdef void insert(self, int begin, int end, LatticeNode node):
         self.end_lists[end].append(node)
         node.begin = begin
         node.end = end
@@ -85,15 +85,20 @@ class Lattice:
     def has_previous_node(self, index: int) -> bool:
         return bool(self.end_lists[index])
 
-    def connect_node(self, r_node: LatticeNode) -> None:
+    cdef void connect_node(self, LatticeNode r_node):
         begin = r_node.begin
-        r_node.total_cost = float('inf')
+        r_node.total_cost = INT_MAX
+
+        cdef LatticeNode l_node
+        cdef int connect_cost
         for l_node in self.end_lists[begin]:
             if not l_node.is_connected_to_bos:
                 continue
             # right_id and left_id look reversed, but it works ...
-            connect_cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
-            if connect_cost == Grammar.INHIBITED_CONNECTION:
+            connect_cost = self.connect_costs[l_node.right_id, r_node.left_id]
+
+            # 0x7fff == Grammar.INHIBITED_CONNECTION:
+            if connect_cost == 0x7fff:
                 continue
             cost = l_node.total_cost + connect_cost
             if cost < r_node.total_cost:
@@ -103,7 +108,7 @@ class Lattice:
         r_node.is_connected_to_bos = r_node.best_previous_node is not None
         r_node.total_cost += r_node.cost
 
-    def connect_eos_node(self) -> None:
+    cdef void connect_eos_node(self):
         self.connect_node(self.eos_node)
 
     def get_best_path(self) -> List[LatticeNode]:

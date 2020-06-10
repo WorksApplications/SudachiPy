@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
-
 
 class UTF8InputText:
     def __init__(self, grammar, original_text, modified_text, bytes_, offsets, byte_indexes, char_categories, char_category_continuities, can_bow_list=None):
@@ -48,9 +46,6 @@ class UTF8InputText:
     def get_offset_text_length(self, index):
         return self.byte_indexes[index]
 
-    def is_char_alignment(self, index):
-        return (self.bytes[index] & 0xC0) != 0x80
-
     def get_original_index(self, index):
         return self.offsets[index]
 
@@ -61,7 +56,7 @@ class UTF8InputText:
             return []
         b = self.byte_indexes[begin]
         e = self.byte_indexes[end]
-        continuous_category = copy.deepcopy(self.char_categories[b])
+        continuous_category = set(self.char_categories[b])
         for i in range(b + 1, e):
             continuous_category = continuous_category & self.char_categories[i]
         return continuous_category
@@ -79,7 +74,7 @@ class UTF8InputText:
         return length
 
     def can_bow(self, idx: int) -> bool:
-        return self.is_char_alignment(idx) and self.can_bow_list[self.byte_indexes[idx]]
+        return (self.bytes[idx] & 0xC0 != 0x80) and self.can_bow_list[self.byte_indexes[idx]]
 
     def code_point_count(self, begin: int, end: int):
         return self.byte_indexes[end] - self.byte_indexes[begin]

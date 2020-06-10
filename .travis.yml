@@ -6,6 +6,7 @@ python:
  - '3.7'
 install:
  - pip install flake8 flake8-import-order flake8-builtins && pip install -r requirements.txt
+ - python setup.py build_ext --inplace
 before_script:
  - cp .travis/system.dic.test tests/resources/system.dic && cp .travis/user.dic.test tests/resources/user.dic
 script:

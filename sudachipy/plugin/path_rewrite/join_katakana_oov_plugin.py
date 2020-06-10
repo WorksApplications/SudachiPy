@@ -80,4 +80,4 @@ class JoinKatakanaOovPlugin(PathRewritePlugin):
 
     @staticmethod
     def is_shorter(length: int, text: UTF8InputText, node: LatticeNode):
-        return text.code_point_count(node.begin, node.end) < length
+        return text.code_point_count(node.get_begin(), node.get_end()) < length

@@ -33,8 +33,8 @@ class OovProviderPlugin(ABC):
     def get_oov(self, input_text: UTF8InputText, offset: int, has_other_words: bool) -> List[LatticeNode]:
         nodes = self.provide_oov(input_text, offset, has_other_words)
         for node in nodes:
-            node.begin = offset
-            node.end = offset + node.get_word_info().length()
+            node.set_begin(offset)
+            node.set_end(offset + node.get_word_info().length())
         return nodes
 
     @staticmethod
