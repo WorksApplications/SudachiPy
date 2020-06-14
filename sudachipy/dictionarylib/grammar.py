@@ -45,9 +45,6 @@ class Grammar:
             self._matrix_view = self._matrix_view.cast('h', shape=[left_id_size, right_id_size])
         bytes_.seek(original_offset)
 
-    def __del__(self):
-        self._matrix_view.release()
-
     def get_storage_size(self):
         return self.storage_size
 
