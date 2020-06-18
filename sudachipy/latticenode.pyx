@@ -33,9 +33,9 @@ cdef class LatticeNode:
         self.is_connected_to_bos = False
         self.extra_word_info = None
 
-        self.is_defined = True
+        self._is_defined = True
         if lexicon is left_id is right_id is cost is word_id is None:
-            self.is_defined = False
+            self._is_defined = False
             return
         self.lexicon = lexicon
         self.left_id = left_id
@@ -69,9 +69,15 @@ cdef class LatticeNode:
 
     def set_oov(self):
         self._is_oov = True
-
+    
+    def is_defined(self):
+        return self._is_defined
+    
+    def set_defined(self):
+        self._is_defined = True
+    
     def get_word_info(self) -> WordInfo:
-        if not self.is_defined:
+        if not self._is_defined:
             return UNK
         if self.extra_word_info:
             return self.extra_word_info
@@ -79,16 +85,22 @@ cdef class LatticeNode:
 
     def set_word_info(self, word_info: WordInfo) -> None:
         self.extra_word_info = word_info
-        self.is_defined = True
+        self._is_defined = True
 
     def get_path_cost(self) -> int:
         return self.cost
+    
+    def get_left_id(self) -> int:
+        return self.left_id
+    
+    def get_right_id(self) -> int:
+        return self.right_id
 
     def get_word_id(self) -> int:
         return self.word_id
 
     def get_dictionary_id(self) -> int:
-        if not self.is_defined or self.extra_word_info:
+        if not self._is_defined or self.extra_word_info:
             return -1
         return self.lexicon.get_dictionary_id(self.word_id)  # self.word_id >> 28
 

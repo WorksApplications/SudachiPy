@@ -9,7 +9,7 @@ cdef class LatticeNode:
     cdef bint is_connected_to_bos
     cdef object extra_word_info
     cdef object undefined_word_info
-    cdef bint is_defined
+    cdef bint _is_defined
     cdef object lexicon
     cdef int left_id
     cdef int right_id
