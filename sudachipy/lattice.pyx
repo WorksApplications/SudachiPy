@@ -94,8 +94,7 @@ cdef class Lattice:
         for l_node in self.end_lists[begin]:
             if not l_node.is_connected_to_bos:
                 continue
-            # right_id and left_id look reversed, but it works ...
-            connect_cost = self.connect_costs[l_node.right_id, r_node.left_id]
+            connect_cost = self.connect_costs[r_node.left_id, l_node.right_id]
 
             # 0x7fff == Grammar.INHIBITED_CONNECTION:
             if connect_cost == 0x7fff:
