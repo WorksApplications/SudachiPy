@@ -130,7 +130,8 @@ cdef class Lattice:
             for r_node in r_nodes:
                 surface = '(null)'
                 pos = 'BOS/EOS'
-                if r_node.is_defined:
+
+                if r_node.is_defined():
                     wi = r_node.get_word_info()
                     surface = wi.surface
                     pos_id = wi.pos_id
@@ -139,12 +140,12 @@ cdef class Lattice:
                         pos = ','.join(self.grammar.get_part_of_speech_string(pos_id))
 
                 costs = []
-                for l_node in self.end_lists[r_node.begin]:
-                    cost = self.grammar.get_connect_cost(l_node.right_id, r_node.left_id)
+                for l_node in self.end_lists[r_node.get_begin()]:
+                    cost = self.grammar.get_connect_cost(l_node.get_right_id(), r_node.get_left_id())
                     costs.append(str(cost))
                 index += 1
 
                 logger.info('%d: %d %d %s(%d) %s %d %d %d: %s' %
                             (index, r_node.get_begin(), r_node.get_end(),
-                             surface, r_node.word_id, pos, r_node.left_id,
-                             r_node.right_id, r_node.cost, ' '.join(costs)))
+                             surface, r_node.get_word_id(), pos, r_node.get_left_id(),
+                             r_node.get_right_id(), r_node.get_path_cost(), ' '.join(costs)))
