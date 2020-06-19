@@ -72,9 +72,9 @@ class MorphemeList:
         nodes = []
         for wid in word_ids:
             n = latticenode.LatticeNode(self.lexicon, 0, 0, 0, wid)
-            n.begin = offset
+            n.set_begin(offset)
             offset += n.get_word_info().head_word_length
-            n.end = offset
+            n.set_end(offset)
             nodes.append(n)
 
         return MorphemeList(self.input_text, self.grammar, self.lexicon, nodes)
