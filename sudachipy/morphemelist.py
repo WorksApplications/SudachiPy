@@ -30,8 +30,11 @@ class MorphemeList:
         self.path = path
 
     def __getitem__(self, index):
-        if not (0 <= index < len(self.path)):
+        n_morphs = len(self.path)
+        if index >= n_morphs or index < -n_morphs:
             raise IndexError("Morpheme list index out of range")
+        if index < 0:
+            return morpheme.Morpheme(self, n_morphs + index)
         return morpheme.Morpheme(self, index)
 
     def __len__(self):

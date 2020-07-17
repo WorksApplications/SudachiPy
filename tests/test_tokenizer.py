@@ -93,13 +93,17 @@ class TestTokenizer(unittest.TestCase):
 
     def test_tokenizer_morpheme_list_range(self):
         from sudachipy import tokenizer
-        ms = self.tokenizer_obj.tokenize('コトノハ', tokenizer.Tokenizer.SplitMode.C)
-        self.assertEqual(1, ms.size())
-        self.assertEqual(ms[0].surface(), 'コトノハ')
+        ms = self.tokenizer_obj.tokenize('東京都', tokenizer.Tokenizer.SplitMode.A)
+        self.assertEqual(2, ms.size())
+        self.assertEqual(ms[0].surface(), '東京')
+        self.assertEqual(ms[1].surface(), '都')
+
+        self.assertEqual(ms[-1].surface(), ms[1].surface())
+        self.assertEqual(ms[-2].surface(), ms[0].surface())
         with self.assertRaises(IndexError) as cm:
-            ms[-1]
+            ms[2]
         with self.assertRaises(IndexError) as cm:
-            ms[1]
+            ms[-3]
 
 
 if __name__ == '__main__':
