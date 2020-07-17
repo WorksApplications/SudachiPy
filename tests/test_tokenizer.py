@@ -91,6 +91,16 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(ms_a[0].surface(), '東京')
         self.assertEqual(ms_a[1].surface(), '都')
 
+    def test_tokenizer_morpheme_list_range(self):
+        from sudachipy import tokenizer
+        ms = self.tokenizer_obj.tokenize('コトノハ', tokenizer.Tokenizer.SplitMode.C)
+        self.assertEqual(1, ms.size())
+        self.assertEqual(ms[0].surface(), 'コトノハ')
+        with self.assertRaises(IndexError) as cm:
+            ms[-1]
+        with self.assertRaises(IndexError) as cm:
+            ms[1]
+
 
 if __name__ == '__main__':
     unittest.main()
