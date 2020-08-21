@@ -30,7 +30,7 @@ class BinaryDictionary(object):
 
     @staticmethod
     def _read_dictionary(filename, access=mmap.ACCESS_READ):
-        with open(filename, 'r+b') as system_dic:
+        with open(filename, 'rb') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=access)
         offset = 0
         header = DictionaryHeader.from_bytes(bytes_, offset)
