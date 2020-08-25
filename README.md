@@ -298,6 +298,12 @@ $ sudachipy -r path/to/sudachi.json
 
 ## For Developers
 
+### Cython Build
+
+```sh
+$ python setup.py build_ext --inplace
+```
+
 ### Code Format
 
 Run `scripts/format.sh` to check if your code is formatted correctly.
