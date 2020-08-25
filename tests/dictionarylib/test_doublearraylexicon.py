@@ -32,7 +32,7 @@ class TestDoubleArrayLexicon(unittest.TestCase):
             os.pardir,
             'resources')
         filename = os.path.join(test_resources_dir, 'system.dic')
-        with open(filename, 'r+b') as system_dic:
+        with open(filename, 'rb') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         header = DictionaryHeader.from_bytes(bytes_, 0)
         if header.version != SYSTEM_DICT_VERSION:

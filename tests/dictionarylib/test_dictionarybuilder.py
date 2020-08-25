@@ -260,7 +260,7 @@ class TestDictionaryBuilder(TestCase):
         buffers = []
         if filename is None:
             raise AttributeError("system dictionary is not specified")
-        with open(filename, 'r+b') as system_dic:
+        with open(filename, 'rb') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         buffers.append(bytes_)
 
