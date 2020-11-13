@@ -15,6 +15,7 @@
 import struct
 
 from sudachipy.dictionarylib.jtypedbytebuffer import JTypedByteBuffer
+from . import dictionaryversion
 
 
 class DictionaryHeader:
@@ -53,3 +54,9 @@ class DictionaryHeader:
 
     def storage_size(self):
         return self.__STORAGE_SIZE
+
+    def is_system_dictionary(self):
+        return dictionaryversion.is_system_dictionary(self.version)
+
+    def is_user_dictionary(self):
+        return dictionaryversion.is_user_dictionary(self.version)

@@ -37,7 +37,7 @@ class SimpleOovPlugin(OovProviderPlugin):
             s = input_text.get_substring(offset, offset + length)
             info = wordinfo.WordInfo(surface=s, head_word_length=length, pos_id=self.oov_pos_id, normalized_form=s,
                                      dictionary_form_word_id=-1, dictionary_form=s, reading_form="",
-                                     a_unit_split=[], b_unit_split=[], word_structure=[])
+                                     a_unit_split=[], b_unit_split=[], word_structure=[], synonym_group_ids=[])
             node.set_word_info(info)
             return [node]
         else:

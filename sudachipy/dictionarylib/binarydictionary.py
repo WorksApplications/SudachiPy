@@ -14,7 +14,7 @@
 
 import mmap
 
-from . import SYSTEM_DICT_VERSION, USER_DICT_VERSION_1, USER_DICT_VERSION_2
+from . import SYSTEM_DICT_VERSION_1, SYSTEM_DICT_VERSION_2, USER_DICT_VERSION_1, USER_DICT_VERSION_2
 from .dictionaryheader import DictionaryHeader
 from .doublearraylexicon import DoubleArrayLexicon
 from .grammar import Grammar
@@ -35,29 +35,27 @@ class BinaryDictionary(object):
         offset = 0
         header = DictionaryHeader.from_bytes(bytes_, offset)
         offset += header.storage_size()
-        if header.version not in [SYSTEM_DICT_VERSION, USER_DICT_VERSION_1, USER_DICT_VERSION_2]:
+        if header.version not in [SYSTEM_DICT_VERSION_1, SYSTEM_DICT_VERSION_2, USER_DICT_VERSION_1, USER_DICT_VERSION_2]:
             raise Exception('invalid dictionary version')
         grammar = None
-        if header.version != USER_DICT_VERSION_1:
+        if header.is_system_dictionary() or header.version == USER_DICT_VERSION_2:
             grammar = Grammar(bytes_, offset)
             offset += grammar.get_storage_size()
 
-        lexicon = DoubleArrayLexicon(bytes_, offset)
+        lexicon = DoubleArrayLexicon(bytes_, offset, header.version == SYSTEM_DICT_VERSION_2)
         return bytes_, grammar, header, lexicon
 
     @classmethod
     def from_system_dictionary(cls, filename):
         args = cls._read_dictionary(filename)
-        version = args[2].version
-        if version != SYSTEM_DICT_VERSION:
+        if not args[2].is_system_dictionary():
             raise IOError('invalid system dictionary')
         return cls(*args)
 
     @classmethod
     def from_user_dictionary(cls, filename):
         args = cls._read_dictionary(filename, mmap.ACCESS_COPY)
-        version = args[2].version
-        if version not in [USER_DICT_VERSION_1, USER_DICT_VERSION_2]:
+        if not args[2].is_user_dictionary():
             raise IOError('invalid user dictionary')
         return cls(*args)
 

@@ -28,7 +28,7 @@ class DictionaryBuilder(object):
 
     __BYTE_MAX_VALUE = 127
     __MAX_LENGTH = 255
-    __COLS_NUM = 18
+    __MIN_REQUIRED_COLS_NUM = 18
     __BUFFER_SIZE = 1024 * 1024
     __PATTERN_UNICODE_LITERAL = re.compile(r"\\u([0-9a-fA-F]{4}|{[0-9a-fA-F]+})")
     __ARRAY_MAX_LENGTH = __BYTE_MAX_VALUE  # max value of byte in Java
@@ -103,7 +103,7 @@ class DictionaryBuilder(object):
             raise e
 
     def parse_line(self, cols):
-        if len(cols) != self.__COLS_NUM:
+        if len(cols) < self.__MIN_REQUIRED_COLS_NUM:
             raise ValueError('invalid format')
         cols = [self.decode(col) for col in cols]
         if not self.__is_length_valid(cols):
@@ -133,10 +133,14 @@ class DictionaryBuilder(object):
                 not (entry.aunit_split_string == '*' and entry.bunit_split_string == '*'):
             raise ValueError('invalid splitting')
 
+        synonym_group_ids = []
+        if len(cols) > 18:
+            synonym_group_ids = self.parse_synonym_group_ids(cols[18])
+
         head_length = len(cols[0].encode('utf-8'))
         dict_from_wordid = -1 if cols[13] == '*' else int(cols[13])
         entry.wordinfo = WordInfo(
-            cols[4], head_length, pos_id, cols[12], dict_from_wordid, '', cols[11], None, None, None)
+            cols[4], head_length, pos_id, cols[12], dict_from_wordid, '', cols[11], None, None, None, synonym_group_ids)
         return entry
 
     def __is_length_valid(self, cols):
@@ -288,6 +292,7 @@ class DictionaryBuilder(object):
             self.write_intarray(self.parse_splitinfo(entry.aunit_split_string))
             self.write_intarray(self.parse_splitinfo(entry.bunit_split_string))
             self.write_intarray(self.parse_splitinfo(entry.cunit_split_string))
+            self.write_intarray(wi.synonym_group_ids)
             self.byte_buffer.seek(0)
             io_out.write(self.byte_buffer.read())
             self.byte_buffer.clear()
@@ -364,6 +369,14 @@ class DictionaryBuilder(object):
     def check_wordid(self, wid):
         if wid < 0 or wid >= len(self.entries):
             raise ValueError('invalid word ID')
+
+    def parse_synonym_group_ids(self, text):
+        if text == '*':
+            return []
+        synonym_group_ids = text.split('/')
+        if len(synonym_group_ids) > self.__ARRAY_MAX_LENGTH:
+            raise ValueError("too many units")
+        return [int(synonym_group_id) for synonym_group_id in synonym_group_ids]
 
     def write_string(self, text):
         len_ = 0

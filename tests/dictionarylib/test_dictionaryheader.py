@@ -16,7 +16,7 @@ import mmap
 import os
 import unittest
 
-from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
+from sudachipy.dictionarylib import SYSTEM_DICT_VERSION_2
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 
 
@@ -35,7 +35,7 @@ class TestDictionaryHeader(unittest.TestCase):
         self.header = DictionaryHeader.from_bytes(bytes_, offset)
 
     def test_version(self):
-        self.assertEqual(SYSTEM_DICT_VERSION, self.header.version)
+        self.assertEqual(SYSTEM_DICT_VERSION_2, self.header.version)
 
     def test_create_time(self):
         self.assertTrue(self.header.create_time > 0)

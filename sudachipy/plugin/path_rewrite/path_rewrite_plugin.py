@@ -48,7 +48,7 @@ class PathRewritePlugin(ABC):
         normalized_form = normalized_form if normalized_form else normalized_builder
         wi = WordInfo(surface=surface, head_word_length=length, pos_id=pos_id,
                       normalized_form=normalized_form, dictionary_form=dictionary_builder, dictionary_form_word_id=-1,
-                      reading_form=reading_builder, a_unit_split=[], b_unit_split=[], word_structure=[])
+                      reading_form=reading_builder, a_unit_split=[], b_unit_split=[], word_structure=[], synonym_group_ids=[])
 
         node = lattice.create_node()
         node.set_range(b, e)
@@ -71,7 +71,7 @@ class PathRewritePlugin(ABC):
 
         wi = WordInfo(surface=surface, head_word_length=length, pos_id=pos_id,
                       normalized_form=surface, dictionary_form=surface, dictionary_form_word_id=-1,
-                      reading_form="", a_unit_split=[], b_unit_split=[], word_structure=[])
+                      reading_form="", a_unit_split=[], b_unit_split=[], word_structure=[], synonym_group_ids=[])
 
         node = lattice.create_node()
         node.set_range(b, e)

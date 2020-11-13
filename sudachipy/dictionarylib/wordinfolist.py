@@ -19,10 +19,11 @@ from .wordinfo import WordInfo
 
 
 class WordInfoList(object):
-    def __init__(self, bytes_, offset, word_size):
+    def __init__(self, bytes_, offset, word_size, has_synonym_gid):
         self.bytes = bytes_
         self.offset = offset
         self._word_size = word_size
+        self.has_synonym_gid = has_synonym_gid
 
     @lru_cache(2048)
     def get_word_info(self, word_id):
@@ -43,6 +44,10 @@ class WordInfoList(object):
         b_unit_split = self.buffer_to_int_array()
         word_structure = self.buffer_to_int_array()
 
+        synonym_gids = []
+        if self.has_synonym_gid:
+            synonym_gids = self.buffer_to_int_array()
+
         dictionary_form = surface
         if dictionary_form_word_id >= 0 and dictionary_form_word_id != word_id:
             wi = self.get_word_info(dictionary_form_word_id)
@@ -51,7 +56,7 @@ class WordInfoList(object):
         self.bytes.seek(orig_pos)
 
         return WordInfo(surface, head_word_length, pos_id, normalized_form, dictionary_form_word_id,
-                        dictionary_form, reading_form, a_unit_split, b_unit_split, word_structure)
+                        dictionary_form, reading_form, a_unit_split, b_unit_split, word_structure, synonym_gids)
 
     def word_id_to_offset(self, word_id):
         i = self.offset + 4 * word_id
