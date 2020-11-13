@@ -26,7 +26,7 @@ if [[ "$DIFF" != "" ]]; then
 fi
 
 # unittest
-RES=`cd ..; python3.7 -m unittest discover tests -p '*test*.py' 2>&1`
+RES=`cd ..; python -m unittest discover tests -p '*test*.py' 2>&1`
 RES_TAIL=`echo "$RES" | tail -1`
 if [[ $RES_TAIL != "OK" ]]; then
     >&2 echo "$RES"
