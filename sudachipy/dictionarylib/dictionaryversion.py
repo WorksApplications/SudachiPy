@@ -18,8 +18,21 @@ SYSTEM_DICT_VERSION_1 = 0x7366d3f18bd111e7
 # the second version of system dictionaries
 SYSTEM_DICT_VERSION_2 = 0xce9f011a92394434
 
+# the first version of user dictionaries
 USER_DICT_VERSION_1 = 0xa50f31188bd211e7
+
+# the second version of user dictionaries
 USER_DICT_VERSION_2 = 0x9fdeb5a90168d868
+
+# the third version of user dictionaries
+USER_DICT_VERSION_3 = 0xca9811756ff64fb0
+
+
+def is_dictionary(version):
+    return version in [
+        SYSTEM_DICT_VERSION_1, SYSTEM_DICT_VERSION_2,
+        USER_DICT_VERSION_1, USER_DICT_VERSION_2, USER_DICT_VERSION_3
+    ]
 
 
 def is_system_dictionary(version):
@@ -27,4 +40,12 @@ def is_system_dictionary(version):
 
 
 def is_user_dictionary(version):
-    return version == USER_DICT_VERSION_1 or version == USER_DICT_VERSION_2
+    return version == USER_DICT_VERSION_1 or version == USER_DICT_VERSION_2 or version == USER_DICT_VERSION_3
+
+
+def has_grammar(version):
+    return is_system_dictionary(version) or version == USER_DICT_VERSION_2 or version == USER_DICT_VERSION_3
+
+
+def has_synonym_group_ids(version):
+    return version == SYSTEM_DICT_VERSION_2 or version == USER_DICT_VERSION_3

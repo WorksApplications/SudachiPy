@@ -14,7 +14,7 @@
 
 import mmap
 
-from . import SYSTEM_DICT_VERSION_1, SYSTEM_DICT_VERSION_2, USER_DICT_VERSION_1, USER_DICT_VERSION_2
+from .dictionaryversion import has_grammar, has_synonym_group_ids, is_dictionary
 from .dictionaryheader import DictionaryHeader
 from .doublearraylexicon import DoubleArrayLexicon
 from .grammar import Grammar
@@ -35,14 +35,14 @@ class BinaryDictionary(object):
         offset = 0
         header = DictionaryHeader.from_bytes(bytes_, offset)
         offset += header.storage_size()
-        if header.version not in [SYSTEM_DICT_VERSION_1, SYSTEM_DICT_VERSION_2, USER_DICT_VERSION_1, USER_DICT_VERSION_2]:
+        if not is_dictionary(header.version):
             raise Exception('invalid dictionary version')
         grammar = None
-        if header.is_system_dictionary() or header.version == USER_DICT_VERSION_2:
+        if has_grammar(header.version):
             grammar = Grammar(bytes_, offset)
             offset += grammar.get_storage_size()
 
-        lexicon = DoubleArrayLexicon(bytes_, offset, header.version == SYSTEM_DICT_VERSION_2)
+        lexicon = DoubleArrayLexicon(bytes_, offset, has_synonym_group_ids(header.version))
         return bytes_, grammar, header, lexicon
 
     @classmethod

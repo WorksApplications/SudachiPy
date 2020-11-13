@@ -68,11 +68,15 @@ class TestTokenizer(unittest.TestCase):
     def test_get_synonym_group_ids(self):
         ms = self.tokenizer_obj.tokenize('京都')
         self.assertEqual(1, ms.size())
-        # self.assertEqual([1, 5], ms[0].synonym_group_ids())
+        self.assertEqual([1, 5], ms[0].synonym_group_ids())
 
         ms = self.tokenizer_obj.tokenize('ぴらる')
         self.assertEqual(1, ms.size())
         self.assertEqual([], ms[0].synonym_group_ids())
+
+        ms = self.tokenizer_obj.tokenize('東京府')
+        self.assertEqual(1, ms.size())
+        self.assertEqual([1, 3], ms[0].synonym_group_ids())
 
     def test_tokenize_kanji_alphabet_word(self):
         self.assertEqual(len(self.tokenizer_obj.tokenize('特a')), 1)

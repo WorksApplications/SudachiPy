@@ -24,7 +24,7 @@ from . import dictionary
 from . import tokenizer
 from .config import set_default_dict_package, settings, unlink_default_dict_package
 from .dictionarylib import BinaryDictionary
-from .dictionarylib import SYSTEM_DICT_VERSION_2, USER_DICT_VERSION_2
+from .dictionarylib import SYSTEM_DICT_VERSION_2, USER_DICT_VERSION_3
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
 from .dictionarylib.dictionaryheader import DictionaryHeader
 from .dictionarylib.userdictionarybuilder import UserDictionaryBuilder
@@ -106,7 +106,7 @@ def _command_user_build(args, print_usage):
     _system_dic_checker(args, print_usage)
     _input_files_checker(args, print_usage)
     header = DictionaryHeader(
-        USER_DICT_VERSION_2, int(time.time()), args.description)
+        USER_DICT_VERSION_3, int(time.time()), args.description)
     dict_ = BinaryDictionary.from_system_dictionary(args.system_dic)
     with open(args.out_file, 'wb') as wf:
         wf.write(header.to_bytes())
