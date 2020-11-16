@@ -20,7 +20,7 @@ from io import StringIO
 from logging import getLogger
 from unittest import TestCase, mock
 
-from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
+from sudachipy.dictionarylib import SYSTEM_DICT_VERSION_2
 from sudachipy.dictionarylib.dictionarybuilder import DictionaryBuilder
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib.lexicon import Lexicon
@@ -36,9 +36,9 @@ class TestDictionaryBuilder(TestCase):
             wf.write('1 1\n0 0 200\n')
         self.input_path = os.path.join(self.test_dir, 'input.txt')
         with open(self.input_path, 'w', encoding='utf-8') as wf:
-            wf.write("東京都,0,0,0,東京都,名詞,固有名詞,地名,一般,*,*,ヒガシキョウト,東京都,*,B,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/2\",*,1/2\n")
-            wf.write("東,-1,-1,0,東,名詞,普通名詞,一般,*,*,*,ヒガシ,ひがし,*,A,*,*,*\n")
-            wf.write("京都,0,0,0,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*\n")
+            wf.write("東京都,0,0,0,東京都,名詞,固有名詞,地名,一般,*,*,ヒガシキョウト,東京都,*,B,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/2\",*,1/2,1/2\n")
+            wf.write("東,-1,-1,0,東,名詞,普通名詞,一般,*,*,*,ヒガシ,ひがし,*,A,*,*,*,*\n")
+            wf.write("京都,0,0,0,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*,*\n")
         self.logger = getLogger()
         self.logger.disabled = True
 
@@ -48,7 +48,7 @@ class TestDictionaryBuilder(TestCase):
     def test_parseline(self):
         builder = DictionaryBuilder(logger=self.logger)
         entry = builder.parse_line(
-            '京都,6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'.split(','))
+            '京都,6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*,*'.split(','))
         self.assertEqual('京都', entry.headword)
         self.assertEqual([6, 6, 5293], entry.parameters)
         self.assertEqual(0, entry.wordinfo.pos_id)
@@ -56,9 +56,14 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual('*', entry.bunit_split_string)
 
         entry = builder.parse_line(
-            '京都,-1,-1,0,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'.split(','))
+            '京都,-1,-1,0,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*,*'.split(','))
         self.assertIsNone(entry.headword)
         self.assertEqual(0, entry.wordinfo.pos_id)
+
+        # Synonym GID field is optional
+        entry = builder.parse_line(
+            '京都,6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'.split(','))
+        self.assertEqual(0, len(entry.wordinfo.synonym_group_ids))
 
     def test_parse_line_invalid_columns(self):
         builder = DictionaryBuilder(logger=self.logger)
@@ -69,13 +74,13 @@ class TestDictionaryBuilder(TestCase):
     def test_parse_line_empty_headword(self):
         builder = DictionaryBuilder(logger=self.logger)
         with self.assertRaises(ValueError) as cm:
-            builder.parse_line(',6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'.split(','))
+            builder.parse_line(',6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*,*'.split(','))
         self.assertEqual('headword is empty', cm.exception.args[0])
 
     def test_parse_line_toolong_headword(self):
         builder = DictionaryBuilder(logger=self.logger)
         x = 'a' * (32767 + 1)  # max value of short in Java + 1
-        x = x + ',6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*'
+        x = x + ',6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*,*'
         with self.assertRaises(ValueError) as cm:
             builder.parse_line(x.split(','))
         self.assertEqual('string is too long', cm.exception.args[0])
@@ -83,12 +88,12 @@ class TestDictionaryBuilder(TestCase):
     def test_parse_line_toomany_split(self):
         builder = DictionaryBuilder(logger=self.logger)
         with self.assertRaises(ValueError) as cm:
-            builder.parse_line('京都,6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,B,0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0,*,*'.split(','))
+            builder.parse_line('京都,6,6,5293,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,B,0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0/0/1/2/3/4/5/6/7/8/9/0,*,*,*'.split(','))
         self.assertEqual('too many units', cm.exception.args[0])
 
     def test_parse_line_same_readingform(self):
         builder = DictionaryBuilder(logger=self.logger)
-        entry = builder.parse_line('〒,6,6,5293,〒,名詞,普通名詞,一般,*,*,*,〒,〒,*,A,*,*,*'.split(','))
+        entry = builder.parse_line('〒,6,6,5293,〒,名詞,普通名詞,一般,*,*,*,〒,〒,*,A,*,*,*,*'.split(','))
         self.assertEqual('〒', entry.wordinfo.reading_form)
 
     def test_add_to_trie(self):
@@ -198,7 +203,7 @@ class TestDictionaryBuilder(TestCase):
         lexicon_paths = [self.input_path]
         matrix_input_stream = open(self.matrix_path, 'r', encoding='utf-8')
 
-        header = DictionaryHeader(SYSTEM_DICT_VERSION, int(time.time()), 'test')
+        header = DictionaryHeader(SYSTEM_DICT_VERSION_2, int(time.time()), 'test')
         out_stream.write(header.to_bytes())
         builder = DictionaryBuilder(logger=self.logger)
         builder.build(lexicon_paths, matrix_input_stream, out_stream)
@@ -209,7 +214,7 @@ class TestDictionaryBuilder(TestCase):
         lexicon = lexicon_set.lexicons[0]
 
         # header
-        self.assertEqual(SYSTEM_DICT_VERSION, header.version)
+        self.assertEqual(SYSTEM_DICT_VERSION_2, header.version)
         self.assertEqual('test', header.description)
 
         # grammar
@@ -229,6 +234,7 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual(0, wi.pos_id)
         self.assertEqual([1, 2], wi.a_unit_split)
         self.assertEqual([], wi.b_unit_split)
+        self.assertEqual([1, 2], wi.synonym_group_ids)
         lst = lexicon.lookup('東京都'.encode('utf-8'), 0)
         self.assertEqual((0, len('東京都'.encode('utf-8'))), lst.__next__())
         with self.assertRaises(StopIteration):
@@ -266,12 +272,12 @@ class TestDictionaryBuilder(TestCase):
 
         offset = 0
         header = dictionarylib.dictionaryheader.DictionaryHeader.from_bytes(bytes_, offset)
-        if header.version != SYSTEM_DICT_VERSION:
+        if not header.is_system_dictionary():
             raise Exception("invalid system dictionary")
         offset += header.storage_size()
 
         grammar = dictionarylib.grammar.Grammar(bytes_, offset)
         offset += grammar.get_storage_size()
 
-        lexicon = dictionarylib.lexiconset.LexiconSet(dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, offset))
+        lexicon = dictionarylib.lexiconset.LexiconSet(dictionarylib.doublearraylexicon.DoubleArrayLexicon(bytes_, offset, header.version == SYSTEM_DICT_VERSION_2))
         return buffers, header, grammar, lexicon

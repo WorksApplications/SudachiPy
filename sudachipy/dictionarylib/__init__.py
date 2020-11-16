@@ -18,5 +18,7 @@ from . import categorytype
 from . import lexiconset
 from . import doublearraylexicon
 from . import dictionaryheader
-from .dictionaryversion import SYSTEM_DICT_VERSION, USER_DICT_VERSION_1, USER_DICT_VERSION_2
+from .dictionaryversion import (
+    SYSTEM_DICT_VERSION_1, SYSTEM_DICT_VERSION_2, USER_DICT_VERSION_1, USER_DICT_VERSION_2, USER_DICT_VERSION_3,
+)
 from .binarydictionary import BinaryDictionary

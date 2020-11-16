@@ -64,6 +64,10 @@ class Morpheme:
     def dictionary_id(self):
         return self.list.path[self.index].get_dictionary_id()
 
+    def synonym_group_ids(self):
+        wi = self.get_word_info()
+        return wi.synonym_group_ids
+
     def get_word_info(self):
         if not self.word_info:
             self.word_info = self.list.get_word_info(self.index)

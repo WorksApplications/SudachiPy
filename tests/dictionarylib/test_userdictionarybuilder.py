@@ -19,7 +19,7 @@ import time
 from logging import getLogger
 from unittest import TestCase
 
-from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
+from sudachipy.dictionarylib import SYSTEM_DICT_VERSION_2
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib.userdictionarybuilder import UserDictionaryBuilder
 
@@ -45,7 +45,7 @@ class TestUserDictionaryBuilder(TestCase):
 
     def test_parseline_with_userdefined_POS(self):
         builder = UserDictionaryBuilder(self.grammar, self.lexicon_set, logger=self.logger)
-        builder.parse_line('田中,0,0,0,田中,存在,しない,品詞,*,*,*,タナカ,田中,*,A,*,*,*\n'.split(','))
+        builder.parse_line('田中,0,0,0,田中,存在,しない,品詞,*,*,*,タナカ,田中,*,A,*,*,*,*'.split(','))
         self.assertEqual(1, len(builder.pos_table.get_list()))
 
     def test_build(self):
@@ -56,11 +56,11 @@ class TestUserDictionaryBuilder(TestCase):
         # lexicon_paths = [self.input_path]
         # matrix_input_stream = open(self.matrix_path, 'r')
         with open(in_path, 'w', encoding='utf-8') as wf:
-            wf.write("東京都市,0,0,0,東京都市,名詞,固有名詞,地名,一般,*,*,ヒガシキョウトシ,東京都市,*,B,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/3/U1\",*,\"4/3/市,名詞,普通名詞,一般,*,*,*,シ\"\n")
-            wf.write('市,-1,-1,0,市,名詞,普通名詞,一般,*,*,*,シ,市,*,A,*,*,*\n')
+            wf.write("東京都市,0,0,0,東京都市,名詞,固有名詞,地名,一般,*,*,ヒガシキョウトシ,東京都市,*,B,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/3/U1\",*,\"4/3/市,名詞,普通名詞,一般,*,*,*,シ\",*\n")
+            wf.write('市,-1,-1,0,市,名詞,普通名詞,一般,*,*,*,シ,市,*,A,*,*,*,*\n')
 
         _, _, grammar, lexicon_set = TestDictionaryBuilder.read_system_dictionary(self.dict_filename)
-        header = DictionaryHeader(SYSTEM_DICT_VERSION, int(time.time()), 'test')
+        header = DictionaryHeader(SYSTEM_DICT_VERSION_2, int(time.time()), 'test')
         out_stream.write(header.to_bytes())
         builder = UserDictionaryBuilder(grammar, lexicon_set, logger=self.logger)
         lexicon_paths = [in_path]
@@ -71,7 +71,7 @@ class TestUserDictionaryBuilder(TestCase):
         lexicon = lexicon_set.lexicons[0]
 
         # header
-        self.assertEqual(SYSTEM_DICT_VERSION, header.version)
+        self.assertEqual(SYSTEM_DICT_VERSION_2, header.version)
         self.assertEqual('test', header.description)
 
         # lexicon

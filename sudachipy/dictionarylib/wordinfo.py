@@ -24,7 +24,8 @@ class WordInfo:
                  reading_form,
                  a_unit_split,
                  b_unit_split,
-                 word_structure):
+                 word_structure,
+                 synonym_group_ids):
         self.surface = surface
         self.head_word_length = head_word_length
         self.pos_id = pos_id
@@ -35,6 +36,7 @@ class WordInfo:
         self.a_unit_split = a_unit_split
         self.b_unit_split = b_unit_split
         self.word_structure = word_structure
+        self.synonym_group_ids = synonym_group_ids
 
     def length(self):
         return self.head_word_length

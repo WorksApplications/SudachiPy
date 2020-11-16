@@ -92,7 +92,7 @@ class MeCabOovPlugin(OovProviderPlugin):
         node.set_parameter(oov.left_id, oov.right_id, oov.cost)
         info = wordinfo.WordInfo(surface=text, head_word_length=length, pos_id=oov.pos_id, normalized_form=text,
                                  dictionary_form_word_id=-1, dictionary_form=text, reading_form="",
-                                 a_unit_split=[], b_unit_split=[], word_structure=[])
+                                 a_unit_split=[], b_unit_split=[], word_structure=[], synonym_group_ids=[])
         node.set_word_info(info)
         return node
 

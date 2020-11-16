@@ -32,7 +32,7 @@ class DoubleArrayLexicon(Lexicon):
     word_id_table = None
     word_params = None
 
-    def __init__(self, bytes_: mmap.mmap, offset: int):
+    def __init__(self, bytes_: mmap.mmap, offset: int, has_synonym_gid: bool):
         self.trie = DoubleArray()
         bytes_.seek(offset)
         size = int.from_bytes(bytes_.read(4), 'little')
@@ -48,7 +48,7 @@ class DoubleArrayLexicon(Lexicon):
         self.word_params = wordparameterlist.WordParameterList(bytes_, offset)
         offset += self.word_params.storage_size()
 
-        self.word_infos = wordinfolist.WordInfoList(bytes_, offset, self.word_params.get_size())
+        self.word_infos = wordinfolist.WordInfoList(bytes_, offset, self.word_params.get_size(), has_synonym_gid)
 
     def __del__(self):
         del self.word_params

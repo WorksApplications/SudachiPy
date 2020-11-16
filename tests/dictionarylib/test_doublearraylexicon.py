@@ -16,7 +16,6 @@ import mmap
 import os
 import unittest
 
-from sudachipy.dictionarylib import SYSTEM_DICT_VERSION
 from sudachipy.dictionarylib.dictionaryheader import DictionaryHeader
 from sudachipy.dictionarylib.doublearraylexicon import DoubleArrayLexicon
 
@@ -35,9 +34,9 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         with open(filename, 'rb') as system_dic:
             bytes_ = mmap.mmap(system_dic.fileno(), 0, access=mmap.ACCESS_READ)
         header = DictionaryHeader.from_bytes(bytes_, 0)
-        if header.version != SYSTEM_DICT_VERSION:
+        if not header.is_system_dictionary():
             raise Exception('invalid system dictionary')
-        self.lexicon = DoubleArrayLexicon(bytes_, header.storage_size() + 470)
+        self.lexicon = DoubleArrayLexicon(bytes_, header.storage_size() + 470, True)
 
     def test_lookup(self):
         res = self.lexicon.lookup('東京都'.encode('utf-8'), 0)
@@ -103,6 +102,7 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         self.assertEqual([5, 9], wi.a_unit_split)
         self.assertEqual([], wi.b_unit_split)
         self.assertEqual([5, 9], wi.word_structure)
+        self.assertEqual([], wi.synonym_group_ids)
 
     def test_wordinfo_with_longword(self):
         # 0123456789 * 30
@@ -115,7 +115,7 @@ class TestDoubleArrayLexicon(unittest.TestCase):
         self.assertEqual(570, len(wi.reading_form))
 
     def test_size(self):
-        self.assertEqual(38, self.lexicon.size())
+        self.assertEqual(39, self.lexicon.size())
 
 
 if __name__ == '__main__':
