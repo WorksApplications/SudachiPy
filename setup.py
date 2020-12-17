@@ -31,7 +31,7 @@ setup(name="SudachiPy",
       url="https://github.com/WorksApplications/SudachiPy",
       license="Apache-2.0",
       author="Works Applications",
-      author_email="takaoka_k@worksap.co.jp",
+      author_email="sudachi@worksap.co.jp",
       packages=find_packages(include=["sudachipy", "sudachipy.*"]),
       package_data={"": ["resources/*.json", "resources/*.dic", "resources/*.def"]},
       entry_points={
