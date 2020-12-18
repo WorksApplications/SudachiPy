@@ -4,6 +4,8 @@
 [![Build Status](https://travis-ci.com/WorksApplications/SudachiPy.svg?branch=develop)](https://travis-ci.com/WorksApplications/SudachiPy)
 [![](https://img.shields.io/github/license/WorksApplications/SudachiPy.svg)](https://github.com/WorksApplications/SudachiPy/blob/develop/LICENSE)
 
+[日本語](/docs/tutorial.md)
+
 SudachiPy is a Python version of [Sudachi](https://github.com/WorksApplications/Sudachi), a Japanese morphological analyzer.
 
 
