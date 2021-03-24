@@ -1,4 +1,5 @@
 {
+    "systemDict" : "",
     "characterDefinitionFile" : "char.def",
     "inputTextPlugin" : [
         { "class" : "sudachipy.plugin.input_text.DefaultInputTextPlugin" },

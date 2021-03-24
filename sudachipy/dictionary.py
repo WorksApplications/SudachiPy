@@ -22,10 +22,14 @@ from .plugin.path_rewrite import get_path_rewrite_plugins
 from .tokenizer import Tokenizer
 
 
+class UndefinedDictionaryError(Exception):
+    pass
+
+
 class Dictionary:
 
-    def __init__(self, config_path=None, resource_dir=None):
-        config.settings.set_up(config_path, resource_dir)
+    def __init__(self, config_path=None, resource_dir=None, dict_type=None):
+        config.settings.set_up(config_path, resource_dir, dict_type)
         self.grammar = None
         self.lexicon = None
         self.input_text_plugins = []
@@ -62,7 +66,7 @@ class Dictionary:
 
     def _read_system_dictionary(self, filename):
         if filename is None:
-            raise AttributeError("system dictionary is not specified")
+            raise ValueError("system dictionary is not specified")
         dict_ = BinaryDictionary.from_system_dictionary(filename)
         self.dictionaries.append(dict_)
         self.grammar = dict_.grammar

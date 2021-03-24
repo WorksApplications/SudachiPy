@@ -22,7 +22,7 @@ import time
 from . import __version__
 from . import dictionary
 from . import tokenizer
-from .config import set_default_dict_package, settings, unlink_default_dict_package
+from .config import settings
 from .dictionarylib import BinaryDictionary
 from .dictionarylib import SYSTEM_DICT_VERSION_2, USER_DICT_VERSION_3
 from .dictionarylib.dictionarybuilder import DictionaryBuilder
@@ -125,22 +125,6 @@ def _command_build(args, print_usage):
         builder.build(args.in_files, rf, wf)
 
 
-def _command_link(args, print_usage):
-    output = sys.stdout
-    if args.unlink:
-        unlink_default_dict_package(output=output)
-        return
-
-    dict_package = 'sudachidict_' + args.dict_type
-    try:
-        return set_default_dict_package(dict_package, output=output)
-    except ImportError:
-        print('Package `{0}` does not exist.\n'
-              'You may install it with a command `$ pip install {0}`'
-              .format(dict_package), file=sys.stderr)
-        exit(1)
-
-
 def _command_tokenize(args, print_usage):
     if args.version:
         print_version()
@@ -169,7 +153,11 @@ def _command_tokenize(args, print_usage):
     enable_dump = args.d
 
     try:
-        dict_ = dictionary.Dictionary(config_path=args.fpath_setting)
+        if args.system_dict_type is not None:
+            print("args.system_dict_type", args.system_dict_type, flush=True)
+            dict_ = dictionary.Dictionary(config_path=args.fpath_setting, dict_type=args.system_dict_type)
+        else:
+            dict_ = dictionary.Dictionary(config_path=args.fpath_setting)
         tokenizer_obj = dict_.create()
         input_ = fileinput.input(args.in_files, openhook=fileinput.hook_encoded("utf-8"))
         run(tokenizer_obj, mode, input_, print_all, stdout_logger, enable_dump)
@@ -192,17 +180,13 @@ def main():
     parser_tk.add_argument("-r", dest="fpath_setting", metavar="file", help="the setting file in JSON format")
     parser_tk.add_argument("-m", dest="mode", choices=["A", "B", "C"], default="C", help="the mode of splitting")
     parser_tk.add_argument("-o", dest="fpath_out", metavar="file", help="the output file")
+    parser_tk.add_argument("-s", dest="system_dict_type", metavar='string', choices=["small", "core", "full"],
+                           help="sudachidict type")
     parser_tk.add_argument("-a", action="store_true", help="print all of the fields")
     parser_tk.add_argument("-d", action="store_true", help="print the debug information")
     parser_tk.add_argument("-v", "--version", action="store_true", dest="version", help="print sudachipy version")
     parser_tk.add_argument("in_files", metavar="file", nargs=argparse.ZERO_OR_MORE, help='text written in utf-8')
     parser_tk.set_defaults(handler=_command_tokenize, print_usage=parser_tk.print_usage)
-
-    # link default dict package
-    parser_ln = subparsers.add_parser('link', help='see `link -h`', description='Link Default Dict Package')
-    parser_ln.add_argument("-t", dest="dict_type", choices=["small", "core", "full"], default="core", help="dict dict")
-    parser_ln.add_argument("-u", dest="unlink", action="store_true", help="unlink sudachidict")
-    parser_ln.set_defaults(handler=_command_link, print_usage=parser_ln.print_usage)
 
     # build dictionary parser
     parser_bd = subparsers.add_parser('build', help='see `build -h`', description='Build Sudachi Dictionary')
