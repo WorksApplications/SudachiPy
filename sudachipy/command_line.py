@@ -154,7 +154,6 @@ def _command_tokenize(args, print_usage):
 
     try:
         if args.system_dict_type is not None:
-            print("args.system_dict_type", args.system_dict_type, flush=True)
             dict_ = dictionary.Dictionary(config_path=args.fpath_setting, dict_type=args.system_dict_type)
         else:
             dict_ = dictionary.Dictionary(config_path=args.fpath_setting)
