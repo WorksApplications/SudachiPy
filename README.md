@@ -70,7 +70,8 @@ EOS
 
 ```bash
 $ sudachipy tokenize -h
-usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d] [-v]
+usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-s string]
+                          [-a] [-d] [-v]
                           [file [file ...]]
 
 Tokenize Text
@@ -83,6 +84,7 @@ optional arguments:
   -r file        the setting file in JSON format
   -m {A,B,C}     the mode of splitting
   -o file        the output file
+  -s string      sudachidict type
   -a             print all of the fields
   -d             print the debug information
   -v, --version  print sudachipy version
@@ -175,33 +177,71 @@ tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 
 ## Dictionary Edition
 
+**WARNING: `sudachipy link` is no longer available in SudachiPy v0.5.2 and later. **
+
+
 There are three editions of Sudachi Dictionary, namely, `small`, `core`, and `full`. See [WorksApplications/SudachiDict](https://github.com/WorksApplications/SudachiDict) for the detail.
 
-SudachiPy uses `sudachidict_core` by default. You can specify the dictionary with the `link -t` command.
+SudachiPy uses `sudachidict_core` by default. 
 
-```bash
-$ pip install sudachidict_small
-$ sudachipy link -t small
-```
-
-```bash
-$ pip install sudachidict_full
-$ sudachipy link -t full
-```
-
-You can remove the dictionary link with the `link -u` commnad.
-
-```bash
-$ sudachipy link -u
-```
-
-Dictionaries are installed as Python packages `sudachidict_small`, `sudachidict_core`, and `sudachidict_full`. SudachiPy tries to refer `sudachidict` package to use a dictionary. The `link` subcommand creates *a symbolic link* of `sudachidict_*` as `sudachidict`, to switch the packages.
+Dictionaries are installed as Python packages `sudachidict_small`, `sudachidict_core`, and `sudachidict_full`.
 
 * [SudachiDict-small · PyPI](https://pypi.org/project/SudachiDict-small/)
 * [SudachiDict-core · PyPI](https://pypi.org/project/SudachiDict-core/)
 * [SudachiDict-full · PyPI](https://pypi.org/project/SudachiDict-full/)
 
 The dictionary files are not in the package itself, but it is downloaded upon installation.
+
+### Dictionary option: command line
+
+You can specify the dictionary with the tokenize option `-s`.
+
+```bash
+$ pip install sudachidict_small
+$ echo "外国人参政権" | sudachipy -s small
+```
+
+```bash
+$ pip install sudachidict_full
+$ echo "外国人参政権" | sudachipy -s full
+```
+
+### Dictionary option: Python package
+
+You can specify the dictionary with the `Dicionary()` argument; `config_path` or `dict_type`.
+
+```python
+class Dictionary(config_path=None, resource_dir=None, dict_type=None)
+```
+
+1. `config_path`
+    * You can specify the file path to the setting file with `config_path` (See [Dictionary in The Setting File](#Dictionary in The Setting File) for the detail).
+    * If the dictionary file is specified in the setting file as `systemDict`, SudachiPy will use the dictionary.
+2. `dict_type`
+    * You can also specify the dictionary type with `dict_type`.
+    * The available arguments are `small`, `core`, or `full`.
+    * If different dictionaries are specified with `config_path` and `dict_type`, **a dictionary defined `dict_type` overrides** those defined in the config path.
+
+```python
+from sudachipy import tokenizer
+from sudachipy import dictionary
+
+# default: sudachidict_core
+tokenizer_obj = dictionary.Dictionary().create()  
+
+# The dictionary given by the `systemDict` key in the config file (/path/to/sudachi.json) will be used
+tokenizer_obj = dictionary.Dictionary(config_path="/path/to/sudachi.json").create()  
+
+# The dictionary specified by `dict_type` will be set.
+tokenizer_obj = dictionary.Dictionary(dict_type="core").create()  # sudachidict_core (same as default)
+tokenizer_obj = dictionary.Dictionary(dict_type="small").create()  # sudachidict_small
+tokenizer_obj = dictionary.Dictionary(dict_type="full").create()  # sudachidict_full
+
+# The dictionary specified by `dict_type` overrides those defined in the config path.
+# In the following code, `sudachidict_full` will be used regardless of a dictionary defined in the config file. 
+tokenizer_obj = dictionary.Dictionary(config_path="/path/to/sudachi.json", dict_type="full").create()  
+```
+
 
 ### Dictionary in The Setting File
 
@@ -256,7 +296,7 @@ optional arguments:
   -h, --help  show this help message and exit
   -d string   description comment to be embedded on dictionary
   -o file     output file (default: user.dic)
-  -s file     system dictionary (default: linked system_dic, see link -h)
+  -s file     system dictionary (default: core dic)
 ```
 
 About the dictionary file format, please refer to [this document](https://github.com/WorksApplications/Sudachi/blob/develop/docs/user_dict.md) (written in Japanese, English version is not available yet).

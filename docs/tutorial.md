@@ -70,7 +70,8 @@ EOS
 
 ```bash
 $ sudachipy tokenize -h
-usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-a] [-d] [-v]
+usage: sudachipy tokenize [-h] [-r file] [-m {A,B,C}] [-o file] [-s string]
+                          [-a] [-d] [-v]
                           [file [file ...]]
 
 Tokenize Text
@@ -83,6 +84,7 @@ optional arguments:
   -r file        the setting file in JSON format
   -m {A,B,C}     the mode of splitting
   -o file        the output file
+  -s string      sudachidict type
   -a             print all of the fields
   -d             print the debug information
   -v, --version  print sudachipy version
@@ -170,28 +172,14 @@ tokenizer_obj.tokenize("シュミレーション", mode)[0].normalized_form()
 (これは `20200330` `core` 辞書による出力例です。 辞書のバージョンによって変わる可能性があります。)
 
 ## 辞書の種類
+
+**WARNING: `sudachipy link` コマンドは SudachiPy v0.5.2 以降から利用できなくなりました. **
+
 Sudachi辞書は`small`と`core`と`full`の3種類があります。 詳細は[WorksApplications/SudachiDict](https://github.com/WorksApplications/SudachiDict)を参照してください。
 
-SudachiPyはデフォルトでは`sudachidict_core`に設定されています。辞書設定の変更は`link -t`コマンドによって行えます。
+SudachiPyはデフォルトでは`sudachidict_core`に設定されています。
 
-
-```bash
-$ pip install sudachidict_small
-$ sudachipy link -t small
-```
-
-```bash
-$ pip install sudachidict_full
-$ sudachipy link -t full
-```
-
-`link -u`によってリンクを削除するとデフォルトの`sudachidict_core`を使用します。
-
-```bash
-$ sudachipy link -u
-```
-
-`sudachidict_small`, `sudachidict_core`, `sudachidict_full`はPythonのパッケージとしてインストールされます。 SudachiPyは辞書を使用するとき`sudachidict` パッケージを参照します。 `link` によって`sudachidict_*`を`sudachidict`として参照するための *symbolic link* が作られます。
+`sudachidict_small`, `sudachidict_core`, `sudachidict_full`はPythonのパッケージとしてインストールされます。
 
 * [SudachiDict-small · PyPI](https://pypi.org/project/SudachiDict-small/)
 * [SudachiDict-core · PyPI](https://pypi.org/project/SudachiDict-core/)
@@ -199,9 +187,64 @@ $ sudachipy link -u
 
 辞書ファイルはパッケージ自体には含まれていませんが、上記のインストール時にダウンロードする処理が埋め込まれています。
 
+### 辞書オプション: コマンドライン
+
+辞書設定の変更は`-s`オプションで指定することができます。
+
+
+```bash
+$ pip install sudachidict_small
+$ echo "外国人参政権" | sudachipy -s small
+```
+
+```bash
+$ pip install sudachidict_full
+$ echo "外国人参政権" | sudachipy -s full
+```
+
+### 辞書オプション: Python パッケージ
+
+Dictionary の引数 `config_path` または `dict_type` から利用する辞書を指定することができます。
+
+```python
+class Dictionary(config_path=None, resource_dir=None, dict_type=None)
+```
+
+1. `config_path`
+    * `config_path` で辞書の設定ファイルのパスを指定することができます（[辞書の設定ファイル](#辞書の設定ファイル) 参照）。
+    * 指定した辞書の設定ファイルに、辞書のファイルパス `systemDict` が記述されていれば、その辞書を優先して利用します．
+2. `dict_type`
+    * `dict_type` オプションで辞書の種類を直接指定することもできます。
+    * `small`, `core`, `full` の３種類が指定可能です。
+    * `config_path` と `dict_type` で異なる辞書が指定されている場合、**`dict_type` が優先**されます。 
+
+```python
+from sudachipy import tokenizer
+from sudachipy import dictionary
+
+# デフォルトは sudachidict_core が設定されている
+tokenizer_obj = dictionary.Dictionary().create()  
+
+# /path/to/sudachi.json の systemDict で指定されている辞書が設定される
+tokenizer_obj = dictionary.Dictionary(config_path="/path/to/sudachi.json").create()  
+
+# dict_type で指定された辞書が設定される
+tokenizer_obj = dictionary.Dictionary(dict_type="core").create()  # sudachidict_core （デフォルトと同じ）
+tokenizer_obj = dictionary.Dictionary(dict_type="small").create()  # sudachidict_small
+tokenizer_obj = dictionary.Dictionary(dict_type="full").create()  # sudachidict_full
+
+# dict_type (sudachidict_full) が優先される
+tokenizer_obj = dictionary.Dictionary(config_path="/path/to/sudachi.json", dict_type="full").create()  
+```
+
+
 ### 辞書の設定ファイル
 
 また、`sudachi.json`で辞書ファイルを切り替えることができます。
+
+辞書のファイルパス `systemDict` は、絶対パスと相対パスのどちらでも指定可能です。
+
+相対パスは、辞書の設定ファイルからの相対パスです。
 
 
 ```
@@ -250,7 +293,7 @@ optional arguments:
   -h, --help  show this help message and exit
   -d string   description comment to be embedded on dictionary
   -o file     output file (default: user.dic)
-  -s file     system dictionary (default: linked system_dic, see link -h)
+  -s file     system dictionary (default: core dic)
 ```
 
 辞書ファイル形式については[user_dict.md](https://github.com/WorksApplications/Sudachi/blob/develop/docs/user_dict.md)を参照してください。 
