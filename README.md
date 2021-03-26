@@ -296,7 +296,7 @@ optional arguments:
   -h, --help  show this help message and exit
   -d string   description comment to be embedded on dictionary
   -o file     output file (default: user.dic)
-  -s file     system dictionary (default: core dic)
+  -s file     system dictionary path (default: system core dictionary path)
 ```
 
 About the dictionary file format, please refer to [this document](https://github.com/WorksApplications/Sudachi/blob/develop/docs/user_dict.md) (written in Japanese, English version is not available yet).

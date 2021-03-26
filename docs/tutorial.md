@@ -293,7 +293,7 @@ optional arguments:
   -h, --help  show this help message and exit
   -d string   description comment to be embedded on dictionary
   -o file     output file (default: user.dic)
-  -s file     system dictionary (default: core dic)
+  -s file     system dictionary path (default: system core dictionary path)
 ```
 
 辞書ファイル形式については[user_dict.md](https://github.com/WorksApplications/Sudachi/blob/develop/docs/user_dict.md)を参照してください。 

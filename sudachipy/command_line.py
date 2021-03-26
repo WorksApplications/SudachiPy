@@ -207,7 +207,7 @@ def main():
     parser_ubd.add_argument('-o', dest='out_file', metavar='file', default='user.dic',
                             help='output file (default: user.dic)')
     parser_ubd.add_argument('-s', dest='system_dic', metavar='file', required=False,
-                            help='system dictionary (default: core dic)')
+                            help='system dictionary path (default: system core dictionary path)')
     parser_ubd.add_argument("in_files", metavar="file", nargs=argparse.ONE_OR_MORE,
                             help='source files with CSV format (one or more)')
     parser_ubd.set_defaults(handler=_command_user_build, print_usage=parser_ubd.print_usage)
