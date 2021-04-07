@@ -91,7 +91,7 @@ class DictionaryBuilder(object):
         line_no = -1
         try:
             for i, row in enumerate(csv.reader(lexicon_input_stream)):
-                line_no = -1
+                line_no = i
                 entry = self.parse_line(row)
                 if entry.headword:
                     self.add_to_trie(entry.headword, len(self.entries))
