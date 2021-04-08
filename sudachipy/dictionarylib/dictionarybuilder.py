@@ -97,7 +97,7 @@ class DictionaryBuilder(object):
                     self.add_to_trie(entry.headword, len(self.entries))
                 self.entries.append(entry)
         except Exception as e:
-            if line_no > 0:
+            if line_no >= 0:
                 self.logger.error(
                     '{} at line {} in {}\n'.format(e.args[0], line_no, lexicon_input_stream.name))
             raise e
