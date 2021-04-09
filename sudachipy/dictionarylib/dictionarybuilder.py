@@ -91,13 +91,13 @@ class DictionaryBuilder(object):
         line_no = -1
         try:
             for i, row in enumerate(csv.reader(lexicon_input_stream)):
-                line_no = -1
+                line_no = i
                 entry = self.parse_line(row)
                 if entry.headword:
                     self.add_to_trie(entry.headword, len(self.entries))
                 self.entries.append(entry)
         except Exception as e:
-            if line_no > 0:
+            if line_no >= 0:
                 self.logger.error(
                     '{} at line {} in {}\n'.format(e.args[0], line_no, lexicon_input_stream.name))
             raise e
