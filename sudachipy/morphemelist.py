@@ -23,11 +23,12 @@ class MorphemeList:
     def empty(cls):
         return MorphemeList(None, None, None, [])
 
-    def __init__(self, input_, grammar, lexicon, path):
+    def __init__(self, input_, grammar, lexicon, path, chikkar):
         self.input_text = input_
         self.grammar = grammar
         self.lexicon = lexicon
         self.path = path
+        self.chikkar = chikkar
 
     def __getitem__(self, index):
         n_morphs = len(self.path)

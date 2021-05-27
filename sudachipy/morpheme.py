@@ -68,6 +68,12 @@ class Morpheme:
         wi = self.get_word_info()
         return wi.synonym_group_ids
 
+    def chikkar(self):
+        return self.list.chikkar
+
+    def synonyms(self):
+        return self.list.chikkar.find(self.normalized_form(), group_ids=self.synonym_group_ids())
+
     def get_word_info(self):
         if not self.word_info:
             self.word_info = self.list.get_word_info(self.index)

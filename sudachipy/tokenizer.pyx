@@ -17,6 +17,9 @@ import os
 from enum import Enum
 from typing import List
 
+from chikkarpy import Chikkar
+from chikkarpy.dictionarylib import Dictionary as SynDic
+
 from .dictionarylib.categorytype import CategoryType
 from .dictionarylib.grammar import Grammar
 from .dictionarylib.lexicon import Lexicon
@@ -114,6 +117,7 @@ class Tokenizer:
         self._mode = mode or self.SplitMode.C
         self._logger = logging.getLogger(__name__)
         self._logger.disabled = True
+        self._chikkar = None
         if self._oov_provider_plugins:
             self.default_oov_provider = self._oov_provider_plugins[-1]
 
@@ -163,7 +167,7 @@ class Tokenizer:
         self._dump_path(path, logger)
         logger.info('===')
 
-        ml = MorphemeList(input_, self._grammar, self._lexicon, path)
+        ml = MorphemeList(input_, self._grammar, self._lexicon, path, self._chikkar)
         return ml
 
     def _build_lattice(self, input_: UTF8InputText):
@@ -195,3 +199,11 @@ class Tokenizer:
             return
         for i, node in enumerate(path):
             logger.info('{}: {}￿'.format(i, node))
+
+    def set_chikkar(self, chikkar=None):
+        if chikkar is None:
+            chikkar = Chikkar()
+            system_synonym_dic = SynDic(enable_trie=False)
+            chikkar.add_dictionary(SynDic)
+
+        self._chikkar = chikkar
