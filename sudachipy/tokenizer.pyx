@@ -203,7 +203,7 @@ class Tokenizer:
     def set_chikkar(self, chikkar=None):
         if chikkar is None:
             chikkar = Chikkar()
-            system_synonym_dic = SynDic(enable_trie=False)
-            chikkar.add_dictionary(SynDic)
+            system_synonym_dic = SynDic(filename=None, enable_trie=False)
+            chikkar.add_dictionary(system_synonym_dic)
 
         self._chikkar = chikkar
