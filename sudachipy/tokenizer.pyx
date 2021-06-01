@@ -15,10 +15,9 @@
 import logging
 import os
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from chikkarpy import Chikkar
-from chikkarpy.dictionarylib import Dictionary as SynDic
 
 from .dictionarylib.categorytype import CategoryType
 from .dictionarylib.grammar import Grammar
@@ -106,6 +105,7 @@ class Tokenizer:
 
     def __init__(self, grammar: Grammar, lexicon: Lexicon, input_text_plugins: List[InputTextPlugin],
                  oov_provider_plugins: List, path_rewrite_plugins: List[PathRewritePlugin],
+                 chikkar: Optional[Chikkar],
                  mode: SplitMode = None):
         self._grammar = grammar
         self._lexicon = lexicon
@@ -117,7 +117,7 @@ class Tokenizer:
         self._mode = mode or self.SplitMode.C
         self._logger = logging.getLogger(__name__)
         self._logger.disabled = True
-        self._chikkar = None
+        self._chikkar = chikkar
         if self._oov_provider_plugins:
             self.default_oov_provider = self._oov_provider_plugins[-1]
 
@@ -199,11 +199,3 @@ class Tokenizer:
             return
         for i, node in enumerate(path):
             logger.info('{}: {}￿'.format(i, node))
-
-    def set_chikkar(self, chikkar=None):
-        if chikkar is None:
-            chikkar = Chikkar()
-            system_synonym_dic = SynDic(filename=None, enable_trie=False)
-            chikkar.add_dictionary(system_synonym_dic)
-
-        self._chikkar = chikkar

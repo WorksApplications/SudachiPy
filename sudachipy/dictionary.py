@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from chikkarpy import Chikkar
+from chikkarpy.dictionarylib import Dictionary as SynDic
+
 from . import config
 from . import dictionarylib
 from .dictionarylib.binarydictionary import BinaryDictionary
@@ -38,6 +41,7 @@ class Dictionary:
         self.path_rewrite_plugins = []
         self.dictionaries = []
         self.header = None
+        self.chikkar = None
         self._read_system_dictionary(config.settings.system_dict_path())
 
         # self.edit_connection_plugin = [InhibitConnectionPlugin()]
@@ -99,4 +103,13 @@ class Dictionary:
 
     def create(self, mode=None):
         return Tokenizer(
-            self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, self.path_rewrite_plugins, mode=mode)
+            self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, self.path_rewrite_plugins,
+            self.chikkar, mode=mode)
+
+    def set_chikkar(self, chikkar=None):
+        if chikkar is None:
+            chikkar = Chikkar()
+            system_synonym_dic = SynDic(filename=None, enable_trie=False)
+            chikkar.add_dictionary(system_synonym_dic)
+
+        self.chikkar = chikkar
