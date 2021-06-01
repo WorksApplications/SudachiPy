@@ -21,7 +21,7 @@ class MorphemeList:
 
     @classmethod
     def empty(cls):
-        return MorphemeList(None, None, None, [])
+        return MorphemeList(None, None, None, [], None)
 
     def __init__(self, input_, grammar, lexicon, path, chikkar):
         self.input_text = input_
@@ -83,7 +83,7 @@ class MorphemeList:
             n.set_end(offset)
             nodes.append(n)
 
-        return MorphemeList(self.input_text, self.grammar, self.lexicon, nodes)
+        return MorphemeList(self.input_text, self.grammar, self.lexicon, nodes, self.chikkar)
 
     def is_oov(self, index):
         return self.path[index].is_oov()

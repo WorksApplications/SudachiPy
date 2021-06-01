@@ -82,7 +82,7 @@ class Dictionary:
         dict_ = BinaryDictionary.from_user_dictionary(filename)
         self.dictionaries.append(dict_)
         user_lexicon = dict_.lexicon
-        tokenizer_ = Tokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [])
+        tokenizer_ = Tokenizer(self.grammar, self.lexicon, self.input_text_plugins, self.oov_provider_plugins, [], self.chikkar)
         user_lexicon.calculate_cost(tokenizer_)
         self.lexicon.add(user_lexicon, self.grammar.get_part_of_speech_size())
         if dict_.grammar:
