@@ -329,7 +329,7 @@ class DictionaryBuilder(object):
             else:
                 ids.append(self.word_to_id(word))
                 if ids[-1] < 0:
-                    raise ValueError('not found such a word: {word}')
+                    raise ValueError('not found such a word: {}'.format(word))
         return ids
 
     @staticmethod
