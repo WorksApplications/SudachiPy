@@ -334,7 +334,7 @@ class DictionaryBuilder(object):
 
     @staticmethod
     def __is_id(text):
-        return re.match(r'U?\d+', text)
+        return re.match(r'U?\d+$', text)
 
     def parse_id(self, text):
         if text.startswith('U'):
