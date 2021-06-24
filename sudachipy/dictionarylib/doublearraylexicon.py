@@ -78,7 +78,7 @@ class DoubleArrayLexicon(Lexicon):
         return self.word_params.size
 
     def get_word_id(self, headword: str, pos_id: int, reading_form: str) -> int:
-        for wid in range(self.word_infos.size()):
+        for wid, _ in self.lookup(headword.encode('utf-8'), 0):
             info = self.word_infos.get_word_info(wid)
             if info.surface == headword \
                     and info.pos_id == pos_id \
