@@ -39,6 +39,8 @@ class TestDictionaryBuilder(TestCase):
             wf.write("東京都,0,0,0,東京都,名詞,固有名詞,地名,一般,*,*,ヒガシキョウト,東京都,*,B,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/2\",*,1/2,1/2\n")
             wf.write("東,-1,-1,0,東,名詞,普通名詞,一般,*,*,*,ヒガシ,ひがし,*,A,*,*,*,*\n")
             wf.write("京都,0,0,0,京都,名詞,固有名詞,地名,一般,*,*,キョウト,京都,*,A,*,*,*,*\n")
+            wf.write("1,-1,-1,0,1,名詞,数詞,*,*,*,*,イチ,1,*,A,*,*,*,*\n")
+            wf.write("東1,0,0,0,東1,名詞,普通名詞,一般,*,*,*,ヒガシイチ,東1,*,C,\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/1,名詞,数詞,*,*,*,*,イチ\",\"東,名詞,普通名詞,一般,*,*,*,ヒガシ/U3\",*")
         self.logger = getLogger()
         self.logger.disabled = True
 
@@ -218,13 +220,13 @@ class TestDictionaryBuilder(TestCase):
         self.assertEqual('test', header.description)
 
         # grammar
-        self.assertEqual(2, grammar.get_part_of_speech_size())
+        self.assertEqual(3, grammar.get_part_of_speech_size())
         self.assertEqual(["名詞", "固有名詞", "地名", "一般", "*", "*"], grammar.get_part_of_speech_string(0))
         self.assertEqual(["名詞", "普通名詞", "一般", "*", "*", "*"], grammar.get_part_of_speech_string(1))
         self.assertEqual(200, grammar.get_connect_cost(0, 0))
 
         # lexicon
-        self.assertEqual(3, lexicon.size())
+        self.assertEqual(5, lexicon.size())
         self.assertEqual(0, lexicon.get_cost(0))
         wi = lexicon.get_word_info(0)
         self.assertEqual('東京都', wi.surface)
