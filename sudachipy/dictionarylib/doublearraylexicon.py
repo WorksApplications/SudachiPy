@@ -78,21 +78,13 @@ class DoubleArrayLexicon(Lexicon):
         return self.word_params.size
 
     def get_word_id(self, headword: str, pos_id: int, reading_form: str) -> int:
-        for wid, _ in self.lookup(headword.encode('utf-8'), 0):
-            if self._compare_word_id(wid, headword, pos_id, reading_form):
-                return wid
-
         for wid in range(self.word_infos.size()):
-            if self._compare_word_id(wid, headword, pos_id, reading_form):
+            info = self.word_infos.get_word_info(wid)
+            if info.surface == headword \
+                    and info.pos_id == pos_id \
+                    and info.reading_form == reading_form:
                 return wid
-
         return -1
-
-    def _compare_word_id(self, wid: int, headword: str, pos_id: int, reading_form: str) -> bool:
-        info = self.word_infos.get_word_info(wid)
-        return info.surface == headword \
-            and info.pos_id == pos_id \
-            and info.reading_form == reading_form
 
     def get_dictionary_id(self, word_id: int) -> int:
         return 0
