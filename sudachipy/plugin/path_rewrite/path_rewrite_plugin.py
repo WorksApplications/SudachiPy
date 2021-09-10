@@ -64,7 +64,7 @@ class PathRewritePlugin(ABC):
         e = path[end - 1].get_end()
 
         n = lattice.get_minimum_node(b, e)
-        if n:
+        if n is not None:
             path[begin:end] = [n]
             return n
 
