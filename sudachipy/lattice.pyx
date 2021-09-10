@@ -57,15 +57,15 @@ cdef class Lattice:
         return self.end_lists[end]
 
     def get_nodes(self, begin: int, end: int) -> List[LatticeNode]:
-        return [node for node in self.end_lists[end] if node.begin == begin]
+        return [node for node in self.end_lists[end] if node.get_begin() == begin]
 
-    def get_minumum_node(self, begin: int, end: int) -> Optional[LatticeNode]:
+    def get_minimum_node(self, begin: int, end: int) -> Optional[LatticeNode]:
         nodes = self.get_nodes(begin, end)
         if not nodes:
             return None
         min_arg = nodes[0]
         for node in nodes[1:]:
-            if node.cost < min_arg.cost:
+            if node.get_path_cost() < min_arg.get_path_cost():
                 min_arg = node
         return min_arg
 

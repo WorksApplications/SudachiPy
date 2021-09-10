@@ -62,6 +62,12 @@ class PathRewritePlugin(ABC):
             raise IndexError("begin >= end")
         b = path[begin].get_begin()
         e = path[end - 1].get_end()
+
+        n = lattice.get_minimum_node(b, e)
+        if n is not None:
+            path[begin:end] = [n]
+            return n
+
         surface = ""
         length = 0
         for i in range(begin, end):
@@ -76,6 +82,7 @@ class PathRewritePlugin(ABC):
         node = lattice.create_node()
         node.set_range(b, e)
         node.set_word_info(wi)
+        node.set_oov()
 
         path[begin:end] = [node]
         return node
