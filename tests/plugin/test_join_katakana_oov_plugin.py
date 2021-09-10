@@ -53,6 +53,8 @@ class TestJoinKatakanaOOVPlugin(unittest.TestCase):
         path = self.get_path('アイアイウ')
         self.assertEqual(1, len(path))
         self.assertFalse(path[0].is_oov())
+        self.assertEqual(['名詞', '固有名詞', '地名', '一般', '*', '*'],
+            self.dict_.grammar.get_part_of_speech_string(path[0].get_word_info().pos_id))
 
     def test_starts_with_middle(self):
         self.plugin._min_length = 3
