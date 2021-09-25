@@ -8,8 +8,11 @@
 set -e
 
 # build dictionaries
-python -m sudachipy.command_line build -o tests/resources/system.dic -d "the system dictionary for the unit tests" -m tests/resources/dict/matrix.def tests/resources/dict/lex.csv
-python -m sudachipy.command_line ubuild -o tests/resources/user.dic -s tests/resources/system.dic tests/resources/dict/user.csv
+if !(type sudachipy > /dev/null 2>&1); then
+    python setup.py develop
+fi
+sudachipy build -o tests/resources/system.dic -d "the system dictionary for the unit tests" -m tests/resources/dict/matrix.def tests/resources/dict/lex.csv
+sudachipy ubuild -o tests/resources/user.dic -s tests/resources/system.dic tests/resources/dict/user.csv
 
 set +e
 
