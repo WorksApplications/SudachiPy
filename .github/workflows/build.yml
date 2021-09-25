@@ -38,6 +38,6 @@ jobs:
     - name: Test with unittest
       run: |
         cp .travis/system.dic.test tests/resources/system.dic
-        cp .travis/user.dic.test tests/resources/test.dic
+        cp .travis/user.dic.test tests/resources/user.dic
         python setup.py build_ext --inplace
         python -m unittest discover tests
