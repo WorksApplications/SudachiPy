@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import struct
-from functools import lru_cache
 
 from .wordinfo import WordInfo
 
@@ -25,7 +24,6 @@ class WordInfoList(object):
         self._word_size = word_size
         self.has_synonym_gid = has_synonym_gid
 
-    @lru_cache(2048)
     def get_word_info(self, word_id):
         orig_pos = self.bytes.tell()
         index = self.word_id_to_offset(word_id)
