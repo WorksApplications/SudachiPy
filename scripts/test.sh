@@ -13,6 +13,7 @@ if !(type sudachipy > /dev/null 2>&1); then
 fi
 sudachipy build -o tests/resources/system.dic -d "the system dictionary for the unit tests" -m tests/resources/dict/matrix.def tests/resources/dict/lex.csv
 sudachipy ubuild -o tests/resources/user.dic -s tests/resources/system.dic tests/resources/dict/user.csv
+sudachipy ubuild -o tests/resources/large_user.dic -s tests/resources/system.dic tests/resources/dict/large_user.csv
 
 set +e
 
