@@ -22,6 +22,9 @@ class Morpheme:
     def __str__(self):
         return self.surface()
 
+    def __repr__(self):
+        return self.surface()
+
     def begin(self):
         return self.list.get_begin(self.index)
 

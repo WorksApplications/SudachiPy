@@ -48,6 +48,9 @@ class MorphemeList:
     def __str__(self):
         return ''.join([mm.surface() for mm in self])
 
+    def __repr__(self):
+        return str(self)
+
     def get_begin(self, index):
         return self.input_text.get_original_index(self.path[index].get_begin())
 
