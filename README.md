@@ -8,6 +8,10 @@
 
 SudachiPy is a Python version of [Sudachi](https://github.com/WorksApplications/Sudachi), a Japanese morphological analyzer.
 
+## Warning
+
+This repository is for 0.5.* version of SudachiPy, 0.6* and above are developed as [Sudachi.rs](https://github.com/WorksApplications/sudachi.rs).
+
 
 ## TL;DR
 
